@@ -10,5 +10,6 @@ export const ignoreJwtApiUrl = [
     '/user/register',
     '/uploadfile',
     '/article/query',
-    '/article/detail'
+    '/article/detail',
+    '/tag/query'
 ];

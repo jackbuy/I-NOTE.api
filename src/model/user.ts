@@ -26,7 +26,7 @@ export const userLogin  = (req: any, res: any) => {
                     // expiresIn: 60*60*1  // 1小时过期
                 // }
             );
-            SuccessMsg(res, { data: {token: token, userMsg: content} });
+            SuccessMsg(res, { data: {token: token, userId: _id} });
         } else {
             ErrorMsg(res, { msg: '账号或密码错误！'});
         }
@@ -60,6 +60,22 @@ export const CheckUserIsLogin  = (req: any, res: any) => {
         } else {
             SuccessMsg(res, { data: false })
         }
+    });
+}
+
+// 已登录用户详情
+export const userLoginDeteil  = (req: any, res: any) => {
+    const { userId } = req.userMsg;
+    User.findById(userId, 'username').then((resp: any) => {
+        SuccessMsg( res, { data: resp} );
+    });
+}
+
+// 用户详情
+export const userDeteil  = (req: any, res: any) => {
+    const { userId } = req.params;
+    User.findById(userId, 'username').then((resp: any) => {
+        SuccessMsg( res, { data: resp} );
     });
 }
 
