@@ -51,20 +51,9 @@ export const userRegister  = (req: any, res: any) => {
     });
 }
 
-// 检查用户是否已登录
-export const CheckUserIsLogin  = (req: any, res: any) => {
-    const { userId } = req.userMsg;
-    User.findById(userId).then((resp: any) => {
-        if(resp) {
-            SuccessMsg(res, { data: true })
-        } else {
-            SuccessMsg(res, { data: false })
-        }
-    });
-}
 
-// 已登录用户详情
-export const userLoginDeteil  = (req: any, res: any) => {
+// 用户信息
+export const userInfo  = (req: any, res: any) => {
     const { userId } = req.userMsg;
     User.findById(userId, 'username').then((resp: any) => {
         SuccessMsg( res, { data: resp} );
@@ -79,14 +68,3 @@ export const userDeteil  = (req: any, res: any) => {
     });
 }
 
-export const userQuery  = (req: any, res: any) => {
-    res.send('userQuery')
-}
-
-export const userEdit  = (req: any, res: any) => {
-    res.send('edit')
-}
-
-export const userDelete  = (req: any, res: any) => {
-    res.send('delete')
-}

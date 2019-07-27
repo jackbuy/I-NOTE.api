@@ -1,6 +1,6 @@
 export const ErrorMsg = ( res: any, { msg = 'error' }: any ) => {
     return res.send({
-        code: 401,
+        code: 500,
         msg
     })
 }

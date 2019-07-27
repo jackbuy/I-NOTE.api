@@ -1,23 +1,14 @@
-import { Article, User, Tag } from '../schema';
+import { Article, User, Tag, Message, Support } from '../schema';
 import { SuccessMsg, ErrorMsg } from '../utils/utils';
 
-// 查询已发布的文章(模糊查询)
+// 查询文章(模糊查询)
 export const articleQuery  = (req: any, res: any) => {
-    const userId: String = '';
-    common(req, res, userId);
-}
-
-// 当前登录用户
-export const articleUserQuery  = (req: any, res: any) => {
-    const { userId } = req.userMsg;
-    common(req, res, userId);
-}
-
-const common = (req: any, res: any, userId: String) => {
-    const { keyword, tagName, publish } = req.body;
+    let userId: String = '';
+    const { keyword, tagName, publish, mine } = req.body;
     let params: any = { publish };
     const reg = new RegExp(keyword, 'i') //不区分大小写
-    if (userId) params.userId = userId;
+    if (req.userMsg) userId = req.userMsg.userId;
+    if (userId && mine) params.userId = userId;
     if (keyword) {
         params.$or = [ //多条件，数组
             { title : { $regex: reg } },
@@ -27,10 +18,18 @@ const common = (req: any, res: any, userId: String) => {
     if (tagName) params.tagName = tagName;
     Article.find(params, {__v: 0})
     .populate({path: 'userId', model: User, select: 'username'})
-    // .populate({path: 'tagName', model: Tag, select: 'title'})
     .sort({ _id: -1 }).exec((err, resp) => {
         if (!err) {
-            SuccessMsg(res, {data: resp});
+            let result: any[] = []
+            Support.find().then((resp2) => { // 查询已赞
+                resp.map((item: any) => {
+                    resp2.map((item2: any) => {
+                        if (item._id == item2.articleId && userId == item2.createUserId) item.isSupport = true;
+                    });
+                    result.push(item);
+                });
+                SuccessMsg(res, {data: result});
+            });
         } else {
             ErrorMsg(res, {});
         }
@@ -40,8 +39,44 @@ const common = (req: any, res: any, userId: String) => {
 // 详情
 export const articleDetail  = (req: any, res: any) => {
     const { articleId } = req.body;
-    Article.findById(articleId).then((resp: any) => {
-        SuccessMsg( res, { data: resp} );
+    const query = {_id: articleId};
+    Article.findOne(query).then((resp: any) => {
+        const { viewCount } = resp;
+        Article.updateOne(query, { viewCount: viewCount + 1 })
+        .then(() => {
+            Article.findOne(query)
+            .populate({path: 'userId', model: User, select: 'username'})
+            .then((resp2: any) => {
+                SuccessMsg( res, { data: resp2 } );
+            });
+        })
+        .catch(( err: any ) => {ErrorMsg(res, {msg: err});});
+    });
+}
+
+// 点赞
+export const articleSupport = (req: any, res: any) => {
+    const { userId } = req.userMsg;
+    const { articleId } = req.params;
+    const query = { _id: articleId };
+    const data: any = {
+        articleId,
+        createUserId: userId,
+        createTime: Date.now()
+    };
+    Support.findOne( { articleId: articleId, createUserId: userId } ).then((resp1) => {
+        if (!resp1) {
+            new Support(data).save().then(() => {
+                Article.findOne(query).then((resp2: any) => {
+                    const { supportCount } = resp2;
+                    Article.updateOne(query, { supportCount: supportCount + 1 })
+                    .then(() => {SuccessMsg(res, {});})
+                    .catch(( err: any ) => {ErrorMsg(res, {msg: err});});
+                });
+            });
+        } else {
+            ErrorMsg(res, {msg: '您已点赞！'});
+        }
     });
 }
 
