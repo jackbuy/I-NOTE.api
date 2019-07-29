@@ -23,13 +23,13 @@ app.all("*", function(req, res, next) {
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(express.static('resouces')); // 指定文件夹 http://localhost:8081/xxxx.jpg, resouces 静态资源文件夹
+app.use(express.static('resouces'));
 
 app.use((req: any, res: any, next) => {
-    let token = req.body.token || req.query.token || req.headers.token; //token可能存在post请求和get请求
+    let token = req.body.token || req.query.token || req.headers.token;
     jwt.verify(token, secretkey, (err: any, decode: any) => {
        if (err) {
-        if (ignoreJwtApiUrl.includes(req.url)) { // 不用token 的api
+        if (ignoreJwtApiUrl.includes(req.url)) { // 忽略不用token的api
             return next();
         } else {
             res.send({

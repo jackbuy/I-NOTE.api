@@ -1,29 +1,29 @@
 import express from 'express';
 const app = express();
 
-import {
-    articleQuery, articleDetail, articleSupport, articleAdd, articleEdit, articleDelete
-} from '../model/article';
-import { tagQuery } from '../model/tag';
-import {
-    userLogin, userRegister, userInfo, userDeteil
-} from '../model/user';
+import * as Article from '../model/article';
+import * as User from '../model/user';
+import * as Tag from '../model/tag';
+import * as Message from '../model/message';
 
-// tag
-app.get('/tag/query', tagQuery);
+// Tag
+app.get('/tag/query', Tag.tagQuery);
 
-// article
-app.post('/article/query', articleQuery);
-app.post('/article/detail', articleDetail);
-app.get('/article/support/:articleId', articleSupport);
-app.post('/article/add', articleAdd);
-app.put('/article/edit/:articleId', articleEdit);
-app.delete('/article/delete/:articleId', articleDelete);
+// Message
+app.get('/message/query', Message.messageQuery);
 
-// user
-app.post('/user/login', userLogin);
-app.post('/user/register', userRegister);
-app.get('/user/userInfo', userInfo);
-app.get('/user/userInfo/:userId', userDeteil);
+// Article
+app.post('/article/query', Article.articleQuery);
+app.post('/article/detail', Article.articleDetail);
+app.get('/article/support/:articleId', Article.articleSupport);
+app.post('/article/add', Article.articleAdd);
+app.put('/article/edit/:articleId', Article.articleEdit);
+app.delete('/article/delete/:articleId', Article.articleDelete);
+
+// User
+app.post('/user/login', User.userLogin);
+app.post('/user/register', User.userRegister);
+app.get('/user/userInfo', User.userInfo);
+app.get('/user/userInfo/:userId', User.userDeteil);
 
 export default app

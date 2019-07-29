@@ -11,7 +11,8 @@ export const userLogin  = (req: any, res: any) => {
         username,
         password: md5(password)
     }
-    User.findOne(query).then((resp: any) => {
+    User.findOne(query)
+    .then((resp: any) => {
         if (resp) {
             const { _id, username } = resp;
             const content: any = {  // 要生成token的主题信息
@@ -40,11 +41,13 @@ export const userRegister  = (req: any, res: any) => {
         username,
         password: md5(password)
     }
-    User.find({username}).then((resp: any) => {
+    User.find({username})
+    .then((resp: any) => {
         if (resp.length > 0) {
             ErrorMsg(res, { msg: '账号已存在'});
         } else {
-            new User(data).save().then(() => {
+            new User(data).save()
+            .then(() => {
                 SuccessMsg(res, {});
             });
         }
