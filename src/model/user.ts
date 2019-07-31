@@ -23,8 +23,7 @@ export const userLogin  = (req: any, res: any) => {
                 content,
                 secretkey,
                 // {
-                    // expiresIn: 60*1  // 1分钟过期
-                    // expiresIn: 60*60*1  // 1小时过期
+                //     expiresIn: 60*1  // token1分钟过期
                 // }
             );
             SuccessMsg(res, { data: {token: token, userId: _id} });

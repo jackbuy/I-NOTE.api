@@ -1,5 +1,7 @@
 ## I-NOTE.api
 
+>在项目根目录，新建resouces文件夹，用于存放上传的图片
+
 全局安装 typescript
 
 > npm install -g typescript

@@ -11,6 +11,6 @@ export const SuccessMsg = ( res: any, { data, msg = 'ok', total }: any ) => {
         msg
     };
     if (data) result.data = data;
-    if (total) result.total = total;
+    if (total >= 0) result.total = total;
     return res.send(result)
 }

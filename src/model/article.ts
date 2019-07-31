@@ -33,7 +33,7 @@ export const articleQuery  = (req: any, res: any) => {
         articleData = article_data;
         return Article.find(params).countDocuments();
     })
-    .then((article_count) =>{
+    .then((article_count = 0) =>{
         total = article_count;
         return Support.find();
     })

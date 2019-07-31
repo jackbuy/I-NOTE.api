@@ -48,6 +48,4 @@ app.use((req: any, res: any, next) => {
 
 app.use(router);
 
-app.listen(10000, (): void => {
-    console.log('服务已启动，端口10000');
-})
+app.listen(10000, () => console.log('服务已启动，端口10000'))
