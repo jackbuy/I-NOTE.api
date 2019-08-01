@@ -69,4 +69,3 @@ export const userDeteil  = (req: any, res: any) => {
         SuccessMsg( res, { data: resp} );
     });
 }
-
