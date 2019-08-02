@@ -13,6 +13,7 @@ export default new Schema({ //文章
     viewCount: { type: Number, default: 0 }, // 阅读数量
     collectCount: { type: Number, default: 0 }, // 收藏数量
     isCollect: { type: Boolean, default: false }, // 是否已收藏
+    isFollow: { type: Boolean, default: false }, // 是否已关注
     commentCount: { type: Number, default: 0 }, // 评论数量
     userId: { type: String },
     createTime: { type: Date, default: Date.now },

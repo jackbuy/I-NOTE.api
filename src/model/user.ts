@@ -11,8 +11,7 @@ export const userLogin  = (req: any, res: any) => {
         username,
         password: md5(password)
     }
-    User.findOne(query)
-    .then((resp: any) => {
+    User.findOne(query).then((resp: any) => {
         if (resp) {
             const { _id, username } = resp;
             const content: any = {  // 要生成token的主题信息
@@ -26,9 +25,9 @@ export const userLogin  = (req: any, res: any) => {
                 //     expiresIn: 60*1  // token1分钟过期
                 // }
             );
-            SuccessMsg(res, { data: {token: token, userId: _id} });
+            SuccessMsg(res, { data: { token: token, userId: _id } });
         } else {
-            ErrorMsg(res, { msg: '账号或密码错误！'});
+            ErrorMsg(res, { msg: '账号或密码错误！' });
         }
     });
 }
@@ -40,15 +39,13 @@ export const userRegister  = (req: any, res: any) => {
         username,
         password: md5(password)
     }
-    User.find({username})
-    .then((resp: any) => {
-        if (resp.length > 0) {
-            ErrorMsg(res, { msg: '账号已存在'});
-        } else {
-            new User(data).save()
-            .then(() => {
+    User.findOne({ username }).then((resp: any) => {
+        if (!resp) {
+            new User(data).save().then(() => {
                 SuccessMsg(res, {});
             });
+        } else {
+            ErrorMsg(res, { msg: '账号已存在' });
         }
     });
 }
@@ -57,15 +54,12 @@ export const userRegister  = (req: any, res: any) => {
 // 用户信息
 export const userInfo  = (req: any, res: any) => {
     const { userId } = req.userMsg;
-    User.findById(userId, 'username').then((resp: any) => {
-        SuccessMsg( res, { data: resp} );
-    });
-}
-
-// 用户详情
-export const userDeteil  = (req: any, res: any) => {
-    const { userId } = req.params;
-    User.findById(userId, 'username').then((resp: any) => {
-        SuccessMsg( res, { data: resp} );
+    const query: any = {
+        _id: req.params.userId ? req.params.userId : userId
+    }
+    User.findOne(query, 'username').then((resp: any) => {
+        SuccessMsg(res, { data: resp });
+    }).catch((err) => {
+        ErrorMsg(res, { msg: err });
     });
 }
