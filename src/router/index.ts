@@ -10,18 +10,19 @@ import * as Collect from '../model/collect';
 import * as Follow from '../model/follow';
 
 // Tag
-app.get('/tag/query', Tag.tagQuery);
+app.post('/tag/query', Tag.tagQuery);
+app.post('/tag/follow/query', Tag.tagFollowQuery);
 
 // Message
 app.get('/message/query', Message.messageQuery);
 
 // Collect
-app.get('/collect/query', Collect.collectQuery);
+app.post('/collect/query', Collect.collectQuery);
 
 // Follow
-app.get('/follow/user/query', Follow.followUserQuery);
-app.get('/fans/query', Follow.fansQuery);
-app.get('/follow/user/:followUserId', Follow.followUser);
+app.post('/follow/query', Follow.followQuery);
+app.post('/fans/query', Follow.fansQuery);
+app.post('/follow', Follow.follow);
 
 // Article
 app.post('/article/query', Article.articleQuery);
@@ -35,8 +36,7 @@ app.delete('/article/delete/:articleId', Article.articleDelete);
 // User
 app.post('/user/login', User.userLogin);
 app.post('/user/register', User.userRegister);
-app.get('/user/userInfo', User.userInfo);
-app.get('/user/userInfo/:userId', User.userInfo);
+app.post('/user/userInfo', User.userInfo);
 
 // upload
 app.post('/uploadfile', Upload.upload.any(), Upload.uploadFunc);

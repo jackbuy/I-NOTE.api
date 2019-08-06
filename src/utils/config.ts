@@ -11,5 +11,9 @@ export const ignoreJwtApiUrl: string[] = [
     '/uploadfile',
     '/article/query',
     '/article/detail',
-    '/tag/query'
+    '/tag/query',
+    '/user/userInfo',
+    '/collect/query',
+    '/follow/query',
+    '/fans/query'
 ];

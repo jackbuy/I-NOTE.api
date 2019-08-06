@@ -3,5 +3,6 @@ const Schema = mongoose.Schema;
 
 export default new Schema({ //tag
     title: { type: String },
-    name: { type: String }
+    name: { type: String },
+    isFollow: { type: Boolean, default: false }
 });

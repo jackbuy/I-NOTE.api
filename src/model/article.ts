@@ -1,16 +1,21 @@
 import { Article, User, Tag, Message, Support, Collect, Follow } from '../schema';
 import { SuccessMsg, ErrorMsg, checkHasId } from '../utils/utils';
+import { DB_URL } from '../utils/config';
 
-// 查询文章(模糊查询)
+/**
+ * 查询文章(模糊查询)
+ * @param sortType 0(最新)1(最热)
+ */
 export const articleQuery  = (req: any, res: any) => {
-    const { keyword, tagName, publish, mine, currentPage = 1, pageSize = 25 } = req.body;
-    let userId: string = '';
+    const { keyword, tagName, publish, userId, currentPage = 1, pageSize = 25, sortType = 'newest' } = req.body;
+    let currentUserId: string = ''; // 当前登录用户
+    let querySort: any = {};
     let params: any = { publish };
     const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
     const querylimit: number = parseInt(pageSize);
 
-    if (req.userMsg) userId = req.userMsg.userId;
-    if (userId && mine) params.userId = userId;
+    if (userId) params.userId = userId;
+    if (req.userMsg) currentUserId = req.userMsg.userId;
     if (keyword) {
         const reg = new RegExp(keyword, 'i') //不区分大小写
         params.$or = [ //多条件，数组
@@ -19,6 +24,8 @@ export const articleQuery  = (req: any, res: any) => {
         ]
     }
     if (tagName) params.tagName = tagName;
+    if (sortType == 'newest') querySort = { _id: -1 }
+    if (sortType == 'popular') querySort = { viewCount: -1 }
 
     let result: any[] = [];
     let articleData: any[] = [];
@@ -27,7 +34,7 @@ export const articleQuery  = (req: any, res: any) => {
     Article
         .find(params, {__v: 0})
         .populate({path: 'userId', model: User, select: 'username'})
-        .sort({ _id: -1})
+        .sort(querySort)
         .skip(querySkip)
         .limit(querylimit)
         .then((article_data: any) => {
@@ -38,19 +45,19 @@ export const articleQuery  = (req: any, res: any) => {
             if (article_count) total = article_count;
             return Support.find();
         })
-        .then((support_data: any) => {
+        .then((resp: any) => {
             articleData.map((item: any) => {
-                support_data.map((item2: any) => {
-                    if (item._id == item2.articleId && userId == item2.createUserId) item.isSupport = true;
+                resp.map((resp_item: any) => {
+                    if (item._id == resp_item.articleId && currentUserId == resp_item.createUserId) item.isSupport = true;
                 });
                 result.push(item);
             });
             return Collect.find();
         })
-        .then((collect_data: any) => {
+        .then((resp: any) => {
             result.map((item: any) => {
-                collect_data.map((item2: any) => {
-                    if (item._id == item2.articleId && userId == item2.createUserId) item.isCollect = true;
+                resp.map((resp_item: any) => {
+                    if (item._id == resp_item.articleId && currentUserId == resp_item.createUserId) item.isCollect = true;
                 });
             });
         })
@@ -75,10 +82,18 @@ export const articleDetail  = (req: any, res: any) => {
         .then(() => Article.findOne(query).populate({ path: 'userId', model: User, select: 'username' }))
         .then((resp: any) => {
             result = resp;
-            return Follow.findOne({ userId, type: 0, followId: resp.userId._id })
+            return Follow.findOne({ userId, type: 0, followId: resp.userId._id });
         })
         .then((resp: any) => {
             if (resp) result.isFollow = true;
+            return Support.findOne({ createUserId: userId, articleId });
+        })
+        .then((resp: any) => {
+            if (resp) result.isSupport = true;
+            return Collect.findOne({ createUserId: userId, articleId });
+        })
+        .then((resp: any) => {
+            if (resp) result.isCollect = true;
             SuccessMsg(res, { data: result });
         })
         .catch((err: any) => {
@@ -162,7 +177,7 @@ export const articleSupport = (req: any, res: any) => {
                         articleId,
                         createUserId: userId,
                         receiveUserId: resp.userId,
-                        type: 0
+                        type: 5
                     };
                     return new Message(msgData).save();
                 })
@@ -172,7 +187,21 @@ export const articleSupport = (req: any, res: any) => {
                 })
                 .then(() => { SuccessMsg(res, {}); });
         } else {
-            ErrorMsg(res, { msg: '您已点赞！' });
+            Support.deleteOne({ articleId })
+                .then(() => Article.findOne(query))
+                .then((resp: any) => {
+                    supportCount = resp.supportCount;
+                    // 保存消息
+                    const msgData: any = {
+                        articleId,
+                        createUserId: userId,
+                        receiveUserId: resp.userId,
+                        type: 6
+                    };
+                    return new Message(msgData).save();
+                })
+                .then(() => Article.updateOne(query, { supportCount: supportCount - 1 })) // 更新文章
+                .then(() => { SuccessMsg(res, {}); });
         }
     });;
 }
@@ -226,3 +255,4 @@ export const articleDelete  = (req: any, res: any) => {
         ErrorMsg(res, { msg: '文章已不存在！' });
     });
 }
+// db.articles.update({publish: true}, {$set: {supportCount: 0, collectCount: 0}}, false, true)

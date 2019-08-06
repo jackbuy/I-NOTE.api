@@ -1,6 +1,6 @@
 import md5 from 'md5';
 import jwt from 'jsonwebtoken';
-import { User } from '../schema';
+import { User, Follow } from '../schema';
 import { SuccessMsg, ErrorMsg } from '../utils/utils';
 import { secretkey } from '../utils/config';
 
@@ -53,12 +53,13 @@ export const userRegister  = (req: any, res: any) => {
 
 // 用户信息
 export const userInfo  = (req: any, res: any) => {
-    const { userId } = req.userMsg;
-    const query: any = {
-        _id: req.params.userId ? req.params.userId : userId
-    }
-    User.findOne(query, 'username').then((resp: any) => {
+    const { userId } = req.body;
+    const query: any = { _id: userId }
+    // let result: any = {};
+    User.findOne(query, 'username createTime').then((resp: any) => {
         SuccessMsg(res, { data: resp });
+        // result = resp;
+        // return Follow.findOne({ userId, type: 0, followId: resp.userId._id })
     }).catch((err) => {
         ErrorMsg(res, { msg: err });
     });
