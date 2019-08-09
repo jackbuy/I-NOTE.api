@@ -10,8 +10,25 @@ export const collectQuery  = (req: any, res: any) => {
 
     const p1 = Collect.collectQueryLimit({ query, querySkip, querylimit });
     const p2 = Collect.count(query);
+    const p3 = Collect.find({ query });
 
-    Promise.all([p1, p2]).then((resp) => {
-        SuccessMsg(res, { data: resp[0].map((item: any) => item.articleId), total: resp[1] });
+    Promise.all([p1, p2, p3]).then((resp) => {
+        let result: any = [];
+        let result2: any = [];
+        resp[0].map((item: any) => {
+            if (item.articleId) {
+                result.push(item.articleId)
+            } else {
+                result2 = resp[2];
+                result2.map((item2: any) => {
+                    if (JSON.stringify(item2._id) == JSON.stringify(item._id)) {
+                        result.push({
+                            _id: item2.articleId
+                        })
+                    }
+                })
+            }
+        })
+        SuccessMsg(res, { data: result, total: resp[1] });
     });
 }

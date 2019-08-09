@@ -11,7 +11,7 @@ export const userLogin  = (req: any, res: any) => {
         username,
         password: md5(password)
     }
-    User.findOne(query).then((resp: any) => {
+    User.findOne({ query }).then((resp: any) => {
         if (resp) {
             const { _id, username } = resp;
             const content: any = {  // 要生成token的主题信息
@@ -35,11 +35,12 @@ export const userLogin  = (req: any, res: any) => {
 // 注册
 export const userRegister  = (req: any, res: any) => {
     const { username, password } = req.body;
+    const query = { username };
     const data: any = {
         username,
         password: md5(password)
     }
-    User.findOne({ username }).then((resp: any) => {
+    User.findOne({ query }).then((resp: any) => {
         if (!resp) {
             User.save(data).then(() => {
                 SuccessMsg(res, {});
