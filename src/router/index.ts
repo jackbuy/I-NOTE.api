@@ -1,16 +1,16 @@
 import express from 'express';
 const app = express();
 
-import * as Article from '../model/article';
-import * as User from '../model/user';
-import * as Tag from '../model/tag';
-import * as Message from '../model/message';
-import * as Upload from '../model/upload';
-import * as Collect from '../model/collect';
-import * as Follow from '../model/follow';
+import * as Article from './article';
+import * as User from './user';
+import * as Tag from './tag';
+import * as Collect from './collect';
+import * as Message from './message';
+import * as Upload from './upload';
+import * as Follow from './follow';
 
 // Tag
-app.post('/tag/query', Tag.tagQuery);
+app.post('/tag/query', Tag.tagQueryAll);
 app.post('/tag/follow/query', Tag.tagFollowQuery);
 
 // Message
