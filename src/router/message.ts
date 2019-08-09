@@ -4,7 +4,7 @@ import { SuccessMsg, ErrorMsg } from '../utils/utils';
 export const messageQuery = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { currentPage = 1, pageSize = 10 } = req.body;
-    const query = { createUserId: userId };
+    const query = { receiveUserId: userId };
     const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
     const querylimit: number = parseInt(pageSize);
 

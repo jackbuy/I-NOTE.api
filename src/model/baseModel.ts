@@ -12,7 +12,7 @@ export default class Model {
      * @param options 选项（排序、数量等）
      * @return promise
      */
-    find({ query = {}, select = {}, options = {} }: any): Promise<object> {
+    find({ query = {}, select = '-__v', options = {} }: any): Promise<object> {
         let find = this.schema.find(query, select);
         for (let i in options) find[i](options[i]);
         return find;
@@ -24,7 +24,7 @@ export default class Model {
      * @param select 返回字段
      * @return promise
      */
-    findOne({ query = {}, select = {}, options = {} }: any): Promise<object> {
+    findOne({ query = {}, select = '-__v', options = {} }: any): Promise<object> {
         return this.schema.findOne(query, select)
     }
 
