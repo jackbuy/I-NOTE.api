@@ -53,7 +53,7 @@ export const follow = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { followId, type } = req.body;
 
-    Follow.findOne({ userId, followId, type }).then((resp: any) => {
+    Follow.findOne({ query: { userId, followId, type } }).then((resp: any) => {
         if (!resp) {
             Follow.save({ userId, followId, type, createTime: Date.now()}).then(() => {
                 SuccessMsg(res, { msg: '关注成功！' });

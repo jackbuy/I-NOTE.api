@@ -13,8 +13,9 @@ class ArticleModel extends BaseModel {
             limit(querylimit)
     }
 
-    findOnePopulate(query: any) {
+    findOnePopulate({ query }: any) {
         return Article.findOne(query).
+            populate({ path: 'tagId', model: Tag, select: 'title' }).
             populate({ path: 'userId', model: User, select: 'username' });
     }
 }

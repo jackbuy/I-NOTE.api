@@ -62,20 +62,20 @@ export const articleDetail  = (req: any, res: any) => {
     let result: any = {};
     if (req.userMsg) userId = req.userMsg.userId;
 
-    Article.findOne(query)
+    Article.findOne({ query })
         .then((resp: any) => Article.updateOne({ query, update: { viewCount: resp.viewCount + 1 } }))
-        .then(() => Article.findOnePopulate(query))
+        .then(() => Article.findOnePopulate({ query }))
         .then((resp: any) => {
             result = resp;
-            return Follow.findOne({ userId, type: 0, followId: resp.userId._id });
+            return Follow.findOne({ query: { userId, type: 0, followId: resp.userId._id } });
         })
         .then((resp: any) => {
             if (resp) result.isFollow = true;
-            return Support.findOne({ createUserId: userId, articleId });
+            return Support.findOne({ query: { createUserId: userId, articleId } });
         })
         .then((resp: any) => {
             if (resp) result.isSupport = true;
-            return Collect.findOne({ createUserId: userId, articleId });
+            return Collect.findOne({ query: { createUserId: userId, articleId } });
         })
         .then((resp: any) => {
             if (resp) result.isCollect = true;
@@ -98,10 +98,10 @@ export const articleCollect = (req: any, res: any) => {
     };
     let collectCount: number = 0;
 
-    Collect.findOne({ articleId: articleId, createUserId: userId }).then((resp1: any) => {
+    Collect.findOne({ query: { articleId: articleId, createUserId: userId } }).then((resp1: any) => {
         if (!resp1) {
             Collect.save(data)
-                .then(() => Article.findOne(query))
+                .then(() => Article.findOne({ query }))
                 .then((resp: any) => {
                     collectCount = resp.collectCount;
                     // 保存消息
@@ -111,7 +111,7 @@ export const articleCollect = (req: any, res: any) => {
                 .then(() => { SuccessMsg(res, {}); });
         } else {
             Collect.removeOne({ articleId })
-                .then(() => Article.findOne(query))
+                .then(() => Article.findOne({ query }))
                 .then((resp: any) => {
                     collectCount = resp.collectCount;
                     // 保存消息
@@ -135,10 +135,10 @@ export const articleSupport = (req: any, res: any) => {
     };
     let supportCount: number = 0;
 
-    Support.findOne({ articleId: articleId, createUserId: userId }).then((resp1) => {
+    Support.findOne({ query: { articleId: articleId, createUserId: userId } }).then((resp1) => {
         if (!resp1) {
             Support.save(data)
-                .then(() => Article.findOne(query))
+                .then(() => Article.findOne({ query }))
                 .then((resp: any) => {
                     supportCount = resp.supportCount;
                     // 保存消息
@@ -151,7 +151,7 @@ export const articleSupport = (req: any, res: any) => {
                 .then(() => { SuccessMsg(res, {}); });
         } else {
             Support.removeOne({ articleId })
-                .then(() => Article.findOne(query))
+                .then(() => Article.findOne({ query }))
                 .then((resp: any) => {
                     supportCount = resp.supportCount;
                     // 保存消息
