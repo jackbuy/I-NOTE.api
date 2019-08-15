@@ -21,5 +21,5 @@ export const upload = multer({
 
 export const uploadFunc  = (req: any, res: any) => {
     if (req.files.length <= 0 || req.files == null) return ErrorMsg(res, {});
-    return SuccessMsg(res, { data: req.files });
+    SuccessMsg(res, { data: req.files });
 }

@@ -8,7 +8,6 @@ export const secretkey: string = 'secretkey';
 export const ignoreJwtApiUrl: string[] = [
     '/user/login',
     '/user/register',
-    '/uploadfile',
     '/article/query',
     '/article/detail',
     '/tag/query',

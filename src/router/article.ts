@@ -41,7 +41,7 @@ export const articleQuery  = (req: any, res: any) => {
     if (sortType == 'newest') querySort = { _id: -1 }
     if (sortType == 'popular') querySort = { viewCount: -1 }
 
-    const p1 = Article.queryLimit({ query, querylimit, querySkip, querySort});
+    const p1 = Article.queryLimit({ query, querylimit, querySkip, querySort, publish});
     const p2 = Article.count(query);
     const p3 = Support.find({ });
     const p4 = Collect.find({ });
@@ -56,7 +56,7 @@ export const articleQuery  = (req: any, res: any) => {
 
 // 详情
 export const articleDetail  = (req: any, res: any) => {
-    const { articleId } = req.body;
+    const { articleId, isEdit = 'false' } = req.body;
     const query: any = { _id: articleId };
     let userId: string = '';
     let result: any = {};
@@ -64,7 +64,7 @@ export const articleDetail  = (req: any, res: any) => {
 
     Article.findOne({ query })
         .then((resp: any) => Article.updateOne({ query, update: { viewCount: resp.viewCount + 1 } }))
-        .then(() => Article.findOnePopulate({ query }))
+        .then(() => Article.findOnePopulate({ query, isEdit }))
         .then((resp: any) => {
             result = resp;
             return Follow.findOne({ query: { userId, type: 0, followId: resp.userId._id } });
