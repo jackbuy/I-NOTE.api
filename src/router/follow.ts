@@ -19,11 +19,12 @@ const setVal = (arr1: any, arr2: any, type: string) => {
  */
 export const followQuery  = (req: any, res: any) => {
     const { userId, type, currentPage, pageSize } = req.body;
-    const query = { type, userId };
+    const query: any = { type, userId };
+    const select: string = '-__v';
     const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
     const querylimit: number = parseInt(pageSize);
 
-    Follow.followQueryLimit({ query, querySkip, querylimit }).then((resp: any) => {
+    Follow.followQueryLimit({ query, select, querySkip, querylimit }).then((resp: any) => {
         SuccessMsg(res, { data: resp });
     });
 }
@@ -31,14 +32,15 @@ export const followQuery  = (req: any, res: any) => {
 // 粉丝列表
 export const fansQuery  = (req: any, res: any) => {
     const { userId, type, currentPage, pageSize } = req.body;
-    const query = {
+    const query: any = {
         followId: userId,
         type
     };
+    const select: string = '-__v';
     const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
     const querylimit: number = parseInt(pageSize);
 
-    const p1 = Follow.fansQueryLimit({ query, querySkip, querylimit });
+    const p1 = Follow.fansQueryLimit({ query, select, querySkip, querylimit });
     const p2 = Follow.find({ query: { userId } });
 
     Promise.all([ p1, p2 ]).then((resp) => {

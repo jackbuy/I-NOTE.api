@@ -51,7 +51,6 @@ export const userRegister  = (req: any, res: any) => {
     });
 }
 
-
 // 用户信息
 export const userInfo  = (req: any, res: any) => {
     const { userId } = req.body;
@@ -62,4 +61,15 @@ export const userInfo  = (req: any, res: any) => {
     }).catch((err) => {
         ErrorMsg(res, { msg: err });
     });
+}
+
+// 用户推荐
+export const userRecommend = (req: any, res: any) => {
+    const query: any = {};
+    const select: string = 'username';
+    const querySkip: number = 0;
+    const querylimit: number = 5;
+    const p1 = User.userRecommend({ query, select, querySkip, querylimit });
+
+    p1.then((resp) => { SuccessMsg(res, { data: resp }); })
 }

@@ -3,14 +3,15 @@ import { Message, User, Article } from '../schema';
 
 interface messageQuery {
     query: any;
+    select: string;
     querySkip: number;
     querylimit: number;
 }
 
 class MessageModel extends BaseModel{
 
-    queryLimit({ query, querySkip, querylimit }: messageQuery) {
-        return Message.find(query, '-__v').
+    queryLimit({ query, select, querySkip, querylimit }: messageQuery) {
+        return Message.find(query, select).
             populate({ path: 'createUserId', model: User, select: 'username' }).
             populate({ path: 'receiveUserId', model: User, select: 'username' }).
             populate({ path: 'articleId', model: Article, select: 'title' }).

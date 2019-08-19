@@ -3,14 +3,15 @@ import { Collect, User, Article, Tag } from '../schema';
 
 interface query {
     query: any;
+    select: string;
     querySkip: number;
     querylimit: number;
 }
 
 class CollectModel extends BaseModel {
 
-    collectQueryLimit({ query, querySkip, querylimit }: query) {
-        return Collect.find(query, 'articleId').
+    collectQueryLimit({ query, select, querySkip, querylimit }: query) {
+        return Collect.find(query, select).
             populate({
                 path: 'articleId',
                 model: Article,

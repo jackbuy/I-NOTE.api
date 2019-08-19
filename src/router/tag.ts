@@ -31,3 +31,14 @@ export const tagFollowQuery = (req: any, res: any) => {
         SuccessMsg(res, { data: result.map((item: any) => item.followId) });
     });
 }
+
+// tag推荐
+export const tagRecommend = (req: any, res: any) => {
+    const query: any = {};
+    const select: string = '-__v';
+    const querySkip: number = 0;
+    const querylimit: number = 12;
+    const p1 = Tag.tagRecommend({ query, select, querySkip, querylimit });
+
+    p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+}

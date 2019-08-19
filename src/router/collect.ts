@@ -4,11 +4,12 @@ import { SuccessMsg, ErrorMsg } from '../utils/utils';
 // 列表
 export const collectQuery  = (req: any, res: any) => {
     const { userId, currentPage, pageSize } = req.body;
-    const query = { createUserId: userId };
+    const query: any = { createUserId: userId };
+    const select: string = 'articleId';
     const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
     const querylimit: number = parseInt(pageSize);
 
-    const p1 = Collect.collectQueryLimit({ query, querySkip, querylimit });
+    const p1 = Collect.collectQueryLimit({ query, select, querySkip, querylimit });
     const p2 = Collect.count(query);
     const p3 = Collect.find({ query });
 

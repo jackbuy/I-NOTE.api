@@ -3,6 +3,7 @@ import { Follow, User, Tag } from '../schema';
 
 interface queryLimit {
     query: any;
+    select: string;
     querySkip: number;
     querylimit: number;
 }
@@ -15,8 +16,8 @@ interface followQuery {
 class FollowModel extends BaseModel {
 
     // 关注列表
-    followQueryLimit({ query, querySkip, querylimit }: queryLimit) {
-        return Follow.find(query, '-__v').
+    followQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
+        return Follow.find(query, select).
             populate({path: 'followId', model: User, select: 'username'}).
             limit(querylimit).
             skip(querySkip).
@@ -24,8 +25,8 @@ class FollowModel extends BaseModel {
     }
 
     // 粉丝列表
-    fansQueryLimit({ query, querySkip, querylimit }: queryLimit) {
-        return Follow.find(query, '-__v').
+    fansQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
+        return Follow.find(query, select).
             populate({ path: 'userId', model: User }).
             limit(querylimit).
             skip(querySkip).

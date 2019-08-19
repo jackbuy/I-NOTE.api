@@ -8,10 +8,12 @@ import * as Collect from './collect';
 import * as Message from './message';
 import * as Upload from './upload';
 import * as Follow from './follow';
+import * as Topic from './topic';
 
 // Tag
 app.post('/tag/query', Tag.tagQueryAll);
 app.post('/tag/follow/query', Tag.tagFollowQuery);
+app.get('/tag/recommend', Tag.tagRecommend);
 
 // Message
 app.get('/message/query', Message.messageQuery);
@@ -37,6 +39,14 @@ app.delete('/article/delete/:articleId', Article.articleDelete);
 app.post('/user/login', User.userLogin);
 app.post('/user/register', User.userRegister);
 app.post('/user/userInfo', User.userInfo);
+app.get('/user/recommend', User.userRecommend);
+
+// topic
+app.post('/topic/query', Topic.topicQuery);
+app.get('/topic/recommend', Topic.topicRecommend);
+app.post('/topic/add', Topic.topicAdd);
+app.get('/topic/detail/:topicId', Topic.topicDetail);
+app.get('/topic/article/:topicId', Topic.topicArticles);
 
 // upload
 app.post('/uploadfile', Upload.upload.any(), Upload.uploadFunc);
