@@ -38,8 +38,8 @@ export const articleQuery  = (req: any, res: any) => {
         ]
     }
     if (tagId) query.tagId = tagId;
-    if (sortType == 'newest') querySort = { _id: -1 }
-    if (sortType == 'popular') querySort = { viewCount: -1 }
+    if (sortType == 'newest') querySort = { top: -1, editTime: -1 }
+    if (sortType == 'popular') querySort = { top: -1, viewCount: -1 }
 
     const p1 = Article.queryLimit({ query, querylimit, querySkip, querySort, publish});
     const p2 = Article.count(query);

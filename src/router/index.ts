@@ -43,10 +43,11 @@ app.get('/user/recommend', User.userRecommend);
 
 // topic
 app.post('/topic/query', Topic.topicQuery);
+app.post('/topic/user/query', Topic.topicUserQuery);
 app.get('/topic/recommend', Topic.topicRecommend);
 app.post('/topic/add', Topic.topicAdd);
 app.get('/topic/detail/:topicId', Topic.topicDetail);
-app.get('/topic/article/:topicId', Topic.topicArticles);
+app.post('/topic/article/query', Topic.topicArticlesQuery);
 
 // upload
 app.post('/uploadfile', Upload.upload.any(), Upload.uploadFunc);
