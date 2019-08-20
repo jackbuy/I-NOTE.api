@@ -51,9 +51,18 @@ export const topicAdd  = (req: any, res: any) => {
     });
 }
 
+// 删除
+export const topicDelete  = (req: any, res: any) => {
+    const { topicId } = req.params;
+    const query = { _id: topicId };
+    Topic.removeOne(query).then((resp: any) => {
+        SuccessMsg(res, {});
+    });
+}
+
 // 专题详情
 export const topicDetail = (req: any, res: any) => {
-    const { topicId } = req.params;
+    const { topicId } = req.body;
     const query = { _id: topicId };
     Topic.findOne({ query }).then((resp) => {
         SuccessMsg(res, { data: resp });

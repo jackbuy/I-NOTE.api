@@ -16,5 +16,10 @@ export const ignoreJwtApiUrl: string[] = [
     '/user/userInfo',
     '/collect/query',
     '/follow/query',
-    '/fans/query'
+    '/fans/query',
+    '/user/recommend',
+    '/topic/recommend',
+    '/topic/query',
+    '/topic/detail',
+    '/topic/article/query'
 ];
