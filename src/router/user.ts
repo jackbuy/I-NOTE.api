@@ -1,6 +1,10 @@
 import md5 from 'md5';
 import jwt from 'jsonwebtoken';
 import User from '../model/user';
+import Follow from '../model/follow';
+import Article from '../model/article';
+import Topic from '../model/topic';
+import Collect from '../model/collect';
 import { SuccessMsg, ErrorMsg } from '../utils/utils';
 import { secretkey } from '../utils/config';
 
@@ -51,11 +55,30 @@ export const userRegister  = (req: any, res: any) => {
     });
 }
 
+// 空间用户信息
+export const zoneUserInfo  = (req: any, res: any) => {
+    const { userId, followId = '' } = req.body;
+    const query: any = { _id: followId }
+    const select: string = '-password -__v -cate -lastSignAt';
+    let result: any = {};
+
+    User.findOne({ query, select }).then((resp: any) => {
+        result = resp;
+        return Follow.findOne({ query: { userId, type: 0, followId } });
+    }).then((resp: any) => {
+        if (resp) result.isFollow = true;
+        SuccessMsg(res, { data: result });
+    }).catch((err) => {
+        ErrorMsg(res, { msg: err });
+    });
+}
+
 // 用户信息
 export const userInfo  = (req: any, res: any) => {
-    const { userId } = req.body;
+    const { userId } = req.userMsg;
     const query: any = { _id: userId }
-    const select: string = 'username createTime';
+    const select: string = 'username nickname gender brief';
+
     User.findOne({ query, select }).then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch((err) => {
@@ -72,4 +95,65 @@ export const userRecommend = (req: any, res: any) => {
     const p1 = User.userRecommend({ query, select, querySkip, querylimit });
 
     p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+}
+
+// 编辑
+export const userInfoEdit  = (req: any, res: any) => {
+    const { userId } = req.userMsg;
+    const update: any = {
+        ...req.body
+    };
+    const query: any = { _id: userId };
+    User.updateOne({ query, update })
+        .then(() => {
+            SuccessMsg(res, {});
+        })
+        .catch((err: any) => {
+            ErrorMsg(res, { msg: err });
+        });
+}
+
+// 更新用户文章数量
+export const updateArticleCount  = (userId: string) => {
+    const articleQuery: any = { userId, publish: true };
+    const query: any = { _id: userId };
+    return Article.count(articleQuery).then((resp: any) => {
+        return User.updateOne({ query, update: { articleCount: resp } })
+    });
+}
+
+// 更新用户专题数量
+export const updateTopicCount  = (userId: string) => {
+    const articleQuery: any = { userId };
+    const query: any = { _id: userId };
+    return Topic.count(articleQuery).then((resp: any) => {
+        return User.updateOne({ query, update: { topicCount: resp } })
+    });
+}
+
+// 更新用户收藏数量
+export const updateCollectCount  = (userId: string) => {
+    const articleQuery: any = { createUserId: userId };
+    const query: any = { _id: userId };
+    return Collect.count(articleQuery).then((resp: any) => {
+        return User.updateOne({ query, update: { collectCount: resp } })
+    });
+}
+
+// 更新用户粉丝数量
+export const updateFansCount  = (userId: string) => {
+    const articleQuery: any = { followId: userId, type: 0 };
+    const query: any = { _id: userId };
+    return Follow.count(articleQuery).then((resp: any) => {
+        return User.updateOne({ query, update: { fansCount: resp } })
+    });
+}
+
+// 更新用户关注数量
+export const updateFollowCount  = (userId: string) => {
+    const articleQuery: any = { userId };
+    const query: any = { _id: userId };
+    return Follow.count(articleQuery).then((resp: any) => {
+        return User.updateOne({ query, update: { followCount: resp } })
+    });
 }

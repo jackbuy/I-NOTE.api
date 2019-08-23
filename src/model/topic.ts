@@ -1,5 +1,5 @@
 import BaseModel from './baseModel';
-import { Topic, User } from '../schema';
+import { Topic, User, Article } from '../schema';
 
 interface messageQuery {
     query: any;
@@ -7,12 +7,16 @@ interface messageQuery {
     querySkip: number;
     querylimit: number;
 }
+interface topicArticle {
+    query: any;
+    select: string;
+}
 
 class TopicModel extends BaseModel{
 
     queryLimit({ query, select, querySkip, querylimit }: messageQuery) {
         return Topic.find(query, select).
-            populate({path: 'userId', model: User, select: 'username'}).
+            populate({path: 'userId', model: User, select: 'username nickname'}).
             limit(querylimit).
             skip(querySkip).
             sort({_id: -1})
@@ -24,6 +28,11 @@ class TopicModel extends BaseModel{
             limit(querylimit).
             skip(querySkip).
             sort({_id: -1})
+    }
+
+    queryTopicArticle({ query, select }: topicArticle) {
+        return Article.findOne(query, select).
+            populate({path: 'userId', model: User, select: 'username nickname'})
     }
 
 }

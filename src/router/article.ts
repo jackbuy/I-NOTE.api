@@ -3,6 +3,7 @@ import Support from '../model/support';
 import Collect from '../model/collect';
 import Follow from '../model/follow';
 import Message from '../model/message';
+import { updateArticleCount, updateCollectCount } from './user';
 import { SuccessMsg, ErrorMsg } from '../utils/utils';
 
 const setArrVal = (arr1: any, arr2: any, currentUserId: string, type: string) => {
@@ -38,7 +39,7 @@ export const articleQuery  = (req: any, res: any) => {
         ]
     }
     if (tagId) query.tagId = tagId;
-    if (sortType == 'newest') querySort = { top: -1, editTime: -1 }
+    if (sortType == 'newest') querySort = { top: -1, createTime: -1 }
     if (sortType == 'popular') querySort = { top: -1, viewCount: -1 }
 
     const p1 = Article.queryLimit({ query, querylimit, querySkip, querySort, publish});
@@ -70,7 +71,7 @@ export const articleDetail  = (req: any, res: any) => {
             return Follow.findOne({ query: { userId, type: 0, followId: resp.userId._id } });
         })
         .then((resp: any) => {
-            if (resp) result.isFollow = true;
+            if (resp) result.userId.isFollow = true;
             return Support.findOne({ query: { createUserId: userId, articleId } });
         })
         .then((resp: any) => {
@@ -82,7 +83,7 @@ export const articleDetail  = (req: any, res: any) => {
             SuccessMsg(res, { data: result });
         })
         .catch((err: any) => {
-            ErrorMsg(res, { msg: err });
+            ErrorMsg(res, {});
         });
 }
 
@@ -108,6 +109,7 @@ export const articleCollect = (req: any, res: any) => {
                     return Message.save({ articleId, createUserId: userId, receiveUserId: resp.userId, type: 1 });
                 })
                 .then(() => Article.updateOne({ query, update: { collectCount: collectCount + 1 } })) // 更新文章
+                .then(() => updateCollectCount(userId))
                 .then(() => { SuccessMsg(res, {}); });
         } else {
             Collect.removeOne({ articleId })
@@ -115,9 +117,10 @@ export const articleCollect = (req: any, res: any) => {
                 .then((resp: any) => {
                     collectCount = resp.collectCount;
                     // 保存消息
-                    return Message.save({ articleId, createUserId: userId, receiveUserId: resp.userId, type: 2 });
+                    // return Message.save({ articleId, createUserId: userId, receiveUserId: resp.userId, type: 2 });
                 })
                 .then(() => Article.updateOne({ query, update: { collectCount: collectCount - 1 } })) // 更新文章
+                .then(() => updateCollectCount(userId))
                 .then(() => { SuccessMsg(res, {}); });
         }
     });
@@ -155,7 +158,7 @@ export const articleSupport = (req: any, res: any) => {
                 .then((resp: any) => {
                     supportCount = resp.supportCount;
                     // 保存消息
-                    return Message.save({ articleId, createUserId: userId, receiveUserId: resp.userId, type: 6 });
+                    // return Message.save({ articleId, createUserId: userId, receiveUserId: resp.userId, type: 6 });
                 })
                 .then(() => Article.updateOne({ query, update: { supportCount: supportCount - 1 } })) // 更新文章
                 .then(() => { SuccessMsg(res, {}); });
@@ -171,8 +174,15 @@ export const articleAdd  = (req: any, res: any) => {
         userId,
         createTime: Date.now()
     };
+    let result: any = {};
+
     Article.save(data).then((resp: any) => {
-        SuccessMsg(res, { data: { articleId: resp._id } });
+        result = resp;
+        return updateArticleCount(userId);
+    }).then(() => {
+        SuccessMsg(res, { data: { articleId: result._id } });
+    }).catch((err: any) => {
+        ErrorMsg(res, { msg: err });
     });
 }
 
@@ -186,27 +196,34 @@ export const articleEdit  = (req: any, res: any) => {
         editTime: Date.now()
     };
     const query: any = { _id: articleId };
-    Article.updateOne({ query, update })
-        .then(() => {
-            SuccessMsg(res, {});
-        })
-        .catch((err: any) => {
-            ErrorMsg(res, { msg: err });
-        });
+
+    Article.updateOne({ query, update }).then((resp: any) => {
+        return updateArticleCount(userId);
+    }).then(() => {
+        SuccessMsg(res, {});
+    }).catch((err: any) => {
+        ErrorMsg(res, { msg: err });
+    });
 }
 
 // 删除
 export const articleDelete  = (req: any, res: any) => {
     const { articleId } = req.params;
+    const { userId } = req.userMsg;
     const query = { _id: articleId };
+    let result: any = {};
+
     Article.removeOne(query).then((resp: any) => {
-        const { deletedCount } = resp;
+        result = resp;
+        return updateArticleCount(userId);
+    }).then(() => {
+        const { deletedCount } = result;
         if (deletedCount === 1) {
             SuccessMsg(res, {});
         } else {
             ErrorMsg(res, { msg: '文章删除失败！' });
         }
-    }).catch(() => {
+    }).catch((err: any) => {
         ErrorMsg(res, { msg: '文章已不存在！' });
     });
 }

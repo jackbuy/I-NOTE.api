@@ -1,4 +1,5 @@
 import Follow from '../model/follow';
+import { updateFollowCount, updateFansCount } from './user';
 import { SuccessMsg, ErrorMsg, } from '../utils/utils';
 
 const setVal = (arr1: any, arr2: any, type: string) => {
@@ -58,10 +59,18 @@ export const follow = (req: any, res: any) => {
     Follow.findOne({ query: { userId, followId, type } }).then((resp: any) => {
         if (!resp) {
             Follow.save({ userId, followId, type, createTime: Date.now()}).then(() => {
+                return updateFollowCount(userId);
+            }).then(() => {
+                return updateFansCount(userId);
+            }).then(() => {
                 SuccessMsg(res, { msg: '关注成功！' });
             });
         } else {
             Follow.removeOne({ userId, followId }).then(() => {
+                return updateFollowCount(userId);
+            }).then(() => {
+                return updateFansCount(userId);
+            }).then(() => {
                 SuccessMsg(res, { msg: '取消关注成功！' });
             });
         }

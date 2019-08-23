@@ -18,7 +18,7 @@ class FollowModel extends BaseModel {
     // 关注列表
     followQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
         return Follow.find(query, select).
-            populate({path: 'followId', model: User, select: 'username'}).
+            populate({path: 'followId', model: User, select: 'username nickname'}).
             limit(querylimit).
             skip(querySkip).
             sort({ _id: -1 })
@@ -27,7 +27,7 @@ class FollowModel extends BaseModel {
     // 粉丝列表
     fansQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
         return Follow.find(query, select).
-            populate({ path: 'userId', model: User, select: 'username' }).
+            populate({ path: 'userId', model: User, select: 'username nickname' }).
             limit(querylimit).
             skip(querySkip).
             sort({ _id: -1 })

@@ -8,7 +8,7 @@ export const tagQueryAll  = (req: any, res: any) => {
     let userId: string = '';
     if (req.userMsg) userId = req.userMsg.userId;
     const query = { type: 2 , userId };
-    const p1 = Tag.find({ });
+    const p1 = Tag.find({});
     const p2 = Follow.find({ query });
 
     if (userId) {
