@@ -30,6 +30,11 @@ class TopicModel extends BaseModel{
             sort({_id: -1})
     }
 
+    queryTopicDetail({ query, select }: topicArticle) {
+        return Topic.findOne(query, select).
+            populate({path: 'userId', model: User, select: '-password -__v -cate -lastSignAt'})
+    }
+
     queryTopicArticle({ query, select }: topicArticle) {
         return Article.findOne(query, select).
             populate({path: 'userId', model: User, select: 'username nickname'})

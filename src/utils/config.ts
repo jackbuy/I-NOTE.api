@@ -13,7 +13,6 @@ export const ignoreJwtApiUrl: string[] = [
     '/article/detail',
     '/tag/query',
     '/tag/recommend',
-    // '/user/userInfo',
     '/user/zoneUserInfo',
     '/collect/query',
     '/follow/query',

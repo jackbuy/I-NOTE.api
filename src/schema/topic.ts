@@ -6,6 +6,7 @@ export default new Schema({ // 专题
     description: { type: String }, // 描述
     img: { type: String }, // 封面
     userId: { type: String }, // 创建者
+    isFollow: { type: Boolean, default: false },
     articleIds: { type: String, default: '' }, // 专题相关的文章列表
     createTime: { type: Date, default: Date.now } // 创建时间
 });

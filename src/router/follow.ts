@@ -1,6 +1,7 @@
 import Follow from '../model/follow';
 import { updateFollowCount, updateFansCount } from './user';
-import { SuccessMsg, ErrorMsg, } from '../utils/utils';
+import Utils from '../utils/utils';
+const { SuccessMsg, ErrorMsg } = Utils;
 
 const setVal = (arr1: any, arr2: any, type: string) => {
     let arr: any = [];
@@ -55,8 +56,13 @@ export const fansQuery  = (req: any, res: any) => {
 export const follow = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { followId, type } = req.body;
+    const query: any = {
+        userId,
+        followId,
+        type
+    }
 
-    Follow.findOne({ query: { userId, followId, type } }).then((resp: any) => {
+    Follow.findOne({ query }).then((resp: any) => {
         if (!resp) {
             Follow.save({ userId, followId, type, createTime: Date.now()}).then(() => {
                 return updateFollowCount(userId);

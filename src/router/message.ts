@@ -1,5 +1,6 @@
 import Message from '../model/message';
-import { SuccessMsg, ErrorMsg } from '../utils/utils';
+import Utils from '../utils/utils';
+const { SuccessMsg, ErrorMsg } = Utils;
 
 export const messageQuery = (req: any, res: any) => {
     const { userId } = req.userMsg;

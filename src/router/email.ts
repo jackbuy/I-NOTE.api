@@ -1,5 +1,6 @@
 import { send } from "../utils/email";
-import { SuccessMsg, ErrorMsg, } from '../utils/utils';
+import Utils from '../utils/utils';
+const { SuccessMsg, ErrorMsg } = Utils;
 
 // 发送邮件
 export const sendEmail = (req: any, res: any) => {

@@ -56,6 +56,7 @@ app.post('/topic/article/query', Topic.topicArticlesQuery);
 
 // upload
 app.post('/uploadfile', Upload.upload.any(), Upload.uploadFunc);
+app.post('/deleteFile', Upload.deleteFile);
 
 // email
 app.post('/sendEmail', Email.sendEmail);

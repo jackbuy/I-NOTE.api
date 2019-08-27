@@ -4,9 +4,11 @@ import User from '../model/user';
 import Follow from '../model/follow';
 import Article from '../model/article';
 import Topic from '../model/topic';
+import Tag from '../model/tag';
 import Collect from '../model/collect';
-import { SuccessMsg, ErrorMsg } from '../utils/utils';
 import { secretkey } from '../utils/config';
+import Utils from '../utils/utils';
+const { SuccessMsg, ErrorMsg } = Utils;
 
 // 登录
 export const userLogin  = (req: any, res: any) => {
@@ -77,7 +79,7 @@ export const zoneUserInfo  = (req: any, res: any) => {
 export const userInfo  = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const query: any = { _id: userId }
-    const select: string = 'username nickname gender brief';
+    const select: string = 'username nickname gender brief avatar';
 
     User.findOne({ query, select }).then((resp: any) => {
         SuccessMsg(res, { data: resp });
@@ -111,6 +113,14 @@ export const userInfoEdit  = (req: any, res: any) => {
         .catch((err: any) => {
             ErrorMsg(res, { msg: err });
         });
+}
+// 更新标签文章数量
+export const updateTagArticleCount  = (tagId: string) => {
+    const articleQuery: any = { tagId, publish: true };
+    const query: any = { _id: tagId };
+    return Article.count(articleQuery).then((resp: any) => {
+        return Tag.updateOne({ query, update: { articleCount: resp } })
+    });
 }
 
 // 更新用户文章数量

@@ -1,6 +1,8 @@
 import Follow from '../model/follow';
 import Tag from '../model/tag';
-import { SuccessMsg, ErrorMsg, setArr } from '../utils/utils';
+import Utils from '../utils/utils';
+import { updateTagArticleCount } from './user';
+const { SuccessMsg, ErrorMsg, setArr } = Utils;
 
 
 // tag列表
@@ -11,13 +13,21 @@ export const tagQueryAll  = (req: any, res: any) => {
     const p1 = Tag.find({});
     const p2 = Follow.find({ query });
 
-    if (userId) {
-        Promise.all([p1, p2]).then((resp) => {
-            SuccessMsg(res, { data: setArr({ arr1: resp[0], arr2: resp[1], t: 'isFollow', op1: '_id', op2: 'followId' }) });
-        });
-    } else {
-        p1.then((resp) => { SuccessMsg(res, { data: resp }); })
-    }
+    p1.then((resp: any) => {
+        let promises: object[] = resp.map((item: any) => {
+            return updateTagArticleCount(item._id)
+        })
+        return Promise.all(promises);
+    }).then(() => {
+        if (userId) {
+            Promise.all([p1, p2]).then((resp) => {
+                const result = setArr({ arr1: resp[0], arr2: resp[1], t: 'isFollow', op1: '_id', op2: 'followId' });
+                SuccessMsg(res, { data: result});
+            });
+        } else {
+            p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+        }
+    });
 }
 
 // 已关注tag列表

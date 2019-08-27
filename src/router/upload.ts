@@ -1,7 +1,9 @@
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import md5 from 'md5';
-import { SuccessMsg, ErrorMsg } from '../utils/utils';
+import Utils from '../utils/utils';
+const { SuccessMsg, ErrorMsg } = Utils;
 
 const storage = multer.diskStorage({
     destination: (req: any, file: any, cb: any) => { //文件存放目录
@@ -22,4 +24,10 @@ export const upload = multer({
 export const uploadFunc  = (req: any, res: any) => {
     if (req.files.length <= 0 || req.files == null) return ErrorMsg(res, {});
     SuccessMsg(res, { data: req.files });
+}
+
+export const deleteFile  = (req: any, res: any) => {
+    const { filename } = req.body;
+    fs.unlinkSync('resouces/' + filename);
+    SuccessMsg(res, {});
 }

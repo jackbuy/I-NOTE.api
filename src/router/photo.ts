@@ -1,5 +1,6 @@
 import Photo from '../model/photo';
-import { SuccessMsg, ErrorMsg } from '../utils/utils';
+import Utils from '../utils/utils';
+const { SuccessMsg, ErrorMsg } = Utils;
 
 export const photoSave = (req: any, res: any) => {
     const { userId } = req.UserMsg;

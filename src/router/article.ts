@@ -3,8 +3,9 @@ import Support from '../model/support';
 import Collect from '../model/collect';
 import Follow from '../model/follow';
 import Message from '../model/message';
-import { updateArticleCount, updateCollectCount } from './user';
-import { SuccessMsg, ErrorMsg } from '../utils/utils';
+import { updateArticleCount, updateCollectCount, updateTagArticleCount } from './user';
+import Utils from '../utils/utils';
+const { SuccessMsg, ErrorMsg } = Utils;
 
 const setArrVal = (arr1: any, arr2: any, currentUserId: string, type: string) => {
     let arr: any = [];

@@ -1,5 +1,6 @@
 import Collect from '../model/collect';
-import { SuccessMsg, ErrorMsg } from '../utils/utils';
+import Utils from '../utils/utils';
+const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
 export const collectQuery  = (req: any, res: any) => {

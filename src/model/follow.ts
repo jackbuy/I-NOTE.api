@@ -1,5 +1,5 @@
 import BaseModel from './baseModel';
-import { Follow, User, Tag } from '../schema';
+import { Follow, User, Tag, Topic } from '../schema';
 
 interface queryLimit {
     query: any;
@@ -17,11 +17,31 @@ class FollowModel extends BaseModel {
 
     // 关注列表
     followQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
-        return Follow.find(query, select).
-            populate({path: 'followId', model: User, select: 'username nickname'}).
-            limit(querylimit).
-            skip(querySkip).
-            sort({ _id: -1 })
+        const { type } = query;
+        const _type = parseInt(type);
+        switch(_type) {
+            // 作者
+            case 0 :
+                return Follow.find(query, select).
+                    populate({path: 'followId', model: User, select: 'username nickname'}).
+                    limit(querylimit).
+                    skip(querySkip).
+                    sort({ _id: -1 })
+            // 专题
+            case 1 :
+                return Follow.find(query, select).
+                    populate({path: 'followId', model: Topic, select: 'title isFollow'}).
+                    limit(querylimit).
+                    skip(querySkip).
+                    sort({ _id: -1 })
+            // 标签
+            default :
+                return Follow.find(query, select).
+                    populate({path: 'followId', model: Tag, select: 'title isFollow'}).
+                    limit(querylimit).
+                    skip(querySkip).
+                    sort({ _id: -1 })
+        }
     }
 
     // 粉丝列表
