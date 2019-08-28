@@ -15,6 +15,7 @@ import * as Email from './email';
 app.post('/tag/query', Tag.tagQueryAll);
 app.post('/tag/follow/query', Tag.tagFollowQuery);
 app.get('/tag/recommend', Tag.tagRecommend);
+app.post('/tag/detail', Tag.tagDetail);
 
 // Message
 app.get('/message/query', Message.messageQuery);

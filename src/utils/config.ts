@@ -24,7 +24,8 @@ export const ignoreJwtApiUrl: string[] = [
     '/topic/detail',
     '/topic/article/query',
     '/sendEmail',
-    '/uploadfile'
+    '/uploadfile',
+    '/tag/detail'
 ];
 
 export default {

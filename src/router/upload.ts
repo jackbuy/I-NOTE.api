@@ -28,6 +28,6 @@ export const uploadFunc  = (req: any, res: any) => {
 
 export const deleteFile  = (req: any, res: any) => {
     const { filename } = req.body;
-    fs.unlinkSync('resouces/' + filename);
+    if (filename) fs.unlinkSync('resouces/' + filename);
     SuccessMsg(res, {});
 }

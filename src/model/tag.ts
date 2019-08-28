@@ -10,11 +10,18 @@ interface messageQuery {
 
 class TagModel extends BaseModel{
 
+    queryLimit({ query, select, querySkip, querylimit }: messageQuery) {
+        return Tag.find(query, select).
+            limit(querylimit).
+            skip(querySkip).
+            sort({ articleCount: -1 })
+    }
+
     tagRecommend({ query, select, querySkip, querylimit }: messageQuery) {
         return Tag.find(query, select).
             limit(querylimit).
             skip(querySkip).
-            sort({_id: -1})
+            sort({ articleCount: -1 })
     }
 
 }

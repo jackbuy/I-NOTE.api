@@ -7,11 +7,16 @@ const { SuccessMsg, ErrorMsg, setArr } = Utils;
 
 // tag列表
 export const tagQueryAll  = (req: any, res: any) => {
+    const { currentPage, pageSize } = req.body;
     let userId: string = '';
     if (req.userMsg) userId = req.userMsg.userId;
-    const query = { type: 2 , userId };
-    const p1 = Tag.find({});
-    const p2 = Follow.find({ query });
+    const query: any = {};
+    const select: string = '-__v';
+    const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
+    const querylimit: number = parseInt(pageSize);
+    const FollowQuery = { type: 2 , userId };
+    const p1 = Tag.queryLimit({ query, select, querySkip, querylimit });
+    const p2 = Follow.find({ FollowQuery });
 
     p1.then((resp: any) => {
         let promises: object[] = resp.map((item: any) => {
@@ -51,4 +56,28 @@ export const tagRecommend = (req: any, res: any) => {
     const p1 = Tag.tagRecommend({ query, select, querySkip, querylimit });
 
     p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+}
+
+// tag详情
+export const tagDetail = (req: any, res: any) => {
+    const { tagId } = req.body;
+    const query = { _id: tagId };
+    const select: string = '-__v';
+    let userId: string = '';
+    let result: any = {};
+    if (req.userMsg) userId = req.userMsg.userId;
+
+    Tag.findOne({ query, select }).then((resp: any) => {
+        if (resp) {
+            result = resp;
+            Follow.findOne({ query: { userId, type: 2, followId: tagId } }).then((resp2: any) => {
+                if (resp2) result.isFollow = true;
+                SuccessMsg(res, { data: result });
+            });
+        } else {
+            ErrorMsg(res, { code: 404, msg: '标签不存在'} );
+        }
+    }).catch(() => {
+        ErrorMsg(res, { code: 404, msg: '标签不存在'} );
+    });
 }

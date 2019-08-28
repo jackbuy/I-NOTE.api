@@ -14,7 +14,7 @@ class TagModel extends BaseModel{
         return User.find(query, select).
             limit(querylimit).
             skip(querySkip).
-            sort({_id: -1})
+            sort({ articleCount: -1 })
     }
 
 }

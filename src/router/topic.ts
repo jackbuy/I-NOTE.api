@@ -56,11 +56,17 @@ export const topicDetail = (req: any, res: any) => {
     if (req.userMsg) userId = req.userMsg.userId;
 
     Topic.queryTopicDetail({ query, select }).then((resp: any) => {
-        result = resp;
-        return Follow.findOne({ query: { userId, type: 1, followId: topicId } });
-    }).then((resp: any) => {
-        if (resp) result.isFollow = true;
-        SuccessMsg(res, { data: result });
+        if (resp) {
+            result = resp;
+            Follow.findOne({ query: { userId, type: 1, followId: topicId } }).then((resp2: any) => {
+                if (resp2) result.isFollow = true;
+                SuccessMsg(res, { data: result });
+            });
+        } else {
+            ErrorMsg(res, { code: 404, msg: '专题不存在'} );
+        }
+    }).catch(() => {
+        ErrorMsg(res, { code: 404, msg: '专题不存在'} );
     });
 }
 
@@ -83,6 +89,8 @@ export const topicArticlesQuery = (req: any, res: any) => {
         return Promise.all(promises);
     }).then((resp: any) => {
         SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 

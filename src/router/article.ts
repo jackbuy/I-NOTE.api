@@ -53,7 +53,9 @@ export const articleQuery  = (req: any, res: any) => {
         result = setArrVal(resp[0], resp[2], currentUserId, 'isSupport');
         result = setArrVal(resp[0], resp[3], currentUserId, 'isCollect');
         SuccessMsg(res, { data: result, total: resp[1] });
-    })
+    }).catch((err: any) => {
+        ErrorMsg(res, {});
+    });
 }
 
 // 详情
@@ -65,7 +67,9 @@ export const articleDetail  = (req: any, res: any) => {
     if (req.userMsg) userId = req.userMsg.userId;
 
     Article.findOne({ query })
-        .then((resp: any) => Article.updateOne({ query, update: { viewCount: resp.viewCount + 1 } }))
+        .then((resp: any) => {
+            return Article.updateOne({ query, update: { viewCount: resp.viewCount + 1 } })
+        })
         .then(() => Article.findOnePopulate({ query, isEdit }))
         .then((resp: any) => {
             result = resp;
@@ -84,7 +88,7 @@ export const articleDetail  = (req: any, res: any) => {
             SuccessMsg(res, { data: result });
         })
         .catch((err: any) => {
-            ErrorMsg(res, {});
+            ErrorMsg(res, { code: 404, msg: 'articleId错误' });
         });
 }
 

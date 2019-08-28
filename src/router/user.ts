@@ -65,13 +65,17 @@ export const zoneUserInfo  = (req: any, res: any) => {
     let result: any = {};
 
     User.findOne({ query, select }).then((resp: any) => {
-        result = resp;
-        return Follow.findOne({ query: { userId, type: 0, followId } });
-    }).then((resp: any) => {
-        if (resp) result.isFollow = true;
-        SuccessMsg(res, { data: result });
-    }).catch((err) => {
-        ErrorMsg(res, { msg: err });
+        if (resp) {
+            result = resp;
+            Follow.findOne({ query: { userId, type: 0, followId } }).then((resp2: any) => {
+                if (resp2) result.isFollow = true;
+                SuccessMsg(res, { data: result });
+            });
+        } else {
+            ErrorMsg(res, { code: 404, msg: '作者不存在'} );
+        }
+    }).catch(() => {
+        ErrorMsg(res, { code: 404, msg: '作者不存在'} );
     });
 }
 
@@ -91,7 +95,7 @@ export const userInfo  = (req: any, res: any) => {
 // 用户推荐
 export const userRecommend = (req: any, res: any) => {
     const query: any = {};
-    const select: string = 'username';
+    const select: string = 'username nickname avatar articleCount followCount fansCount';
     const querySkip: number = 0;
     const querylimit: number = 5;
     const p1 = User.userRecommend({ query, select, querySkip, querylimit });
