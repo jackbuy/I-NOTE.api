@@ -14,7 +14,7 @@ class MessageModel extends BaseModel{
         return Message.find(query, select).
             populate({ path: 'createUserId', model: User, select: 'username nickname' }).
             populate({ path: 'receiveUserId', model: User, select: 'username nickname' }).
-            populate({ path: 'articleId', model: Article, select: 'title' }).
+            populate({ path: 'relativeId', model: Article, select: 'title' }).
             limit(querylimit).
             skip(querySkip).
             sort({_id: -1})

@@ -20,7 +20,11 @@ export const topicQuery  = (req: any, res: any) => {
     const querylimit: number = parseInt(pageSize);
     const p1 = Topic.queryLimit({ query, select, querySkip, querylimit });
 
-    p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+    p1.then((resp) => {
+        SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
 }
 
 // 我的专题
@@ -32,7 +36,11 @@ export const topicUserQuery  = (req: any, res: any) => {
     const querylimit: number = parseInt(pageSize);
     const p1 = Topic.queryLimit({ query, select, querySkip, querylimit });
 
-    p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+    p1.then((resp) => {
+        SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
 }
 
 // 推荐
@@ -43,7 +51,11 @@ export const topicRecommend = (req: any, res: any) => {
     const querylimit: number = 5;
     const p1 = Topic.topicRecommend({ query, select, querySkip, querylimit });
 
-    p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+    p1.then((resp) => {
+        SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
 }
 
 // 专题详情
@@ -61,12 +73,14 @@ export const topicDetail = (req: any, res: any) => {
             Follow.findOne({ query: { userId, type: 1, followId: topicId } }).then((resp2: any) => {
                 if (resp2) result.isFollow = true;
                 SuccessMsg(res, { data: result });
+            }).catch(() => {
+                ErrorMsg(res, {});
             });
         } else {
-            ErrorMsg(res, { code: 404, msg: '专题不存在'} );
+            ErrorMsg(res, {});
         }
     }).catch(() => {
-        ErrorMsg(res, { code: 404, msg: '专题不存在'} );
+        ErrorMsg(res, {});
     });
 }
 
@@ -109,6 +123,8 @@ export const topicAdd  = (req: any, res: any) => {
         return updateTopicCount(userId);
     }).then(() => {
         SuccessMsg(res, { data: { topicId: result._id } });
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -127,8 +143,8 @@ export const topicEdit  = (req: any, res: any) => {
         return updateTopicCount(userId);
     }).then(() => {
         SuccessMsg(res, {});
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: err });
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -141,5 +157,7 @@ export const topicDelete  = (req: any, res: any) => {
         return updateTopicCount(userId);
     }).then(() => {
         SuccessMsg(res, {});
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }

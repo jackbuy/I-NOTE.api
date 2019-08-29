@@ -1,5 +1,6 @@
 import Follow from '../model/follow';
 import { updateFollowCount, updateFansCount } from './user';
+import { messageSave } from './message';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -28,6 +29,8 @@ export const followQuery  = (req: any, res: any) => {
 
     Follow.followQueryLimit({ query, select, querySkip, querylimit }).then((resp: any) => {
         SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -49,6 +52,8 @@ export const fansQuery  = (req: any, res: any) => {
         let result: any = [];
         result = setVal(resp[0], resp[1], 'isFollow');
         SuccessMsg(res, { data: result });
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -60,7 +65,7 @@ export const follow = (req: any, res: any) => {
         userId,
         followId,
         type
-    }
+    };
 
     Follow.findOne({ query }).then((resp: any) => {
         if (!resp) {
@@ -69,7 +74,12 @@ export const follow = (req: any, res: any) => {
             }).then(() => {
                 return updateFansCount(userId);
             }).then(() => {
+                if (parseInt(type) === 0) return messageSave({ relativeId: followId, createUserId: userId, receiveUserId: followId, type: 3 });
+                Promise.resolve();
+            }).then(() => {
                 SuccessMsg(res, { msg: '关注成功！' });
+            }).catch(() => {
+                ErrorMsg(res, {});
             });
         } else {
             Follow.removeOne({ userId, followId }).then(() => {
@@ -78,7 +88,11 @@ export const follow = (req: any, res: any) => {
                 return updateFansCount(userId);
             }).then(() => {
                 SuccessMsg(res, { msg: '取消关注成功！' });
+            }).catch(() => {
+                ErrorMsg(res, {});
             });
         }
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }

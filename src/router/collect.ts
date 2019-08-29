@@ -32,7 +32,7 @@ export const collectQuery  = (req: any, res: any) => {
             }
         })
         SuccessMsg(res, { data: result, total: resp[1] });
-    }).catch((err: any) => {
+    }).catch(() => {
         ErrorMsg(res, {});
     });
 }

@@ -18,7 +18,7 @@ app.get('/tag/recommend', Tag.tagRecommend);
 app.post('/tag/detail', Tag.tagDetail);
 
 // Message
-app.get('/message/query', Message.messageQuery);
+app.post('/message/query', Message.messageQuery);
 
 // Collect
 app.post('/collect/query', Collect.collectQuery);

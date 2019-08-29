@@ -28,10 +28,18 @@ export const tagQueryAll  = (req: any, res: any) => {
             Promise.all([p1, p2]).then((resp) => {
                 const result = setArr({ arr1: resp[0], arr2: resp[1], t: 'isFollow', op1: '_id', op2: 'followId' });
                 SuccessMsg(res, { data: result});
+            }).catch(() => {
+                ErrorMsg(res, {});
             });
         } else {
-            p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+            p1.then((resp) => {
+                SuccessMsg(res, { data: resp });
+            }).catch(() => {
+                ErrorMsg(res, {});
+            });
         }
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -44,6 +52,8 @@ export const tagFollowQuery = (req: any, res: any) => {
     Promise.all([p1, p2]).then((resp) => {
         let result: any = setArr({ arr1: resp[0], arr2: resp[1], t:'isFollow', op1: 'followId._id', op2: '_id' });
         SuccessMsg(res, { data: result.map((item: any) => item.followId) });
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -55,7 +65,11 @@ export const tagRecommend = (req: any, res: any) => {
     const querylimit: number = 12;
     const p1 = Tag.tagRecommend({ query, select, querySkip, querylimit });
 
-    p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+    p1.then((resp) => {
+        SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
 }
 
 // tag详情
@@ -73,11 +87,13 @@ export const tagDetail = (req: any, res: any) => {
             Follow.findOne({ query: { userId, type: 2, followId: tagId } }).then((resp2: any) => {
                 if (resp2) result.isFollow = true;
                 SuccessMsg(res, { data: result });
+            }).catch(() => {
+                ErrorMsg(res, {});
             });
         } else {
-            ErrorMsg(res, { code: 404, msg: '标签不存在'} );
+            ErrorMsg(res, {});
         }
     }).catch(() => {
-        ErrorMsg(res, { code: 404, msg: '标签不存在'} );
+        ErrorMsg(res, {});
     });
 }

@@ -12,5 +12,7 @@ export const sendEmail = (req: any, res: any) => {
     };
     send(params).then((resp) => {
         SuccessMsg(res, { data: resp })
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }

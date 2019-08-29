@@ -35,6 +35,8 @@ export const userLogin  = (req: any, res: any) => {
         } else {
             ErrorMsg(res, { msg: '账号或密码错误！' });
         }
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -50,10 +52,14 @@ export const userRegister  = (req: any, res: any) => {
         if (!resp) {
             User.save(data).then(() => {
                 SuccessMsg(res, {});
+            }).catch(() => {
+                ErrorMsg(res, {});
             });
         } else {
             ErrorMsg(res, { msg: '账号已存在' });
         }
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -70,12 +76,14 @@ export const zoneUserInfo  = (req: any, res: any) => {
             Follow.findOne({ query: { userId, type: 0, followId } }).then((resp2: any) => {
                 if (resp2) result.isFollow = true;
                 SuccessMsg(res, { data: result });
+            }).catch(() => {
+                ErrorMsg(res, {});
             });
         } else {
-            ErrorMsg(res, { code: 404, msg: '作者不存在'} );
+            ErrorMsg(res, {});
         }
     }).catch(() => {
-        ErrorMsg(res, { code: 404, msg: '作者不存在'} );
+        ErrorMsg(res, {});
     });
 }
 
@@ -87,8 +95,8 @@ export const userInfo  = (req: any, res: any) => {
 
     User.findOne({ query, select }).then((resp: any) => {
         SuccessMsg(res, { data: resp });
-    }).catch((err) => {
-        ErrorMsg(res, { msg: err });
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }
 
@@ -100,7 +108,11 @@ export const userRecommend = (req: any, res: any) => {
     const querylimit: number = 5;
     const p1 = User.userRecommend({ query, select, querySkip, querylimit });
 
-    p1.then((resp) => { SuccessMsg(res, { data: resp }); })
+    p1.then((resp) => {
+        SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
 }
 
 // 编辑
@@ -110,14 +122,13 @@ export const userInfoEdit  = (req: any, res: any) => {
         ...req.body
     };
     const query: any = { _id: userId };
-    User.updateOne({ query, update })
-        .then(() => {
-            SuccessMsg(res, {});
-        })
-        .catch((err: any) => {
-            ErrorMsg(res, { msg: err });
-        });
+    User.updateOne({ query, update }).then(() => {
+        SuccessMsg(res, {});
+    }).catch((err: any) => {
+        ErrorMsg(res, { msg: err });
+    });
 }
+
 // 更新标签文章数量
 export const updateTagArticleCount  = (tagId: string) => {
     const articleQuery: any = { tagId, publish: true };
