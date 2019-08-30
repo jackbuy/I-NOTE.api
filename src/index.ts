@@ -4,7 +4,6 @@ import bodyParser from 'body-parser';
 
 import { secretkey, ignoreJwtApiUrl } from './utils/config';
 import router from './router';
-import './utils/db';
 const app = express();
 
 //处理跨域请求

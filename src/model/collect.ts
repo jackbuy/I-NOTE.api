@@ -14,11 +14,10 @@ class CollectModel extends BaseModel {
         return Collect.find(query, select).
             populate({
                 path: 'articleId',
-                model: Article,
                 select: '-__v',
                 populate: [
-                    { path: 'userId', model: User, select: 'username nickname' },
-                    { path: 'tagId', model: Tag, select: 'title' }
+                    { path: 'userId', select: 'username nickname' },
+                    { path: 'tagId', select: 'title' }
                 ]
             }).
             limit(querylimit).

@@ -1,21 +1,30 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
+import { DB_URL } from '../utils/config';
+
+mongoose.connect( DB_URL, {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useFindAndModify: false
+})
 
 import article from './article';
 import tag from './tag';
 import user from './user';
-import support from './support';
+import like from './like';
 import collect from './collect';
 import message from './message';
 import follow from './follow';
 import photo from './photo';
 import topic from './topic';
+import captcha from './captcha';
 
-export const Article = mongoose.model('article', article);
-export const Tag = mongoose.model('tag', tag);
-export const User = mongoose.model('user', user);
-export const Support = mongoose.model('support', support);
-export const Collect = mongoose.model('collect', collect);
-export const Message = mongoose.model('message', message);
-export const Follow = mongoose.model('follow', follow);
-export const Photo = mongoose.model('photo', photo);
-export const Topic = mongoose.model('topic', topic);
+export const Article = mongoose.model('Article', article);
+export const Tag = mongoose.model('Tag', tag);
+export const User = mongoose.model('User', user);
+export const Like = mongoose.model('Like', like);
+export const Collect = mongoose.model('Collect', collect);
+export const Message = mongoose.model('Message', message);
+export const Follow = mongoose.model('Follow', follow);
+export const Photo = mongoose.model('Photo', photo);
+export const Topic = mongoose.model('Topic', topic);
+export const Captcha = mongoose.model('Captcha', captcha);

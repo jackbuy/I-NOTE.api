@@ -33,7 +33,7 @@ class Utils {
         let _arr: any = [];
         arr1.map((item: any) => {
             arr2.map((item2: any) => {
-                if (item[op1] == item2[op2]) item[t] = true;
+                if (item[op1].equals(item2[op2])) item[t] = true;
             })
             _arr.push(item);
         })

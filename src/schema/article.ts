@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
 export default new Schema({ //文章
     title: { type: String },
@@ -8,12 +9,12 @@ export default new Schema({ //文章
     publish: { type: Boolean, default: false }, // 是否发布
     top: { type: Boolean, default: false}, // 置顶
     viewCount: { type: Number, default: 0 }, // 阅读数量
-    isSupport: { type: Boolean, default: false }, // 是否点赞
-    supportCount: { type: Number, default: 0 }, // 点赞数量
+    isLike: { type: Boolean, default: false }, // 是否点赞
+    likeCount: { type: Number, default: 0 }, // 点赞数量
     isCollect: { type: Boolean, default: false }, // 是否已收藏
     collectCount: { type: Number, default: 0 }, // 收藏数量
-    tagId: { type: String, default: ''},
-    userId: { type: String },
+    tagId: { type: ObjectId, ref: 'Tag' },
+    userId: { type: ObjectId, ref: 'User' },
     createTime: { type: Date, default: Date.now },
     editTime: { type: Date, default: Date.now }
 });

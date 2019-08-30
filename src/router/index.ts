@@ -13,7 +13,7 @@ import * as Email from './email';
 
 // Tag
 app.post('/tag/query', Tag.tagQueryAll);
-app.post('/tag/follow/query', Tag.tagFollowQuery);
+// app.post('/tag/follow/query', Tag.tagFollowQuery);
 app.get('/tag/recommend', Tag.tagRecommend);
 app.post('/tag/detail', Tag.tagDetail);
 
@@ -24,14 +24,18 @@ app.post('/message/query', Message.messageQuery);
 app.post('/collect/query', Collect.collectQuery);
 
 // Follow
-app.post('/follow/query', Follow.followQuery);
+app.post('/follow/user/query', Follow.followUserQuery);
+app.post('/follow/topic/query', Follow.followTopicQuery);
+app.post('/follow/tag/query', Follow.followTagQuery);
 app.post('/fans/query', Follow.fansQuery);
-app.post('/follow', Follow.follow);
+app.post('/follow/user', Follow.followUser);
+app.post('/follow/topic', Follow.followTopic);
+app.post('/follow/tag', Follow.followTag);
 
 // Article
 app.post('/article/query', Article.articleQuery);
 app.post('/article/detail', Article.articleDetail);
-app.get('/article/support/:articleId', Article.articleSupport);
+app.get('/article/like/:articleId', Article.articleLike);
 app.get('/article/collect/:articleId', Article.articleCollect);
 app.post('/article/add', Article.articleAdd);
 app.put('/article/edit/:articleId', Article.articleEdit);

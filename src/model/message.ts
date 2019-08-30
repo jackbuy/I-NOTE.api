@@ -12,9 +12,12 @@ class MessageModel extends BaseModel{
 
     queryLimit({ query, select, querySkip, querylimit }: messageQuery) {
         return Message.find(query, select).
-            populate({ path: 'createUserId', model: User, select: 'username nickname' }).
-            populate({ path: 'receiveUserId', model: User, select: 'username nickname' }).
-            populate({ path: 'relativeId', model: Article, select: 'title' }).
+            populate('fromUserId', 'username nickname').
+            populate('toUserId', 'username nickname').
+            populate('userId', 'username nickname').
+            populate('topicId', 'title').
+            populate('likeId', 'title').
+            populate('collectId', 'title').
             limit(querylimit).
             skip(querySkip).
             sort({_id: -1})

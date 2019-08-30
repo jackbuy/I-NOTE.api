@@ -1,5 +1,5 @@
 import BaseModel from './baseModel';
-import { Follow, User, Tag, Topic } from '../schema';
+import { Follow } from '../schema';
 
 interface queryLimit {
     query: any;
@@ -8,54 +8,42 @@ interface queryLimit {
     querylimit: number;
 }
 
-interface followQuery {
-    type: number;
-    userId: string;
-}
-
 class FollowModel extends BaseModel {
 
-    // 关注列表
-    followQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
-        const { type } = query;
-        const _type = parseInt(type);
-        switch(_type) {
-            // 作者
-            case 0 :
-                return Follow.find(query, select).
-                    populate({path: 'followId', model: User, select: 'username nickname'}).
-                    limit(querylimit).
-                    skip(querySkip).
-                    sort({ _id: -1 })
-            // 专题
-            case 1 :
-                return Follow.find(query, select).
-                    populate({path: 'followId', model: Topic, select: 'title isFollow'}).
-                    limit(querylimit).
-                    skip(querySkip).
-                    sort({ _id: -1 })
-            // 标签
-            default :
-                return Follow.find(query, select).
-                    populate({path: 'followId', model: Tag, select: 'title isFollow'}).
-                    limit(querylimit).
-                    skip(querySkip).
-                    sort({ _id: -1 })
-        }
-    }
-
-    // 粉丝列表
-    fansQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
+    // 关注人列表
+    followUserQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
         return Follow.find(query, select).
-            populate({ path: 'userId', model: User, select: 'username nickname' }).
+            populate('followUserId', 'username nickname').
             limit(querylimit).
             skip(querySkip).
             sort({ _id: -1 })
     }
 
-    followPopulateQuery({ type, userId }: followQuery) {
-        return Follow.find({ type , userId}).
-            populate({path: 'followId', model: Tag, select: '-__v'})
+    // 关注专题列表
+    followTopicQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
+        return Follow.find(query, select).
+            populate('followTopicId', 'title isFollow').
+            limit(querylimit).
+            skip(querySkip).
+            sort({ _id: -1 })
+    }
+
+    // 关注标签列表
+    followTagQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
+        return Follow.find(query, select).
+            populate('followTagId', 'title isFollow').
+            limit(querylimit).
+            skip(querySkip).
+            sort({ _id: -1 })
+    }
+
+    // 粉丝列表
+    fansQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
+        return Follow.find(query, select).
+            populate('userId', 'username nickname').
+            limit(querylimit).
+            skip(querySkip).
+            sort({ _id: -1 })
     }
 }
 

@@ -5,7 +5,7 @@ const { SuccessMsg, ErrorMsg } = Utils;
 export const messageQuery = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { isRead, type, currentPage = 1, pageSize = 10 } = req.body;
-    let query: any = { receiveUserId: userId };
+    let query: any = { toUserId: userId };
     const select: string = '-__v';
     const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
     const querylimit: number = parseInt(pageSize);
@@ -20,10 +20,10 @@ export const messageQuery = (req: any, res: any) => {
 }
 
 // 保存消息
-export const messageSave = (query: any) => {
+export const messageSave = (data: any) => {
     return new Promise((resolve, reject) => {
-        Message.findOne({ query }).then((resp: any) => {
-            if (!resp) Message.save({ ...query });
+        Message.findOne({ query: data }).then((resp: any) => {
+            if (!resp) Message.save({ ...data });
             resolve();
         }).catch(() => {
             reject();

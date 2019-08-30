@@ -70,7 +70,7 @@ export const topicDetail = (req: any, res: any) => {
     Topic.queryTopicDetail({ query, select }).then((resp: any) => {
         if (resp) {
             result = resp;
-            Follow.findOne({ query: { userId, type: 1, followId: topicId } }).then((resp2: any) => {
+            Follow.findOne({ query: { userId, followTopicId: topicId } }).then((resp2: any) => {
                 if (resp2) result.isFollow = true;
                 SuccessMsg(res, { data: result });
             }).catch(() => {

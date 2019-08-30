@@ -7,7 +7,11 @@ const { SuccessMsg, ErrorMsg } = Utils;
 
 const storage = multer.diskStorage({
     destination: (req: any, file: any, cb: any) => { //文件存放目录
-        cb(null, path.join(__dirname, '../../resouces'))
+        let dirname = path.join(__dirname, '../../resouces')
+        fs.exists(dirname, function(exists) {
+            if (!exists) fs.mkdirSync(dirname); // 判断是否存在目录，没有则创建
+            cb(null, dirname)
+        });
     },
     filename: (req: any, file: any, cb: any) => { //文件信息
         cb(null, new Date().getFullYear() + '' + (new Date().getMonth() == 0 ? 1 : new Date().getMonth()) + '' + new Date().getDate() + '' + new Date().getHours() + '' + new Date().getMinutes() + '' + new Date().getSeconds() + md5(file.originalname) + '.' + file.originalname.toLowerCase().split('.').splice(-1)[0])
@@ -28,6 +32,8 @@ export const uploadFunc  = (req: any, res: any) => {
 
 export const deleteFile  = (req: any, res: any) => {
     const { filename } = req.body;
-    if (filename) fs.unlinkSync('resouces/' + filename);
+    try {
+        if (filename) fs.unlinkSync('resouces/' + filename);
+    } catch(err) {}
     SuccessMsg(res, {});
 }

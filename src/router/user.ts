@@ -6,23 +6,24 @@ import Article from '../model/article';
 import Topic from '../model/topic';
 import Tag from '../model/tag';
 import Collect from '../model/collect';
+import Captcha from '../model/captcha';
 import { secretkey } from '../utils/config';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 登录
 export const userLogin  = (req: any, res: any) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     const query: any = {
-        username,
+        email,
         password: md5(password)
     }
     User.findOne({ query }).then((resp: any) => {
         if (resp) {
-            const { _id, username } = resp;
+            const { _id, email } = resp;
             const content: any = {  // 要生成token的主题信息
                 userId: _id,
-                userName: username
+                email: email
             };
             const token: any = jwt.sign(
                 content,
@@ -33,7 +34,7 @@ export const userLogin  = (req: any, res: any) => {
             );
             SuccessMsg(res, { data: { token: token, userId: _id } });
         } else {
-            ErrorMsg(res, { msg: '账号或密码错误！' });
+            ErrorMsg(res, { msg: '邮箱或密码错误！' });
         }
     }).catch(() => {
         ErrorMsg(res, {});
@@ -42,13 +43,21 @@ export const userLogin  = (req: any, res: any) => {
 
 // 注册
 export const userRegister  = (req: any, res: any) => {
-    const { username, password } = req.body;
-    const query = { username };
+
+    const { nickname, password, email, captcha } = req.body;
+    const query = {
+        email,
+        captcha
+    }
     const data: any = {
-        username,
+        nickname,
+        email,
         password: md5(password)
     }
-    User.findOne({ query }).then((resp: any) => {
+
+    Captcha.findOne({ query }).then((resp: any) => {
+        return resp ? User.findOne({ query: { email } }) : Promise.reject();
+    }).then((resp: any) => {
         if (!resp) {
             User.save(data).then(() => {
                 SuccessMsg(res, {});
@@ -56,11 +65,29 @@ export const userRegister  = (req: any, res: any) => {
                 ErrorMsg(res, {});
             });
         } else {
-            ErrorMsg(res, { msg: '账号已存在' });
+            ErrorMsg(res, { msg: '该邮箱已注册！' });
         }
     }).catch(() => {
         ErrorMsg(res, {});
     });
+    // const query = { username };
+    // const data: any = {
+    //     username,
+    //     password: md5(password)
+    // }
+    // User.findOne({ query }).then((resp: any) => {
+    //     if (!resp) {
+    //         User.save(data).then(() => {
+    //             SuccessMsg(res, {});
+    //         }).catch(() => {
+    //             ErrorMsg(res, {});
+    //         });
+    //     } else {
+    //         ErrorMsg(res, { msg: '账号已存在' });
+    //     }
+    // }).catch(() => {
+    //     ErrorMsg(res, {});
+    // });
 }
 
 // 空间用户信息

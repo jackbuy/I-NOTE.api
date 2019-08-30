@@ -24,6 +24,12 @@ class TagModel extends BaseModel{
             sort({ articleCount: -1 })
     }
 
+    
+    // followPopulateQuery({ type, userId }: followQuery) {
+    //     return Follow.find({ type , userId}).
+    //         populate({path: 'followId', model: Tag, select: '-__v'})
+    // }
+
 }
 
 export default new TagModel(Tag)
