@@ -25,7 +25,7 @@ interface Param {
 }
 
 export const send = (param: Param): Promise<any> => {
-  return new Promise((resolve, reject)=>{
+  return new Promise((resolve: any, reject: any)=>{
     
     if (!client) {
       return reject('没有配置SendCloud')
