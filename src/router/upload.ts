@@ -25,11 +25,13 @@ export const upload = multer({
     }
 }); //上传文件大小限制200MB
 
-export const uploadFunc  = (req: any, res: any) => {
+// 上传文件
+export const uploadFile  = (req: any, res: any) => {
     if (req.files.length <= 0 || req.files == null) return ErrorMsg(res, {});
     SuccessMsg(res, { data: req.files });
 }
 
+// 删除文件
 export const deleteFile  = (req: any, res: any) => {
     const { filename } = req.body;
     try {

@@ -1,34 +1,27 @@
 import BaseModel from './baseModel';
 import { Tag } from '../schema';
 
-interface messageQuery {
+interface query {
     query: any;
-    select: string;
-    querySkip: number;
-    querylimit: number;
+    currentPage: string;
+    pageSize: string;
+    querySort?: any;
 }
 
 class TagModel extends BaseModel{
 
-    queryLimit({ query, select, querySkip, querylimit }: messageQuery) {
-        return Tag.find(query, select).
-            limit(querylimit).
-            skip(querySkip).
-            sort({ articleCount: -1 })
+    // 列表
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+        const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
+        const querylimit: number = parseInt(pageSize);
+        const select: string = '-__v';
+        const options = {
+            skip: querySkip,
+            limit: querylimit,
+            sort: querySort
+        }
+        return Tag.find(query, select, options)
     }
-
-    tagRecommend({ query, select, querySkip, querylimit }: messageQuery) {
-        return Tag.find(query, select).
-            limit(querylimit).
-            skip(querySkip).
-            sort({ articleCount: -1 })
-    }
-
-    
-    // followPopulateQuery({ type, userId }: followQuery) {
-    //     return Follow.find({ type , userId}).
-    //         populate({path: 'followId', model: Tag, select: '-__v'})
-    // }
 
 }
 

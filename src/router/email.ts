@@ -1,16 +1,16 @@
 import { send } from "../utils/email";
-import Captcha from "../model/captcha";
+import { Captcha, User } from "../model";
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 发送邮件
 export const sendEmail = (req: any, res: any) => {
     const { email } = req.body;
-    const code = '848123';
+    const code = Math.round(900000*Math.random()+100000);
     const params = {
         to: email,
         subject: '新用户注册验证码', // 标题
-        text: `验证码：${code} 有效时间：15分钟`, // 内容
+        text: `请输入验证码 ${code} 完成账号注册，有效时间：15分钟。`, // 内容
         html: ''
     };
     const data = {
@@ -19,11 +19,17 @@ export const sendEmail = (req: any, res: any) => {
         createTime: Date.now()
     };
 
-    send(params).then(() => {
-        return Captcha.save(data)
-    }).then((resp: any) => {
-        SuccessMsg(res, { data: resp });
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: err });
+    User.findOne({ query: { email } }).then((resp) => {
+        if (!resp) {
+            send(params).then(() => {
+                return Captcha.save({ data })
+            }).then((resp: any) => {
+                SuccessMsg(res, {});
+            }).catch((err: any) => {
+                ErrorMsg(res, { msg: '验证码发送失败' });
+            });
+        } else {
+            ErrorMsg(res, { msg: '邮箱已注册！' });
+        }
     });
 }

@@ -1,12 +1,6 @@
 import md5 from 'md5';
 import jwt from 'jsonwebtoken';
-import User from '../model/user';
-import Follow from '../model/follow';
-import Article from '../model/article';
-import Topic from '../model/topic';
-import Tag from '../model/tag';
-import Collect from '../model/collect';
-import Captcha from '../model/captcha';
+import { Captcha, Follow, User } from '../model';
 import { secretkey } from '../utils/config';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
@@ -21,7 +15,7 @@ export const userLogin  = (req: any, res: any) => {
     User.findOne({ query }).then((resp: any) => {
         if (resp) {
             const { _id, email } = resp;
-            const content: any = {  // 要生成token的主题信息
+            const content: any = {  // 要生成token的信息
                 userId: _id,
                 email: email
             };
@@ -59,7 +53,7 @@ export const userRegister  = (req: any, res: any) => {
         return resp ? User.findOne({ query: { email } }) : Promise.reject();
     }).then((resp: any) => {
         if (!resp) {
-            User.save(data).then(() => {
+            User.save({ data }).then(() => {
                 SuccessMsg(res, {});
             }).catch(() => {
                 ErrorMsg(res, {});
@@ -68,47 +62,27 @@ export const userRegister  = (req: any, res: any) => {
             ErrorMsg(res, { msg: '该邮箱已注册！' });
         }
     }).catch(() => {
-        ErrorMsg(res, {});
+        ErrorMsg(res, { msg: '无效验证码！' });
     });
-    // const query = { username };
-    // const data: any = {
-    //     username,
-    //     password: md5(password)
-    // }
-    // User.findOne({ query }).then((resp: any) => {
-    //     if (!resp) {
-    //         User.save(data).then(() => {
-    //             SuccessMsg(res, {});
-    //         }).catch(() => {
-    //             ErrorMsg(res, {});
-    //         });
-    //     } else {
-    //         ErrorMsg(res, { msg: '账号已存在' });
-    //     }
-    // }).catch(() => {
-    //     ErrorMsg(res, {});
-    // });
 }
 
 // 空间用户信息
 export const zoneUserInfo  = (req: any, res: any) => {
-    const { userId, followId = '' } = req.body;
-    const query: any = { _id: followId }
+    const { userId, followUserId } = req.body;
+    const query: any = { _id: followUserId }
+    const followQuery: any = { userId, type: 0, followUserId }
     const select: string = '-password -__v -cate -lastSignAt';
     let result: any = {};
 
-    User.findOne({ query, select }).then((resp: any) => {
-        if (resp) {
-            result = resp;
-            Follow.findOne({ query: { userId, type: 0, followId } }).then((resp2: any) => {
-                if (resp2) result.isFollow = true;
-                SuccessMsg(res, { data: result });
-            }).catch(() => {
-                ErrorMsg(res, {});
-            });
-        } else {
-            ErrorMsg(res, {});
-        }
+    let p1 = User.findOne({ query, select });
+    let p2 = userId ? Follow.findOne({ query: followQuery }) : Promise.resolve(null);
+
+    p1.then((resp: any) => {
+        if (resp) result = resp;
+        return p2;
+    }).then((resp: any) => {
+        if (resp) result.isFollow = true;
+        SuccessMsg(res, { data: result });
     }).catch(() => {
         ErrorMsg(res, {});
     });
@@ -130,12 +104,12 @@ export const userInfo  = (req: any, res: any) => {
 // 用户推荐
 export const userRecommend = (req: any, res: any) => {
     const query: any = {};
-    const select: string = 'username nickname avatar articleCount followCount fansCount';
-    const querySkip: number = 0;
-    const querylimit: number = 5;
-    const p1 = User.userRecommend({ query, select, querySkip, querylimit });
+    const currentPage: string = '1';
+    const pageSize: string = '5';
+    const querySort: any = { articleCount: -1 };
+    const p1 = User.queryListLimit({ query, currentPage, pageSize, querySort });
 
-    p1.then((resp) => {
+    p1.then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -153,59 +127,5 @@ export const userInfoEdit  = (req: any, res: any) => {
         SuccessMsg(res, {});
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });
-    });
-}
-
-// 更新标签文章数量
-export const updateTagArticleCount  = (tagId: string) => {
-    const articleQuery: any = { tagId, publish: true };
-    const query: any = { _id: tagId };
-    return Article.count(articleQuery).then((resp: any) => {
-        return Tag.updateOne({ query, update: { articleCount: resp } })
-    });
-}
-
-// 更新用户文章数量
-export const updateArticleCount  = (userId: string) => {
-    const articleQuery: any = { userId, publish: true };
-    const query: any = { _id: userId };
-    return Article.count(articleQuery).then((resp: any) => {
-        return User.updateOne({ query, update: { articleCount: resp } })
-    });
-}
-
-// 更新用户专题数量
-export const updateTopicCount  = (userId: string) => {
-    const articleQuery: any = { userId };
-    const query: any = { _id: userId };
-    return Topic.count(articleQuery).then((resp: any) => {
-        return User.updateOne({ query, update: { topicCount: resp } })
-    });
-}
-
-// 更新用户收藏数量
-export const updateCollectCount  = (userId: string) => {
-    const articleQuery: any = { createUserId: userId };
-    const query: any = { _id: userId };
-    return Collect.count(articleQuery).then((resp: any) => {
-        return User.updateOne({ query, update: { collectCount: resp } })
-    });
-}
-
-// 更新用户粉丝数量
-export const updateFansCount  = (userId: string) => {
-    const articleQuery: any = { followId: userId, type: 0 };
-    const query: any = { _id: userId };
-    return Follow.count(articleQuery).then((resp: any) => {
-        return User.updateOne({ query, update: { fansCount: resp } })
-    });
-}
-
-// 更新用户关注数量
-export const updateFollowCount  = (userId: string) => {
-    const articleQuery: any = { userId };
-    const query: any = { _id: userId };
-    return Follow.count(articleQuery).then((resp: any) => {
-        return User.updateOne({ query, update: { followCount: resp } })
     });
 }

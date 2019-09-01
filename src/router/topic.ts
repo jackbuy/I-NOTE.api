@@ -1,6 +1,5 @@
-import Topic from '../model/topic';
-import Follow from '../model/follow';
-import { updateTopicCount } from './user';
+import { Follow, Topic } from '../model';
+import { updateTopicCount } from './common';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -8,7 +7,6 @@ const { SuccessMsg, ErrorMsg } = Utils;
 export const topicQuery  = (req: any, res: any) => {
     const { keyword, currentPage, pageSize } = req.body;
     const query: any = { };
-    const select: string = '-__v';
     if (keyword) {
         const reg = new RegExp(keyword, 'i') //不区分大小写
         query.$or = [ //多条件，数组
@@ -16,11 +14,9 @@ export const topicQuery  = (req: any, res: any) => {
             { contentText: { $regex: reg } }
         ]
     }
-    const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
-    const querylimit: number = parseInt(pageSize);
-    const p1 = Topic.queryLimit({ query, select, querySkip, querylimit });
+    const p1 = Topic.queryListLimit({ query, currentPage, pageSize });
 
-    p1.then((resp) => {
+    p1.then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -31,12 +27,9 @@ export const topicQuery  = (req: any, res: any) => {
 export const topicUserQuery  = (req: any, res: any) => {
     const { userId, currentPage, pageSize } = req.body;
     const query: any = { userId };
-    const select: string = '-__v';
-    const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
-    const querylimit: number = parseInt(pageSize);
-    const p1 = Topic.queryLimit({ query, select, querySkip, querylimit });
+    const p1 = Topic.queryListLimit({ query, currentPage, pageSize });
 
-    p1.then((resp) => {
+    p1.then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -46,10 +39,9 @@ export const topicUserQuery  = (req: any, res: any) => {
 // 推荐
 export const topicRecommend = (req: any, res: any) => {
     const query: any = {};
-    const select: string = '-__v';
-    const querySkip: number = 0;
-    const querylimit: number = 5;
-    const p1 = Topic.topicRecommend({ query, select, querySkip, querylimit });
+    const currentPage: string = '1';
+    const pageSize: string = '5';
+    const p1 = Topic.queryListLimit({ query, currentPage, pageSize });
 
     p1.then((resp) => {
         SuccessMsg(res, { data: resp });
@@ -62,23 +54,16 @@ export const topicRecommend = (req: any, res: any) => {
 export const topicDetail = (req: any, res: any) => {
     const { topicId } = req.body;
     const query = { _id: topicId };
-    const select: string = '-__v';
     let userId: string = '';
     let result: any = {};
     if (req.userMsg) userId = req.userMsg.userId;
 
-    Topic.queryTopicDetail({ query, select }).then((resp: any) => {
-        if (resp) {
-            result = resp;
-            Follow.findOne({ query: { userId, followTopicId: topicId } }).then((resp2: any) => {
-                if (resp2) result.isFollow = true;
-                SuccessMsg(res, { data: result });
-            }).catch(() => {
-                ErrorMsg(res, {});
-            });
-        } else {
-            ErrorMsg(res, {});
-        }
+    Topic.queryTopicDetail({ query }).then((resp: any) => {
+        if (resp) result = resp;
+        return userId ? Follow.findOne({ query: { userId, followTopicId: topicId } }) : Promise.resolve(null);
+    }).then((resp: any) => {
+        if (resp) result.isFollow = true;
+        SuccessMsg(res, { data: result });
     }).catch(() => {
         ErrorMsg(res, {});
     });
@@ -97,8 +82,7 @@ export const topicArticlesQuery = (req: any, res: any) => {
         let idArr: string[] = resp.articleIds.split(',').slice(querySkip, querylimit);
         let promises: object[] = idArr.map((item: any) => {
             const query: any = { _id: item };
-            const select: string = '-__v';
-            return Topic.queryTopicArticle({ query, select })
+            return Topic.queryTopicArticle({ query })
         })
         return Promise.all(promises);
     }).then((resp: any) => {
@@ -118,7 +102,7 @@ export const topicAdd  = (req: any, res: any) => {
     };
     let result: any = {};
 
-    Topic.save(data).then((resp: any) => {
+    Topic.save({ data }).then((resp: any) => {
         result = resp;
         return updateTopicCount(userId);
     }).then(() => {
@@ -153,7 +137,7 @@ export const topicDelete  = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { topicId } = req.params;
     const query = { _id: topicId };
-    Topic.removeOne(query).then((resp: any) => {
+    Topic.removeOne({ query }).then((resp: any) => {
         return updateTopicCount(userId);
     }).then(() => {
         SuccessMsg(res, {});

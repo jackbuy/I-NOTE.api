@@ -1,20 +1,26 @@
 import BaseModel from './baseModel';
 import { User } from '../schema';
 
-interface messageQuery {
+interface query {
     query: any;
-    select: string;
-    querySkip: number;
-    querylimit: number;
+    currentPage: string;
+    pageSize: string;
+    querySort?: any;
 }
 
 class TagModel extends BaseModel{
 
-    userRecommend({ query, select, querySkip, querylimit }: messageQuery) {
-        return User.find(query, select).
-            limit(querylimit).
-            skip(querySkip).
-            sort({ articleCount: -1 })
+    // 列表
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+        const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
+        const querylimit: number = parseInt(pageSize);
+        const select: string = 'nickname avatar articleCount followCount fansCount';
+        const options = {
+            skip: querySkip,
+            limit: querylimit,
+            sort: querySort
+        }
+        return User.find(query, select, options)
     }
 
 }

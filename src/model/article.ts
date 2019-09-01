@@ -1,22 +1,35 @@
 
 import BaseModel from './baseModel';
-import { Article, User, Tag } from '../schema';
+import { Article } from '../schema';
+
+interface query {
+    query: any;
+    currentPage: string;
+    pageSize: string;
+    querySort?: any;
+}
 
 class ArticleModel extends BaseModel {
 
     // 列表
-    queryListLimit({ query, querySort, querySkip, querylimit }: any) {
-        return Article.find(query, '-__v -contentText -contentHtml').
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+        const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
+        const querylimit: number = parseInt(pageSize);
+        const select = '-__v -contentText -contentHtml';
+        const options = {
+            skip: querySkip,
+            limit: querylimit,
+            sort: querySort
+        }
+        return Article.find(query, select, options).
             populate('userId', 'username nickname').
-            populate('tagId', 'title').
-            sort(querySort).
-            skip(querySkip).
-            limit(querylimit)
+            populate('tagId', 'title')
     }
 
     // 详情
     queryDetail({ query }: any) {
-        return Article.findOne(query).
+        const select = '-__v';
+        return Article.findOne(query, select).
             populate('tagId', 'title').
             populate('userId', '-password -__v -cate -createTime -editTime');
     }

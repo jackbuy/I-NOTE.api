@@ -2,7 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import bodyParser from 'body-parser';
 
-import { secretkey, ignoreJwtApiUrl } from './utils/config';
+import { staticResouces, secretkey, ignoreJwtApiUrl } from './utils/config';
 import router from './router';
 const app = express();
 
@@ -22,7 +22,7 @@ app.all("*", function(req, res, next) {
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(express.static('resouces'));
+app.use(express.static(staticResouces));
 
 app.use((req: any, res: any, next) => {
     let token = req.body.token || req.query.token || req.headers.token;

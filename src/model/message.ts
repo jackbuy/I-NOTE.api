@@ -1,26 +1,32 @@
 import BaseModel from './baseModel';
-import { Message, User, Article } from '../schema';
+import { Message } from '../schema';
 
-interface messageQuery {
+interface query {
     query: any;
-    select: string;
-    querySkip: number;
-    querylimit: number;
+    currentPage: string;
+    pageSize: string;
+    querySort?: any;
 }
 
 class MessageModel extends BaseModel{
 
-    queryLimit({ query, select, querySkip, querylimit }: messageQuery) {
-        return Message.find(query, select).
-            populate('fromUserId', 'username nickname').
-            populate('toUserId', 'username nickname').
-            populate('userId', 'username nickname').
+    // 列表
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+        const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
+        const querylimit: number = parseInt(pageSize);
+        const select: string = '-__v';
+        const options = {
+            skip: querySkip,
+            limit: querylimit,
+            sort: querySort
+        }
+        return Message.find(query, select, options).
+            populate('fromUserId', 'nickname').
+            populate('toUserId', 'nickname').
+            populate('userId', 'nickname').
             populate('topicId', 'title').
             populate('likeId', 'title').
-            populate('collectId', 'title').
-            limit(querylimit).
-            skip(querySkip).
-            sort({_id: -1})
+            populate('collectId', 'title')
     }
 
 }

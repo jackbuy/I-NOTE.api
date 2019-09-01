@@ -1,8 +1,5 @@
-import Article from '../model/article';
-import Like from '../model/like';
-import Collect from '../model/collect';
-import Follow from '../model/follow';
-import { updateArticleCount, updateCollectCount } from './user';
+import { Article, Like, Collect, Follow } from '../model';
+import { updateArticleCount, updateCollectCount } from './common';
 import { messageSave } from './message';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
@@ -22,12 +19,10 @@ const setArrVal = (arr1: any, arr2: any, currentUserId: string, type: string) =>
  * 查询文章(模糊查询)
  */
 export const articleQuery  = (req: any, res: any) => {
-    const { keyword, tagId, publish, userId, currentPage = 1, pageSize = 25, sortType = 'newest' } = req.body;
+    const { keyword, tagId, publish, userId, currentPage, pageSize, sortType = 'newest' } = req.body;
     let currentUserId: string = ''; // 当前登录用户
     let querySort: any = {};
     let query: any = { publish };
-    const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
-    const querylimit: number = parseInt(pageSize);
 
     if (userId) query.userId = userId;
     if (req.userMsg) currentUserId = req.userMsg.userId;
@@ -42,7 +37,7 @@ export const articleQuery  = (req: any, res: any) => {
     if (sortType == 'newest') querySort = { top: -1, createTime: -1 }
     if (sortType == 'popular') querySort = { top: -1, viewCount: -1 }
 
-    const p1 = Article.queryListLimit({ query, querylimit, querySkip, querySort});
+    const p1 = Article.queryListLimit({ query, currentPage, pageSize, querySort });
     const p2 = Like.find({});
     const p3 = Collect.find({});
 
@@ -69,14 +64,14 @@ export const articleDetail  = (req: any, res: any) => {
     }).then(() => {
         return Article.queryDetail({ query })
     }).then((resp: any) => {
-        result = resp;
-        return Follow.findOne({ query: { userId, followUserId: resp.userId._id } });
+        if (resp) result = resp;
+        return userId ? Follow.findOne({ query: { userId, followUserId: resp.userId._id } }) : Promise.resolve(null);
     }).then((resp: any) => {
         if (resp) result.userId.isFollow = true;
-        return Like.findOne({ query: { createUserId: userId, articleId } });
+        return userId ? Like.findOne({ query: { createUserId: userId, articleId } }) : Promise.resolve(null);
     }).then((resp: any) => {
         if (resp) result.isLike = true;
-        return Collect.findOne({ query: { createUserId: userId, articleId } });
+        return userId ? Collect.findOne({ query: { createUserId: userId, articleId } }) : Promise.resolve(null);
     }).then((resp: any) => {
         if (resp) result.isCollect = true;
         SuccessMsg(res, { data: result });
@@ -103,7 +98,7 @@ export const articleCollect = (req: any, res: any) => {
     Collect.findOne({ query: collectQuery }).then((resp: any) => {
         let type: any = resp;
         let count: number = 0;
-        let p = !type ? Collect.save(data) : Collect.removeOne({ articleId });
+        let p = !type ? Collect.save({ data }) : Collect.removeOne({ query: collectQuery });
 
         p.then(() => {
             return Article.findOne({ query: articleQuery });
@@ -142,7 +137,7 @@ export const articleLike = (req: any, res: any) => {
     Like.findOne({ query: likeQquery }).then((resp) => {
         let type: any = resp;
         let count: number = 0;
-        let p = !type ? Like.save(data) : Like.removeOne({ articleId });
+        let p = !type ? Like.save({ data }) : Like.removeOne({ query: likeQquery });
 
         p.then(() => {
             return Article.findOne({ query: articleQuery });
@@ -171,7 +166,7 @@ export const articleAdd  = (req: any, res: any) => {
     };
     let result: any = {};
 
-    Article.save(data).then((resp: any) => {
+    Article.save({ data }).then((resp: any) => {
         result = resp;
         return updateArticleCount(userId);
     }).then(() => {
@@ -208,7 +203,7 @@ export const articleDelete  = (req: any, res: any) => {
     const query = { _id: articleId };
     let result: any = {};
 
-    Article.removeOne(query).then((resp: any) => {
+    Article.removeOne({ query }).then((resp: any) => {
         result = resp;
         return updateArticleCount(userId);
     }).then(() => {

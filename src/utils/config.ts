@@ -4,18 +4,22 @@ export const DB_URL: string = 'mongodb://localhost/i-note2';
 // jwt的密钥
 export const secretkey: string = 'secretkey';
 
+// 静态资源文件夹
+export const staticResouces: string = 'resouces';
+
 // 忽略jwt检查的api
 export const ignoreJwtApiUrl: string[] = [
     '/user/login',
     '/user/register',
-    '/user/hot',
     '/article/query',
     '/article/detail',
     '/tag/query',
     '/tag/recommend',
     '/user/zoneUserInfo',
     '/collect/query',
-    '/follow/query',
+    '/follow/user/query',
+    '/follow/topic/query',
+    '/follow/tag/query',
     '/fans/query',
     '/user/recommend',
     '/topic/recommend',
@@ -24,7 +28,6 @@ export const ignoreJwtApiUrl: string[] = [
     '/topic/detail',
     '/topic/article/query',
     '/sendEmail',
-    '/uploadfile',
     '/tag/detail'
 ];
 

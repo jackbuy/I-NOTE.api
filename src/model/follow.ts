@@ -1,50 +1,32 @@
 import BaseModel from './baseModel';
 import { Follow } from '../schema';
 
-interface queryLimit {
+interface query {
     query: any;
-    select: string;
-    querySkip: number;
-    querylimit: number;
+    currentPage: string;
+    pageSize: string;
+    querySort?: any;
 }
 
 class FollowModel extends BaseModel {
 
-    // 关注人列表
-    followUserQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
-        return Follow.find(query, select).
-            populate('followUserId', 'username nickname').
-            limit(querylimit).
-            skip(querySkip).
-            sort({ _id: -1 })
-    }
-
-    // 关注专题列表
-    followTopicQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
-        return Follow.find(query, select).
+    // 列表
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+        const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
+        const querylimit: number = parseInt(pageSize);
+        const select: string = '-__v';
+        const options = {
+            skip: querySkip,
+            limit: querylimit,
+            sort: querySort
+        }
+        return Follow.find(query, select, options).
+            populate('followUserId', 'nickname isFollow').
             populate('followTopicId', 'title isFollow').
-            limit(querylimit).
-            skip(querySkip).
-            sort({ _id: -1 })
-    }
-
-    // 关注标签列表
-    followTagQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
-        return Follow.find(query, select).
             populate('followTagId', 'title isFollow').
-            limit(querylimit).
-            skip(querySkip).
-            sort({ _id: -1 })
+            populate('userId', 'nickname')
     }
 
-    // 粉丝列表
-    fansQueryLimit({ query, select, querySkip, querylimit }: queryLimit) {
-        return Follow.find(query, select).
-            populate('userId', 'username nickname').
-            limit(querylimit).
-            skip(querySkip).
-            sort({ _id: -1 })
-    }
 }
 
 export default new FollowModel(Follow)

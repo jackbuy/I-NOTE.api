@@ -13,7 +13,6 @@ import * as Email from './email';
 
 // Tag
 app.post('/tag/query', Tag.tagQueryAll);
-// app.post('/tag/follow/query', Tag.tagFollowQuery);
 app.get('/tag/recommend', Tag.tagRecommend);
 app.post('/tag/detail', Tag.tagDetail);
 
@@ -60,7 +59,7 @@ app.post('/topic/detail', Topic.topicDetail);
 app.post('/topic/article/query', Topic.topicArticlesQuery);
 
 // upload
-app.post('/uploadfile', Upload.upload.any(), Upload.uploadFunc);
+app.post('/uploadfile', Upload.upload.any(), Upload.uploadFile);
 app.post('/deleteFile', Upload.deleteFile);
 
 // email

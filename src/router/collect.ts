@@ -1,4 +1,4 @@
-import Collect from '../model/collect';
+import { Collect } from '../model';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -6,11 +6,8 @@ const { SuccessMsg, ErrorMsg } = Utils;
 export const collectQuery  = (req: any, res: any) => {
     const { userId, currentPage, pageSize } = req.body;
     const query: any = { createUserId: userId };
-    const select: string = 'articleId';
-    const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
-    const querylimit: number = parseInt(pageSize);
 
-    const p1 = Collect.collectQueryLimit({ query, select, querySkip, querylimit });
+    const p1 = Collect.queryListLimit({ query, currentPage, pageSize });
     const p2 = Collect.find({ query });
 
     Promise.all([p1, p2]).then((resp) => {

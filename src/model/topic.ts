@@ -1,43 +1,39 @@
 import BaseModel from './baseModel';
-import { Topic, User, Article } from '../schema';
+import { Topic, Article } from '../schema';
 
-interface messageQuery {
+interface query {
     query: any;
-    select: string;
-    querySkip: number;
-    querylimit: number;
-}
-interface topicArticle {
-    query: any;
-    select: string;
+    currentPage: string;
+    pageSize: string;
+    querySort?: any;
 }
 
 class TopicModel extends BaseModel{
 
-    queryLimit({ query, select, querySkip, querylimit }: messageQuery) {
-        return Topic.find(query, select).
-            populate({path: 'userId', model: User, select: 'username nickname'}).
-            limit(querylimit).
-            skip(querySkip).
-            sort({_id: -1})
+    // 列表
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+        const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
+        const querylimit: number = parseInt(pageSize);
+        const select: string = '-__v';
+        const options = {
+            skip: querySkip,
+            limit: querylimit,
+            sort: querySort
+        }
+        return Topic.find(query, select, options).
+            populate('userId', 'nickname')
     }
 
-    // 推荐
-    topicRecommend({ query, select, querySkip, querylimit }: messageQuery) {
-        return Topic.find(query, select).
-            limit(querylimit).
-            skip(querySkip).
-            sort({_id: -1})
-    }
-
-    queryTopicDetail({ query, select }: topicArticle) {
+    queryTopicDetail({ query }: any) {
+        const select: string = '-__v';
         return Topic.findOne(query, select).
-            populate({path: 'userId', model: User, select: '-password -__v -cate -lastSignAt'})
+            populate('userId', '-password -__v -cate -lastSignAt')
     }
 
-    queryTopicArticle({ query, select }: topicArticle) {
+    queryTopicArticle({ query }: any) {
+        const select: string = '-__v';
         return Article.findOne(query, select).
-            populate({path: 'userId', model: User, select: 'username nickname'})
+            populate('userId', 'nickname')
     }
 
 }

@@ -1,17 +1,26 @@
 import BaseModel from './baseModel';
-import { Collect, User, Article, Tag } from '../schema';
+import { Collect } from '../schema';
 
 interface query {
     query: any;
-    select: string;
-    querySkip: number;
-    querylimit: number;
+    currentPage: string;
+    pageSize: string;
+    querySort?: any;
 }
 
 class CollectModel extends BaseModel {
 
-    collectQueryLimit({ query, select, querySkip, querylimit }: query) {
-        return Collect.find(query, select).
+    // 收藏列表
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+        const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
+        const querylimit: number = parseInt(pageSize);
+        const select = 'articleId';
+        const options = {
+            skip: querySkip,
+            limit: querylimit,
+            sort: querySort
+        }
+        return Collect.find(query, select, options).
             populate({
                 path: 'articleId',
                 select: '-__v',
@@ -19,10 +28,7 @@ class CollectModel extends BaseModel {
                     { path: 'userId', select: 'username nickname' },
                     { path: 'tagId', select: 'title' }
                 ]
-            }).
-            limit(querylimit).
-            skip(querySkip).
-            sort({ _id: -1 })
+            })
     }
 
 }
