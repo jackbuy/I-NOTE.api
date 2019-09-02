@@ -18,6 +18,8 @@ app.post('/tag/detail', Tag.tagDetail);
 
 // Message
 app.post('/message/query', Message.messageQuery);
+app.put('/message/read/:messageId', Message.messageRead);
+app.delete('/message/delete/:messageId', Message.messageDelete);
 
 // Collect
 app.post('/collect/query', Collect.collectQuery);

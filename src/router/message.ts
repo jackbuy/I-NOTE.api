@@ -27,3 +27,29 @@ export const messageSave = (data: any) => {
         });
     });
 }
+
+// 标记为已读
+export const messageRead  = (req: any, res: any) => {
+    const { messageId } = req.params;
+    const update: any = {
+        isRead: true
+    };
+    const query: any = { _id: messageId };
+    
+    Message.updateOne({ query, update }).then(() => {
+        SuccessMsg(res, {});
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
+}
+
+// 删除
+export const messageDelete  = (req: any, res: any) => {
+    const { messageId } = req.params;
+    const query = { _id: messageId };
+    Message.removeOne({ query }).then(() => {
+        SuccessMsg(res, {});
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
+}

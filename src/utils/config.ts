@@ -32,7 +32,7 @@ export const ignoreJwtApiUrl: string[] = [
 ];
 
 export default {
-    name: 'I-NOTE 创造者的社区',
+    name: 'I-NOTE 创作者的社区',
     // 邮件发送(15分钟过期) j**k**y z*******>
     sendCloudConfig: {
         from: '2538362801@eqAGLrzN27fwhUNO205Tdt8uSEOSDX2u.sendcloud.org',
