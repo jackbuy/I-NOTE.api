@@ -1,4 +1,13 @@
-import {  Collect, Tag, Topic, Article, Follow, User } from '../model';
+import {  Collect, Tag, Topic, Article, Follow, User, Comment } from '../model';
+
+// 更新文章评论数量
+export const updateArticleCommentCount  = (articleId: string) => {
+    const articleQuery: any = { articleId };
+    const query: any = { _id: articleId };
+    return Comment.count({ query: articleQuery }).then((resp: any) => {
+        return Article.updateOne({ query, update: { commentCount: resp } })
+    });
+}
 
 // 更新标签文章数量
 export const updateTagArticleCount  = (tagId: string) => {

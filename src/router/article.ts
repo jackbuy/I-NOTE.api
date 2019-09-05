@@ -34,7 +34,7 @@ export const articleQuery  = (req: any, res: any) => {
         ]
     }
     if (tagId) query.tagId = tagId;
-    if (sortType == 'newest') querySort = { top: -1, createTime: -1 }
+    if (sortType == 'newest') querySort = { top: -1, editTime: -1 }
     if (sortType == 'popular') querySort = { top: -1, viewCount: -1 }
 
     const p1 = Article.queryListLimit({ query, currentPage, pageSize, querySort });
@@ -97,16 +97,18 @@ export const articleCollect = (req: any, res: any) => {
     
     Collect.findOne({ query: collectQuery }).then((resp: any) => {
         let type: any = resp;
+        let isHasArticle: any;
         let count: number = 0;
         let p = !type ? Collect.save({ data }) : Collect.removeOne({ query: collectQuery });
 
         p.then(() => {
             return Article.findOne({ query: articleQuery });
         }).then((resp: any) => {
-            count = !type ? resp.collectCount + 1 : resp.collectCount - 1;
-            return messageSave({ fromUserId: userId, toUserId: resp.userId._id, collectId: articleId, type: 1 });
+            isHasArticle = resp;
+            if (isHasArticle) count = !type ? resp.collectCount + 1 : resp.collectCount - 1;
+            return isHasArticle ? messageSave({ fromUserId: userId, toUserId: resp.userId._id, collectId: articleId, type: 1 }) : Promise.resolve();
         }).then(() => {
-            return Article.updateOne({ query: articleQuery, update: { collectCount: count } }) // 更新文章
+            return isHasArticle ? Article.updateOne({ query: articleQuery, update: { collectCount: count } }) : Promise.resolve() // 更新文章
         }).then(() => {
             return updateCollectCount(userId);
         }).then(() => {

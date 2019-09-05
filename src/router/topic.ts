@@ -40,7 +40,7 @@ export const topicUserQuery  = (req: any, res: any) => {
 export const topicRecommend = (req: any, res: any) => {
     const query: any = {};
     const currentPage: string = '1';
-    const pageSize: string = '5';
+    const pageSize: string = '3';
     const p1 = Topic.queryListLimit({ query, currentPage, pageSize });
 
     p1.then((resp) => {

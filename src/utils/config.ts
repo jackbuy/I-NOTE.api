@@ -2,7 +2,7 @@
 export const DB_URL: string = 'mongodb://localhost/i-note2';
 
 // jwt的密钥
-export const secretkey: string = 'secretkey';
+export const secretkey: string = 'secretkey_inote';
 
 // 静态资源文件夹
 export const staticResouces: string = 'resouces';
@@ -28,7 +28,8 @@ export const ignoreJwtApiUrl: string[] = [
     '/topic/detail',
     '/topic/article/query',
     '/sendEmail',
-    '/tag/detail'
+    '/tag/detail',
+    '/comment/query'
 ];
 
 export default {

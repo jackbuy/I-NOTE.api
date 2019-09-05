@@ -2,6 +2,7 @@ import md5 from 'md5';
 import jwt from 'jsonwebtoken';
 import { Captcha, Follow, User } from '../model';
 import { secretkey } from '../utils/config';
+import { emit } from '../socket';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -95,6 +96,12 @@ export const userInfo  = (req: any, res: any) => {
     const select: string = 'username nickname gender brief avatar';
 
     User.findOne({ query, select }).then((resp: any) => {
+        emit('NEW_MSG', {
+            type: 'newMsg',
+            data: {
+                toUserId: userId
+            }
+        });
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -105,7 +112,7 @@ export const userInfo  = (req: any, res: any) => {
 export const userRecommend = (req: any, res: any) => {
     const query: any = {};
     const currentPage: string = '1';
-    const pageSize: string = '5';
+    const pageSize: string = '3';
     const querySort: any = { articleCount: -1 };
     const p1 = User.queryListLimit({ query, currentPage, pageSize, querySort });
 

@@ -10,6 +10,7 @@ import * as Upload from './upload';
 import * as Follow from './follow';
 import * as Topic from './topic';
 import * as Email from './email';
+import * as Comment from './comment';
 
 // Tag
 app.post('/tag/query', Tag.tagQueryAll);
@@ -18,6 +19,7 @@ app.post('/tag/detail', Tag.tagDetail);
 
 // Message
 app.post('/message/query', Message.messageQuery);
+app.post('/message/query/new/count', Message.newMessage);
 app.put('/message/read/:messageId', Message.messageRead);
 app.delete('/message/delete/:messageId', Message.messageDelete);
 
@@ -66,5 +68,10 @@ app.post('/deleteFile', Upload.deleteFile);
 
 // email
 app.post('/sendEmail', Email.sendEmail);
+
+// comment
+app.post('/comment/query', Comment.commentQuery);
+app.post('/comment/save', Comment.commentSave);
+app.post('/comment/reply', Comment.commentReply);
 
 export default app
