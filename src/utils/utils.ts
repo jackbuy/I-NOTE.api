@@ -21,7 +21,7 @@ class Utils {
     }
 
     // 异常响应
-    ErrorMsg = (res: any, { code = 500, msg = 'error' }: any) => {
+    ErrorMsg = (res: any, { code = 500, msg = '' }: any) => {
         return res.send({
             code,
             msg

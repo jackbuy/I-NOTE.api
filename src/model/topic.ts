@@ -30,12 +30,6 @@ class TopicModel extends BaseModel{
             populate('userId', '-password -__v -cate -lastSignAt')
     }
 
-    queryTopicArticle({ query }: any) {
-        const select: string = '-__v';
-        return Article.findOne(query, select).
-            populate('userId', 'nickname')
-    }
-
 }
 
 export default new TopicModel(Topic)

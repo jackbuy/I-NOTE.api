@@ -1,9 +1,9 @@
-import { Follow, Topic } from '../model';
+import { Follow, Topic, TopicArticle } from '../model';
 import { updateTopicCount } from './common';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
-// Topic列表
+// 列表
 export const topicQuery  = (req: any, res: any) => {
     const { keyword, currentPage, pageSize } = req.body;
     const query: any = { };
@@ -14,9 +14,9 @@ export const topicQuery  = (req: any, res: any) => {
             { contentText: { $regex: reg } }
         ]
     }
-    const p1 = Topic.queryListLimit({ query, currentPage, pageSize });
+    const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize });
 
-    p1.then((resp: any) => {
+    topicQuery.then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -27,10 +27,35 @@ export const topicQuery  = (req: any, res: any) => {
 export const topicUserQuery  = (req: any, res: any) => {
     const { userId, currentPage, pageSize } = req.body;
     const query: any = { userId };
-    const p1 = Topic.queryListLimit({ query, currentPage, pageSize });
+    const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize });
 
-    p1.then((resp: any) => {
+    topicQuery.then((resp: any) => {
         SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
+}
+
+// 我的专题列表（返回是否已加入专题）
+export const topicUserList  = (req: any, res: any) => {
+    const { articleId, currentPage, pageSize } = req.body;
+    const { userId } = req.userMsg;
+    const query: any = { userId };
+    const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize });
+    let topicIds: Array<string>;
+    let topics: Array<object>;
+
+    topicQuery.then((resp: any) => {
+        if (resp) topics = resp;
+        return TopicArticle.find({ query: { createUserId: userId, articleId } })
+    }).then((resp: any) => {
+        if (resp) topicIds = resp.map((item: any) => item.topicId );
+        topics.map((item: any) => {
+            topicIds.map((id) => {
+                if (item._id.equals(id)) item.isTopic = true;
+            });
+        });
+        SuccessMsg(res, { data: topics });
     }).catch(() => {
         ErrorMsg(res, {});
     });
@@ -41,26 +66,30 @@ export const topicRecommend = (req: any, res: any) => {
     const query: any = {};
     const currentPage: string = '1';
     const pageSize: string = '3';
-    const p1 = Topic.queryListLimit({ query, currentPage, pageSize });
+    const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize });
 
-    p1.then((resp) => {
+    topicQuery.then((resp) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
     });
 }
 
-// 专题详情
+// 详情
 export const topicDetail = (req: any, res: any) => {
-    const { topicId } = req.body;
-    const query = { _id: topicId };
     let userId: string = '';
     let result: any = {};
+
+    const { topicId } = req.body;
+    const query: any = { _id: topicId };
     if (req.userMsg) userId = req.userMsg.userId;
 
-    Topic.queryTopicDetail({ query }).then((resp: any) => {
+    const topicDetail: any = Topic.queryTopicDetail({ query });
+    const followFind: any = userId ? Follow.findOne({ query: { userId, followTopicId: topicId } }) : Promise.resolve(null);
+
+    topicDetail.then((resp: any) => {
         if (resp) result = resp;
-        return userId ? Follow.findOne({ query: { userId, followTopicId: topicId } }) : Promise.resolve(null);
+        return followFind;
     }).then((resp: any) => {
         if (resp) result.isFollow = true;
         SuccessMsg(res, { data: result });
@@ -69,40 +98,20 @@ export const topicDetail = (req: any, res: any) => {
     });
 }
 
-// 专题相关文章
-export const topicArticlesQuery = (req: any, res: any) => {
-    const { topicId, pageSize, currentPage } = req.body;
-    const query: any = { _id: topicId };
-    const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
-    const querylimit: number = parseInt(pageSize);
-    Topic.findOne({ query }).then((resp: any) => {
-        if (!resp.articleIds) return new Promise((resolve, reject) => {
-            resolve([]);
-        });
-        let idArr: string[] = resp.articleIds.split(',').slice(querySkip, querylimit);
-        let promises: object[] = idArr.map((item: any) => {
-            const query: any = { _id: item };
-            return Topic.queryTopicArticle({ query })
-        })
-        return Promise.all(promises);
-    }).then((resp: any) => {
-        SuccessMsg(res, { data: resp });
-    }).catch(() => {
-        ErrorMsg(res, {});
-    });
-}
-
 // 新增
-export const topicAdd  = (req: any, res: any) => {
+export const topicAdd = (req: any, res: any) => {
+    let result: any = {};
+
     const { userId } = req.userMsg;
     const data: any = {
         ...req.body,
         userId,
         createTime: Date.now()
     };
-    let result: any = {};
 
-    Topic.save({ data }).then((resp: any) => {
+    const topicSave = Topic.save({ data });
+
+    topicSave.then((resp: any) => {
         result = resp;
         return updateTopicCount(userId);
     }).then(() => {
@@ -122,8 +131,10 @@ export const topicEdit  = (req: any, res: any) => {
         editTime: Date.now()
     };
     const query: any = { _id: topicId };
+
+    const topicUpdate = Topic.updateOne({ query, update });
     
-    Topic.updateOne({ query, update }).then(() => {
+    topicUpdate.then(() => {
         return updateTopicCount(userId);
     }).then(() => {
         SuccessMsg(res, {});
@@ -137,11 +148,17 @@ export const topicDelete  = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { topicId } = req.params;
     const query = { _id: topicId };
-    Topic.removeOne({ query }).then((resp: any) => {
-        return updateTopicCount(userId);
-    }).then(() => {
-        SuccessMsg(res, {});
-    }).catch(() => {
-        ErrorMsg(res, {});
+
+    const topicRemove = Topic.removeOne({ query });
+    TopicArticle.count({ query: { topicId }}).then((resp: any) => {
+        const count: number = resp;
+        if (count > 0) return ErrorMsg(res, { msg: '专题已关联文章，不能删除！' });
+        topicRemove.then((resp: any) => {
+            return updateTopicCount(userId);
+        }).then(() => {
+            SuccessMsg(res, {});
+        }).catch(() => {
+            ErrorMsg(res, {});
+        });
     });
 }

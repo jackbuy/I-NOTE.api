@@ -4,28 +4,15 @@ import { messageSave } from './message';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
-const setArrVal = (arr1: any, arr2: any, currentUserId: string, type: string) => {
-    let arr: any = [];
-    arr1.map((item: any) => {
-        arr2.map((resp_item: any) => {
-            if (item._id.equals(resp_item.articleId) && currentUserId == resp_item.createUserId) item[type] = true;
-        });
-        arr.push(item);
-    });
-    return arr;
-}
-
 /**
  * 查询文章(模糊查询)
  */
 export const articleQuery  = (req: any, res: any) => {
     const { keyword, tagId, publish, userId, currentPage, pageSize, sortType = 'newest' } = req.body;
-    let currentUserId: string = ''; // 当前登录用户
     let querySort: any = {};
     let query: any = { publish };
 
     if (userId) query.userId = userId;
-    if (req.userMsg) currentUserId = req.userMsg.userId;
     if (keyword) {
         const reg = new RegExp(keyword, 'i') //不区分大小写
         query.$or = [ //多条件，数组
@@ -37,15 +24,10 @@ export const articleQuery  = (req: any, res: any) => {
     if (sortType == 'newest') querySort = { top: -1, editTime: -1 }
     if (sortType == 'popular') querySort = { top: -1, viewCount: -1 }
 
-    const p1 = Article.queryListLimit({ query, currentPage, pageSize, querySort });
-    const p2 = Like.find({});
-    const p3 = Collect.find({});
+    const articleQuery = Article.queryListLimit({ query, currentPage, pageSize, querySort });
 
-    Promise.all([ p1, p2, p3 ]).then((resp) => {
-        let result: any[] = [];
-        result = setArrVal(resp[0], resp[1], currentUserId, 'isLike');
-        result = setArrVal(resp[0], resp[2], currentUserId, 'isCollect');
-        SuccessMsg(res, { data: result });
+    articleQuery.then((resp) => {
+        SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
     });
@@ -83,7 +65,7 @@ export const articleDetail  = (req: any, res: any) => {
 // 收藏
 export const articleCollect = (req: any, res: any) => {
     const { userId } = req.userMsg;
-    const { articleId } = req.params;
+    const { articleId, articleTitle } = req.body;
 
     const articleQuery: any = { _id: articleId };
     const collectQuery = {
@@ -92,6 +74,7 @@ export const articleCollect = (req: any, res: any) => {
     };
     const data: any = {
         ...collectQuery,
+        articleTitle,
         createTime: Date.now()
     };
     
@@ -124,7 +107,7 @@ export const articleCollect = (req: any, res: any) => {
 // 点赞
 export const articleLike = (req: any, res: any) => {
     const { userId } = req.userMsg;
-    const { articleId } = req.params;
+    const { articleId } = req.body;
 
     const articleQuery: any = { _id: articleId };
     const likeQquery: any = { 

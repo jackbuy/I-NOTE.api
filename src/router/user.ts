@@ -1,7 +1,6 @@
 import md5 from 'md5';
-import jwt from 'jsonwebtoken';
 import { Captcha, Follow, User } from '../model';
-import { secretkey } from '../utils/config';
+import { encode } from '../utils/jwt';
 import { emit } from '../socket';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
@@ -13,20 +12,12 @@ export const userLogin  = (req: any, res: any) => {
         email,
         password: md5(password)
     }
-    User.findOne({ query }).then((resp: any) => {
+    const userFind = User.findOne({ query });
+
+    userFind.then((resp: any) => {
         if (resp) {
             const { _id, email } = resp;
-            const content: any = {  // 要生成token的信息
-                userId: _id,
-                email: email
-            };
-            const token: any = jwt.sign(
-                content,
-                secretkey,
-                // {
-                //     expiresIn: 60*1  // token1分钟过期
-                // }
-            );
+            const token = encode({ userId: _id, email });
             SuccessMsg(res, { data: { token: token, userId: _id } });
         } else {
             ErrorMsg(res, { msg: '邮箱或密码错误！' });
@@ -38,23 +29,29 @@ export const userLogin  = (req: any, res: any) => {
 
 // 注册
 export const userRegister  = (req: any, res: any) => {
-
     const { nickname, password, email, captcha } = req.body;
-    const query = {
-        email,
+    const userQuery: any = {
+        email
+    };
+    const captchaQuery: any = {
+        ...userQuery,
         captcha
-    }
-    const data: any = {
+    };
+    const userData: any = {
         nickname,
         email,
         password: md5(password)
-    }
+    };
 
-    Captcha.findOne({ query }).then((resp: any) => {
-        return resp ? User.findOne({ query: { email } }) : Promise.reject();
+    const captchaFind = Captcha.findOne({ query: captchaQuery });
+    const userFind = User.findOne({ query: userQuery });
+    const userSave = User.save({ data: userData });
+
+    captchaFind.then((resp: any) => {
+        return resp ? userFind : Promise.reject();
     }).then((resp: any) => {
         if (!resp) {
-            User.save({ data }).then(() => {
+            userSave.then(() => {
                 SuccessMsg(res, {});
             }).catch(() => {
                 ErrorMsg(res, {});
@@ -70,17 +67,18 @@ export const userRegister  = (req: any, res: any) => {
 // 空间用户信息
 export const zoneUserInfo  = (req: any, res: any) => {
     const { userId, followUserId } = req.body;
-    const query: any = { _id: followUserId }
+    const userQuery: any = { _id: followUserId }
     const followQuery: any = { userId, type: 0, followUserId }
     const select: string = '-password -__v -cate -lastSignAt';
+
+    const userFind = User.findOne({ query: userQuery, select });
+    const followFind = userId ? Follow.findOne({ query: followQuery }) : Promise.resolve(null);
+    
     let result: any = {};
 
-    let p1 = User.findOne({ query, select });
-    let p2 = userId ? Follow.findOne({ query: followQuery }) : Promise.resolve(null);
-
-    p1.then((resp: any) => {
+    userFind.then((resp: any) => {
         if (resp) result = resp;
-        return p2;
+        return followFind;
     }).then((resp: any) => {
         if (resp) result.isFollow = true;
         SuccessMsg(res, { data: result });
@@ -95,13 +93,19 @@ export const userInfo  = (req: any, res: any) => {
     const query: any = { _id: userId }
     const select: string = 'username nickname gender brief avatar';
 
-    User.findOne({ query, select }).then((resp: any) => {
+    const emitMsg: any = (toUserId: any): void => {
         emit('NEW_MSG', {
             type: 'newMsg',
             data: {
-                toUserId: userId
+                toUserId
             }
         });
+    }
+
+    const userFind = User.findOne({ query, select });
+
+    userFind.then((resp: any) => {
+        emitMsg(userId); // 发送消息
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -114,9 +118,10 @@ export const userRecommend = (req: any, res: any) => {
     const currentPage: string = '1';
     const pageSize: string = '3';
     const querySort: any = { articleCount: -1 };
-    const p1 = User.queryListLimit({ query, currentPage, pageSize, querySort });
 
-    p1.then((resp: any) => {
+    const userQuery = User.queryListLimit({ query, currentPage, pageSize, querySort });
+
+    userQuery.then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -126,11 +131,14 @@ export const userRecommend = (req: any, res: any) => {
 // 编辑
 export const userInfoEdit  = (req: any, res: any) => {
     const { userId } = req.userMsg;
+    const query: any = { _id: userId };
     const update: any = {
         ...req.body
     };
-    const query: any = { _id: userId };
-    User.updateOne({ query, update }).then(() => {
+
+    const userUpdate = User.updateOne({ query, update });
+
+    userUpdate.then(() => {
         SuccessMsg(res, {});
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });

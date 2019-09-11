@@ -69,4 +69,12 @@ export default class Model {
         return this.schema.find(query).countDocuments();
     }
 
+    /**
+     * 填充
+     * @param param0 
+     */
+    populate ({ collections, options = {} }: any): Promise<object> {
+        return this.schema.populate(collections, options);
+    }
+
 }

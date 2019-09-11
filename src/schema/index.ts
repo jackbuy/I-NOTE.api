@@ -16,6 +16,7 @@ import message from './message';
 import follow from './follow';
 import photo from './photo';
 import topic from './topic';
+import topicArticle from './topicArticle';
 import captcha from './captcha';
 import comment from './comment';
 
@@ -28,5 +29,6 @@ export const Message = mongoose.model('Message', message);
 export const Follow = mongoose.model('Follow', follow);
 export const Photo = mongoose.model('Photo', photo);
 export const Topic = mongoose.model('Topic', topic);
+export const TopicArticle = mongoose.model('TopicArticle', topicArticle);
 export const Captcha = mongoose.model('Captcha', captcha);
 export const Comment = mongoose.model('Comment', comment);

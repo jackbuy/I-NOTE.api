@@ -45,7 +45,9 @@ export const commentReply = (req: any, res: any) => {
         commentUserId: userId,
         createTime: Date.now()
     }
-    Comment.save({ data }).then((resp: any) => {
+    const commentSave = Comment.save({ data });
+
+    commentSave.then((resp: any) => {
         const query: any = { _id: req.body.parentId };
         const update: any = { $push: { reply: resp._id }};
         return Comment.updateOne({ query, update });

@@ -18,7 +18,7 @@ export const messageQuery = (req: any, res: any) => {
 }
 
 // 保存消息
-export const messageSave = (data: any) => {
+export const messageSave = (data: any): Promise<object> => {
     return new Promise((resolve, reject) => {
         const { toUserId } = data;
         Message.findOne({ query: data }).then((resp: any) => {
@@ -75,7 +75,7 @@ export const messageRead  = (req: any, res: any) => {
 export const messageDelete  = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { messageId } = req.params;
-    const query = { _id: messageId };
+    const query: any = { _id: messageId };
     Message.removeOne({ query }).then(() => {
         emit('NEW_MSG', {
             type: 'newMsg',

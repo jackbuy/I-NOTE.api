@@ -6,8 +6,8 @@ export default new Schema({ // 专题
     title: { type: String }, // 名称
     description: { type: String }, // 描述
     img: { type: String, default: '' }, // 封面
-    isFollow: { type: Boolean, default: false },
+    isFollow: { type: Boolean, default: false }, // 是否已关注
+    isTopic: { type: Boolean, default: false }, // 是否已加入专题
     userId: { type: ObjectId, ref: 'User' },
-    articleIds: { type: String, default: '' },
     createTime: { type: Date, default: Date.now } // 创建时间
 });

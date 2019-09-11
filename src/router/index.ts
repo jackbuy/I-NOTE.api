@@ -9,6 +9,7 @@ import * as Message from './message';
 import * as Upload from './upload';
 import * as Follow from './follow';
 import * as Topic from './topic';
+import * as TopicArticle from './topicArticle';
 import * as Email from './email';
 import * as Comment from './comment';
 
@@ -25,6 +26,7 @@ app.delete('/message/delete/:messageId', Message.messageDelete);
 
 // Collect
 app.post('/collect/query', Collect.collectQuery);
+app.delete('/collect/delete/:collectId', Collect.collectDelete);
 
 // Follow
 app.post('/follow/user/query', Follow.followUserQuery);
@@ -38,8 +40,8 @@ app.post('/follow/tag', Follow.followTag);
 // Article
 app.post('/article/query', Article.articleQuery);
 app.post('/article/detail', Article.articleDetail);
-app.get('/article/like/:articleId', Article.articleLike);
-app.get('/article/collect/:articleId', Article.articleCollect);
+app.post('/article/like', Article.articleLike);
+app.post('/article/collect', Article.articleCollect);
 app.post('/article/add', Article.articleAdd);
 app.put('/article/edit/:articleId', Article.articleEdit);
 app.delete('/article/delete/:articleId', Article.articleDelete);
@@ -52,24 +54,29 @@ app.post('/user/zoneUserInfo', User.zoneUserInfo);
 app.post('/user/userInfoEdit', User.userInfoEdit);
 app.get('/user/recommend', User.userRecommend);
 
-// topic
+// Topic
 app.post('/topic/query', Topic.topicQuery);
 app.post('/topic/user/query', Topic.topicUserQuery);
+app.post('/topic/user/list', Topic.topicUserList);
 app.get('/topic/recommend', Topic.topicRecommend);
 app.post('/topic/add', Topic.topicAdd);
 app.delete('/topic/delete/:topicId', Topic.topicDelete);
 app.put('/topic/edit/:topicId', Topic.topicEdit);
 app.post('/topic/detail', Topic.topicDetail);
-app.post('/topic/article/query', Topic.topicArticlesQuery);
+
+// TopicArticle
+app.post('/topic/article/query', TopicArticle.topicArticleQuery);
+app.post('/topic/article/add', TopicArticle.topicArticleAdd);
+app.delete('/topic/article/delete/:topicArticleId', TopicArticle.topicArticleDelete);
 
 // upload
 app.post('/uploadfile', Upload.upload.any(), Upload.uploadFile);
 app.post('/deleteFile', Upload.deleteFile);
 
-// email
+// Email
 app.post('/sendEmail', Email.sendEmail);
 
-// comment
+// Comment
 app.post('/comment/query', Comment.commentQuery);
 app.post('/comment/save', Comment.commentSave);
 app.post('/comment/reply', Comment.commentReply);

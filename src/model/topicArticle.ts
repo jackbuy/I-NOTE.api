@@ -1,5 +1,5 @@
 import BaseModel from './baseModel';
-import { Collect } from '../schema';
+import { TopicArticle } from '../schema';
 
 interface query {
     query: any;
@@ -8,10 +8,9 @@ interface query {
     querySort?: any;
 }
 
-class CollectModel extends BaseModel {
+class TopicModel extends BaseModel{
 
-    // 收藏列表
-    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+    topicArticleQueryLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
         const querylimit: number = parseInt(pageSize);
         const select = '-__v';
@@ -20,17 +19,16 @@ class CollectModel extends BaseModel {
             limit: querylimit,
             sort: querySort
         }
-        return Collect.find(query, select, options).
+        return TopicArticle.find(query, select, options).
             populate({
                 path: 'articleId',
-                select: '-__v',
+                select: '-__v -contentText -contentHtml',
                 populate: [
                     { path: 'userId', select: 'username nickname' },
                     { path: 'tagId', select: 'title' }
                 ]
             })
     }
-
 }
 
-export default new CollectModel(Collect);
+export default new TopicModel(TopicArticle)
