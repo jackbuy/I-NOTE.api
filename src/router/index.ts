@@ -71,6 +71,7 @@ app.delete('/topic/article/delete/:topicArticleId', TopicArticle.topicArticleDel
 
 // upload
 app.post('/uploadfile', Upload.upload.any(), Upload.uploadFile);
+app.post('/single/uploadfile', Upload.upload.any(), Upload.singleFileUpload);
 app.post('/deleteFile', Upload.deleteFile);
 
 // Email
