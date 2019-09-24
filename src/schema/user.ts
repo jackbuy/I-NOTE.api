@@ -20,6 +20,6 @@ export default new Schema({ //用户
     lastSignAt: { type: Date, default: Date.now }, // 最近登录时间
 
     avatar: { type: String, default: '' }, // 头像
-    gender: { type: Number }, // 性别 0女  1男
+    gender: { type: Number }, // 性别 0女 1男
     brief: { type: String, default: '' }, // 简介,一句话介绍自己，70个字符限制
 });

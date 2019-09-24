@@ -13,7 +13,7 @@
 第一步：
 > npm run tsc-w
 
-低二步：
+第二步：
 > npm run dev
 
 ###### 构建项目

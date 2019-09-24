@@ -1,7 +1,27 @@
 import { Tag, Follow } from '../model';
 import Utils from '../utils/utils';
 import { updateTagArticleCount } from './common';
-const { SuccessMsg, ErrorMsg, setArr } = Utils;
+const { SuccessMsg, ErrorMsg } = Utils;
+
+interface setArr {
+    arr1: any;
+    arr2: any;
+    t: string;
+    op1: string;
+    op2: string;
+}
+
+// 过滤数据
+const setArr = ({ arr1, arr2, t, op1, op2 }: setArr) => {
+    let _arr: any = [];
+    arr1.map((item: any) => {
+        arr2.map((item2: any) => {
+            if (item[op1].equals(item2[op2])) item[t] = true;
+        })
+        _arr.push(item);
+    })
+    return _arr;
+}
 
 
 // tag列表

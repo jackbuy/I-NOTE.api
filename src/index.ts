@@ -1,8 +1,8 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import bodyParser from 'body-parser';
 
-import { staticResouces, secretkey, ignoreJwtApiUrl } from './utils/config';
+import { decode } from './utils/jwt';
+import { staticResouces, ignoreJwtApiUrl } from './utils/config';
 import router from './router';
 import socket from './socket';
 
@@ -27,24 +27,23 @@ app.use(bodyParser.json())
 app.use(express.static(staticResouces));
 
 app.use((req: any, res: any, next) => {
-    let token = req.body.token || req.query.token || req.headers.token;
-    jwt.verify(token, secretkey, (err: any, decode: any) => {
-       if (err) {
-        if (ignoreJwtApiUrl.includes(req.url)) { // 忽略不用token的api
-            return next();
+    const token: string = req.body.token || req.query.token || req.headers.token;
+    const decodeMsg: any = decode(token);
+    if (decodeMsg) {
+        req.userMsg = {
+            userId: decodeMsg.userId
+        };
+        return next();
+    } else {
+        if (ignoreJwtApiUrl.includes(req.url)) { // 忽略不使用token的api
+            return next(); 
         } else {
             res.send({
                 code: 401 // token验证失败，请重新登录
             })
             return;
         }
-       } else {
-            req.userMsg = {
-                userId: decode.userId
-            };
-            return next();
-       }
-    })
+    }
 })
 
 app.use(router);
