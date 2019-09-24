@@ -24,7 +24,7 @@ class TopicModel extends BaseModel{
                 path: 'articleId',
                 select: '-__v -contentText -contentHtml',
                 populate: [
-                    { path: 'userId', select: 'username nickname' },
+                    { path: 'userId', select: 'username nickname avatar' },
                     { path: 'tagId', select: 'title' }
                 ]
             })

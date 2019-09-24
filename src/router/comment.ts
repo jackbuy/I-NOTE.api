@@ -59,3 +59,19 @@ export const commentReply = (req: any, res: any) => {
         ErrorMsg(res, {});
     })
 }
+
+// 删除评论
+export const commentDelete = (req: any, res: any) => {
+    const { commentId } = req.params;
+    const query: any = {
+        _id: commentId
+    }
+
+    Comment.removeOne({ query }).then((resp) => {
+        return updateArticleCommentCount(req.body.articleId);
+    }).then(() => {
+        SuccessMsg(res, {});
+    }).catch(() => {
+        ErrorMsg(res, {});
+    });
+}

@@ -80,6 +80,7 @@ app.post('/sendEmail', Email.sendEmail);
 // Comment
 app.post('/comment/query', Comment.commentQuery);
 app.post('/comment/save', Comment.commentSave);
+app.post('/comment/delete/:commentId', Comment.commentDelete);
 app.post('/comment/reply', Comment.commentReply);
 
 export default app
