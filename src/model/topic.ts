@@ -21,7 +21,7 @@ class TopicModel extends BaseModel{
             sort: querySort
         }
         return Topic.find(query, select, options).
-            populate('userId', 'nickname')
+            populate('userId', 'nickname avatar')
     }
 
     queryTopicDetail({ query }: any) {

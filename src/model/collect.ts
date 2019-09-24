@@ -25,7 +25,7 @@ class CollectModel extends BaseModel {
                 path: 'articleId',
                 select: '-__v',
                 populate: [
-                    { path: 'userId', select: 'username nickname' },
+                    { path: 'userId', select: 'username nickname avatar' },
                     { path: 'tagId', select: 'title' }
                 ]
             })

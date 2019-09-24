@@ -15,14 +15,14 @@ class ArticleModel extends BaseModel {
     queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
         const querylimit: number = parseInt(pageSize);
-        const select = '-__v -contentText -contentHtml';
+        const select = '-__v -contentHtml';
         const options = {
             skip: querySkip,
             limit: querylimit,
             sort: querySort
         }
         return Article.find(query, select, options).
-            populate('userId', 'username nickname').
+            populate('userId', 'username nickname avatar').
             populate('tagId', 'title')
     }
 
