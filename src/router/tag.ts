@@ -26,8 +26,8 @@ const setArr = ({ arr1, arr2, t, op1, op2 }: setArr) => {
 
 // tag列表
 export const tagQueryAll  = (req: any, res: any) => {
-    const { currentPage, pageSize } = req.body;
     let userId: string = '';
+    const { currentPage, pageSize } = req.body;
     if (req.userMsg) userId = req.userMsg.userId;
     const query: any = {};
     const FollowQuery = { userId, type: 2 };
@@ -82,8 +82,9 @@ export const tagDetail = (req: any, res: any) => {
     let userId: string = '';
     let result: any = {};
     if (req.userMsg) userId = req.userMsg.userId;
-
-    Tag.findOne({ query, select }).then((resp: any) => {
+    updateTagArticleCount(tagId).then(() => {
+        return Tag.findOne({ query, select })
+    }).then((resp: any) => {
         if (resp) result = resp;
         return userId ? Follow.findOne({ query: { userId, followTagId: tagId } }) : Promise.resolve(null);
     }).then((resp2: any) => {
@@ -95,7 +96,7 @@ export const tagDetail = (req: any, res: any) => {
 }
 
 // 新增
-export const tagAdd  = (req: any, res: any) => {
+export const tagAdd = (req: any, res: any) => {
     const data: any = {
         ...req.body,
         createTime: Date.now()

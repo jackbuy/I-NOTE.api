@@ -1,6 +1,7 @@
 import { Comment } from '../model';
 import Utils from '../utils/utils';
 import { updateArticleCommentCount } from './common';
+import { promises } from 'fs';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 查询
@@ -67,7 +68,23 @@ export const commentDelete = (req: any, res: any) => {
         _id: commentId
     }
 
-    Comment.removeOne({ query }).then((resp) => {
+    Comment.findOne({ query }).then((resp: any) => {
+        if (!resp) ErrorMsg(res, { msg: '评论内容不存在' });
+        const { _id, parentId } = resp;
+        // 如存在子级， 则删除子级
+        if (!parentId) {
+            Comment.find({ query: { parentId: _id } }).then((resp: any) => {
+                let promises = resp.map((item: any) => {
+                    return Comment.removeOne({ query: { parentId: _id } })
+                });
+                return Promise.all(promises);
+            })
+        } else {
+            Promise.resolve();
+        }
+    }).then(() => {
+        return Comment.removeOne({ query })
+    }).then(() => {
         return updateArticleCommentCount(req.body.articleId);
     }).then(() => {
         SuccessMsg(res, {});
