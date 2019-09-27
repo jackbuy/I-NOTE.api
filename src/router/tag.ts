@@ -25,85 +25,93 @@ const setArr = ({ arr1, arr2, t, op1, op2 }: setArr) => {
 
 
 // tag列表
-export const tagQueryAll  = (req: any, res: any) => {
+export const tagQueryAll  = async (req: any, res: any) => {
     let userId: string = '';
     const { currentPage, pageSize } = req.body;
     if (req.userMsg) userId = req.userMsg.userId;
     const query: any = {};
     const FollowQuery = { userId, type: 2 };
-    const p1 = Tag.queryListLimit({ query, currentPage, pageSize });
-    const p2 = Follow.find({ query: FollowQuery });
 
-    p1.then((resp: any) => {
-        let promises: object[] = resp.map((item: any) => {
-            return updateTagArticleCount(item._id)
-        })
-        return Promise.all(promises);
-    }).then(() => {
+    let result: any,
+        tagList: any,
+        followList: any;
+
+    try {
+
+        tagList = await Tag.queryListLimit({ query, currentPage, pageSize });
+
         if (userId) {
-            Promise.all([p1, p2]).then((resp) => {
-                const result = setArr({ arr1: resp[0], arr2: resp[1], t: 'isFollow', op1: '_id', op2: 'followTagId' });
-                SuccessMsg(res, { data: result});
-            }).catch(() => {
-                ErrorMsg(res, {});
-            });
-        } else {
-            p1.then((resp) => {
-                SuccessMsg(res, { data: resp });
-            }).catch(() => {
-                ErrorMsg(res, {});
-            });
+            followList = await Follow.find({ query: FollowQuery });
+            result = setArr({ arr1: tagList, arr2: followList, t: 'isFollow', op1: '_id', op2: 'followTagId' });
         }
-    }).catch(() => {
+
+        SuccessMsg(res, { data: userId ? result : tagList});
+
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 // tag推荐
-export const tagRecommend = (req: any, res: any) => {
+export const tagRecommend = async (req: any, res: any) => {
     const query: any = {};
     const currentPage: string = '1';
-    const pageSize: string = '5';
+    const pageSize: string = '2';
     const querySort: any = { articleCount: -1 };
-    const p1 = Tag.queryListLimit({ query, currentPage, pageSize, querySort });
 
-    p1.then((resp) => {
-        SuccessMsg(res, { data: resp });
-    }).catch(() => {
+    try {
+
+        const result = await Tag.queryListLimit({ query, currentPage, pageSize, querySort });
+
+        SuccessMsg(res, { data: result });
+
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
+
 }
 
 // tag详情
-export const tagDetail = (req: any, res: any) => {
+export const tagDetail = async (req: any, res: any) => {
     const { tagId } = req.body;
     const query = { _id: tagId };
     const select: string = '-__v';
     let userId: string = '';
-    let result: any = {};
     if (req.userMsg) userId = req.userMsg.userId;
-    updateTagArticleCount(tagId).then(() => {
-        return Tag.findOne({ query, select })
-    }).then((resp: any) => {
-        if (resp) result = resp;
-        return userId ? Follow.findOne({ query: { userId, followTagId: tagId } }) : Promise.resolve(null);
-    }).then((resp2: any) => {
-        if (resp2) result.isFollow = true;
+
+    try {
+
+        await updateTagArticleCount(tagId);
+
+        let result: any = await Tag.findOne({ query, select });
+
+        if (userId) {
+            const follow: any = await Follow.findOne({ query: { userId, followTagId: tagId } })
+            if (follow) result.isFollow = true;
+        }
+
         SuccessMsg(res, { data: result });
-    }).catch(() => {
+
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 // 新增
-export const tagAdd = (req: any, res: any) => {
+export const tagAdd = async (req: any, res: any) => {
     const data: any = {
         ...req.body,
         createTime: Date.now()
     };
-    Tag.save({ data }).then(() => {
+
+    try {
+
+        await Tag.save({ data });
+
         SuccessMsg(res, {});
-    }).catch(() => {
+
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
+
 }

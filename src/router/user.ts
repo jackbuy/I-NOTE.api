@@ -28,7 +28,7 @@ export const userLogin  = (req: any, res: any) => {
 }
 
 // 注册
-export const userRegister  = (req: any, res: any) => {
+export const userRegister  = async (req: any, res: any) => {
     const { nickname, password, email, captcha } = req.body;
     const userQuery: any = {
         email
@@ -43,25 +43,26 @@ export const userRegister  = (req: any, res: any) => {
         password: md5(password)
     };
 
-    const captchaFind = Captcha.findOne({ query: captchaQuery });
-    const userFind = User.findOne({ query: userQuery });
-    const userSave = User.save({ data: userData });
+    try {
 
-    captchaFind.then((resp: any) => {
-        return resp ? userFind : Promise.reject();
-    }).then((resp: any) => {
-        if (!resp) {
-            userSave.then(() => {
+        const captcha = await Captcha.findOne({ query: captchaQuery });
+
+        if (captcha) {
+            const user = await User.findOne({ query: userQuery });
+            if (!user) {
+                await User.save({ data: userData });
                 SuccessMsg(res, {});
-            }).catch(() => {
-                ErrorMsg(res, {});
-            });
+            } else {
+                ErrorMsg(res, { msg: '该邮箱已注册！' });
+            }
         } else {
-            ErrorMsg(res, { msg: '该邮箱已注册！' });
+            ErrorMsg(res, { msg: '无效验证码！' });
         }
-    }).catch(() => {
-        ErrorMsg(res, { msg: '无效验证码！' });
-    });
+
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
+
 }
 
 // 空间用户信息

@@ -62,8 +62,10 @@ export const articleDetail  = (req: any, res: any) => {
     });
 }
 
+//  参考： https://blog.csdn.net/itkingone/article/details/80608798
+
 // 收藏
-export const articleCollect = (req: any, res: any) => {
+export const articleCollect = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId, articleTitle } = req.body;
 
@@ -77,31 +79,34 @@ export const articleCollect = (req: any, res: any) => {
         articleTitle,
         createTime: Date.now()
     };
-    
-    Collect.findOne({ query: collectQuery }).then((resp: any) => {
-        let type: any = resp;
-        let isHasArticle: any;
-        let count: number = 0;
-        let p = !type ? Collect.save({ data }) : Collect.removeOne({ query: collectQuery });
 
-        p.then(() => {
-            return Article.findOne({ query: articleQuery });
-        }).then((resp: any) => {
-            isHasArticle = resp;
-            if (isHasArticle) count = !type ? resp.collectCount + 1 : resp.collectCount - 1;
-            return isHasArticle ? messageSave({ fromUserId: userId, toUserId: resp.userId._id, collectId: articleId, type: 1 }) : Promise.resolve();
-        }).then(() => {
-            return isHasArticle ? Article.updateOne({ query: articleQuery, update: { collectCount: count } }) : Promise.resolve() // 更新文章
-        }).then(() => {
-            return updateCollectCount(userId);
-        }).then(() => {
-            SuccessMsg(res, {});
-        }).catch(() => {
-            ErrorMsg(res, {});
-        });
-    }).catch(() => {
+    try {
+
+        const collect: any = await Collect.findOne({ query: collectQuery });
+
+        if (!collect) {
+            await Collect.save({ data });
+        } else {
+            await Collect.removeOne({ query: collectQuery });
+        }
+
+        const article: any = await Article.findOne({ query: articleQuery });
+
+        if (article) {
+            const { collectCount, userId } = article;
+            const count = !collect ? collectCount + 1 : collectCount - 1;
+            await messageSave({ fromUserId: userId, toUserId: userId._id, collectId: articleId, type: 1 });
+            await Article.updateOne({ query: articleQuery, update: { collectCount: count } });
+        }
+
+        await updateCollectCount(userId);
+
+        SuccessMsg(res, {});
+
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
+
 }
 
 // 点赞
