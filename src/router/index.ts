@@ -17,6 +17,9 @@ import * as Comment from './comment';
 app.post('/tag/query', Tag.tagQueryAll);
 app.get('/tag/recommend', Tag.tagRecommend);
 app.post('/tag/detail', Tag.tagDetail);
+app.post('/tag/add', Tag.tagAdd);
+app.post('/tag/edit', Tag.tagEdit);
+app.delete('/tag/delete/:tagId', Tag.TagDelete);
 
 // Message
 app.post('/message/query', Message.messageQuery);

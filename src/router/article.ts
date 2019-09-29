@@ -1,5 +1,5 @@
 import { Article, Like, Collect, Follow } from '../model';
-import { updateArticleCount, updateCollectCount } from './common';
+import { updateArticleCount, updateCollectCount, updateTagArticleCount } from './common';
 import { messageSave } from './message';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
@@ -61,8 +61,6 @@ export const articleDetail  = (req: any, res: any) => {
         ErrorMsg(res, {});
     });
 }
-
-//  参考： https://blog.csdn.net/itkingone/article/details/80608798
 
 // 收藏
 export const articleCollect = async (req: any, res: any) => {
@@ -158,7 +156,9 @@ export const articleAdd  = (req: any, res: any) => {
 
     Article.save({ data }).then((resp: any) => {
         result = resp;
-        return updateArticleCount(userId);
+        updateArticleCount(userId);
+    }).then(() => {
+        updateTagArticleCount()
     }).then(() => {
         SuccessMsg(res, { data: { articleId: result._id } });
     }).catch((err: any) => {
@@ -167,7 +167,7 @@ export const articleAdd  = (req: any, res: any) => {
 }
 
 // 编辑
-export const articleEdit  = (req: any, res: any) => {
+export const articleEdit = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
     const update: any = {
@@ -178,7 +178,9 @@ export const articleEdit  = (req: any, res: any) => {
     const query: any = { _id: articleId };
 
     Article.updateOne({ query, update }).then((resp: any) => {
-        return updateArticleCount(userId);
+        updateArticleCount(userId);
+    }).then(() => {
+        updateTagArticleCount()
     }).then(() => {
         SuccessMsg(res, {});
     }).catch((err: any) => {
@@ -195,7 +197,9 @@ export const articleDelete  = (req: any, res: any) => {
 
     Article.removeOne({ query }).then((resp: any) => {
         result = resp;
-        return updateArticleCount(userId);
+        updateArticleCount(userId);
+    }).then(() => {
+        updateTagArticleCount()
     }).then(() => {
         const { deletedCount } = result;
         if (deletedCount === 1) {

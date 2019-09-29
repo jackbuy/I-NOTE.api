@@ -10,7 +10,7 @@ export const encode = function(data: any): string {
         data,
         secretkey,
         // {
-        //     expiresIn: 60*30  // token 30分钟过期
+            // expiresIn: 60*30  // token 30分钟过期
         // }
     );
 }

@@ -10,13 +10,21 @@ export const updateArticleCommentCount  = (articleId: string) => {
 }
 
 // 更新标签文章数量
-export const updateTagArticleCount  = (tagId: string) => {
-    const articleQuery: any = { tagId, publish: true };
-    const query: any = { _id: tagId };
-    return Article.count({ query: articleQuery }).then((resp: any) => {
-        return Tag.updateOne({ query, update: { articleCount: resp } })
+export const updateTagArticleCount  = async() => {
+    const tagList: any = await Tag.find({});
+
+    tagList.map(async (item: any) => {
+        const count = await Article.count({ query: {tagId: item._id, publish: true} });
+        await Tag.updateOne({ query: { _id: item._id }, update: { articleCount: count } });
     });
 }
+// export const updateTagArticleCount  = (tagId: string) => {
+//     const articleQuery: any = { tagId, publish: true };
+//     const query: any = { _id: tagId };
+//     return Article.count({ query: articleQuery }).then((resp: any) => {
+//         return Tag.updateOne({ query, update: { articleCount: resp } })
+//     });
+// }
 
 // 更新用户文章数量
 export const updateArticleCount  = (userId: string) => {

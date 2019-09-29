@@ -1,6 +1,5 @@
 import { Tag, Follow } from '../model';
 import Utils from '../utils/utils';
-import { updateTagArticleCount } from './common';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 interface setArr {
@@ -56,7 +55,7 @@ export const tagQueryAll  = async (req: any, res: any) => {
 export const tagRecommend = async (req: any, res: any) => {
     const query: any = {};
     const currentPage: string = '1';
-    const pageSize: string = '2';
+    const pageSize: string = '6';
     const querySort: any = { articleCount: -1 };
 
     try {
@@ -81,8 +80,6 @@ export const tagDetail = async (req: any, res: any) => {
 
     try {
 
-        await updateTagArticleCount(tagId);
-
         let result: any = await Tag.findOne({ query, select });
 
         if (userId) {
@@ -99,14 +96,59 @@ export const tagDetail = async (req: any, res: any) => {
 
 // 新增
 export const tagAdd = async (req: any, res: any) => {
+    const { userId } = req.userMsg;
+    const { title } = req.body;
     const data: any = {
-        ...req.body,
+        title,
+        createUserId: userId,
         createTime: Date.now()
     };
 
     try {
 
         await Tag.save({ data });
+
+        SuccessMsg(res, {});
+
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
+
+}
+
+// 编辑
+export const tagEdit = async (req: any, res: any) => {
+    const { userId } = req.userMsg;
+    const { tagId, title } = req.body;
+    const query = {
+        _id: tagId
+    };
+    const update: any = {
+        title,
+        editUserId: userId,
+        editTime: Date.now()
+    };
+
+    try {
+
+        await Tag.updateOne({ query, update })
+
+        SuccessMsg(res, {});
+
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
+
+}
+
+// 删除
+export const TagDelete = async (req: any, res: any) => {
+    const { tagId } = req.params;
+    const query = { _id: tagId };
+
+    try {
+
+        await Tag.removeOne({ query })
 
         SuccessMsg(res, {});
 

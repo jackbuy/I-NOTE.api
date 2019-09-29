@@ -20,7 +20,9 @@ class TagModel extends BaseModel{
             limit: querylimit,
             sort: querySort
         }
-        return Tag.find(query, select, options)
+        return Tag.find(query, select, options).
+            populate('createUserId', 'nickname').
+            populate('editUserId', 'nickname')
     }
 
 }
