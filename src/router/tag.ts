@@ -1,4 +1,4 @@
-import { Tag, Follow } from '../model';
+import { Tag, Follow, Article } from '../model';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -147,6 +147,9 @@ export const TagDelete = async (req: any, res: any) => {
     const query = { _id: tagId };
 
     try {
+
+        const count: any = await Article.count({ query: { tagId } });
+        if (count > 0) return ErrorMsg(res, { msg: '标签已关联文章，不能删除！' });
 
         await Tag.removeOne({ query })
 
