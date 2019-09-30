@@ -14,7 +14,8 @@ import * as Email from './email';
 import * as Comment from './comment';
 
 // Tag
-app.post('/tag/query', Tag.tagQueryAll);
+app.post('/tag/query', Tag.tagQueryLimit);
+app.post('/tag/child/query', Tag.tagChildQuery);
 app.get('/tag/recommend', Tag.tagRecommend);
 app.post('/tag/detail', Tag.tagDetail);
 app.post('/tag/add', Tag.tagAdd);
@@ -56,6 +57,7 @@ app.post('/user/userInfo', User.userInfo);
 app.post('/user/zoneUserInfo', User.zoneUserInfo);
 app.post('/user/userInfoEdit', User.userInfoEdit);
 app.get('/user/recommend', User.userRecommend);
+app.post('/user/query', User.userQuery);
 
 // Topic
 app.post('/topic/query', Topic.topicQuery);

@@ -10,7 +10,8 @@ const tagSchema = new Schema({ //tag
     createUserId: { type: ObjectId, ref: 'User' }, // 创建者
     createTime: { type: Date }, // 创建时间
     editUserId: { type: ObjectId, ref: 'User' }, // 编辑者
-    editTime: { type: Date } // 编辑时间
+    editTime: { type: Date }, // 编辑时间
+    children: { type: Array }
 });
 
 tagSchema.index({ title: 1, articleCount: 1, isFollow: 1 }, { unique: true });

@@ -119,8 +119,9 @@ export const userRecommend = (req: any, res: any) => {
     const currentPage: string = '1';
     const pageSize: string = '3';
     const querySort: any = { articleCount: -1 };
+    const select: string = 'nickname avatar articleCount followCount fansCount';
 
-    const userQuery = User.queryListLimit({ query, currentPage, pageSize, querySort });
+    const userQuery = User.queryListLimit({ query, currentPage, pageSize, select, querySort });
 
     userQuery.then((resp: any) => {
         SuccessMsg(res, { data: resp });
@@ -143,5 +144,21 @@ export const userInfoEdit  = (req: any, res: any) => {
         SuccessMsg(res, {});
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });
+    });
+}
+
+// 用户列表
+export const userQuery = (req: any, res: any) => {
+    const { currentPage, pageSize } = req.body;
+    const query: any = {};
+    const querySort: any = { articleCount: -1 };
+    const select: string = '-__v -password';
+
+    const userQuery = User.queryListLimit({ query, currentPage, pageSize, select, querySort });
+
+    userQuery.then((resp: any) => {
+        SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
     });
 }

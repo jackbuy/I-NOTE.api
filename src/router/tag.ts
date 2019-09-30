@@ -22,29 +22,81 @@ const setArr = ({ arr1, arr2, t, op1, op2 }: setArr) => {
     return _arr;
 }
 
+const fn = (data: any, pid: any) => {
+    let result = [];
+    let temp;
+    for (var i in data) {
+        // if (data[i]['parentId'] == pid) {
+        if (data[i]['parentId'] && data[i]['parentId'].toString() == pid.toString()) {
+            result.push(data[i]);
+            temp = fn(data, data[i]._id);
+            if (temp.length > 0) {
+                data[i].children = temp;
+            }
+        }
+    }
+    return result;
+}
 
-// tag列表
-export const tagQueryAll  = async (req: any, res: any) => {
+const toTreeJson = (data: any) => {
+    let result = [];
+    let temp;
+    for (const i in data) {
+        if (!data[i].parentId) {
+            result.push(data[i]);
+            temp = fn(data, data[i]._id);
+            if (temp.length > 0) {
+                data[i].children = temp;
+            }
+        }
+    }
+    return result;
+}
+
+
+// tag列表- 分页查询
+export const tagQueryLimit = async (req: any, res: any) => {
     let userId: string = '';
-    const { currentPage, pageSize } = req.body;
     if (req.userMsg) userId = req.userMsg.userId;
     const query: any = {};
     const FollowQuery = { userId, type: 2 };
 
     let result: any,
         tagList: any,
-        followList: any;
+        followList: any,
+        data: any;
 
     try {
 
-        tagList = await Tag.queryListLimit({ query, currentPage, pageSize });
+        tagList = await Tag.queryList({ query });
 
         if (userId) {
             followList = await Follow.find({ query: FollowQuery });
             result = setArr({ arr1: tagList, arr2: followList, t: 'isFollow', op1: '_id', op2: 'followTagId' });
         }
 
-        SuccessMsg(res, { data: userId ? result : tagList});
+        data = userId ? result : tagList;
+
+        SuccessMsg(res, { data: toTreeJson(data)});
+
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
+}
+
+// 子级查询
+export const tagChildQuery = async (req: any, res: any) => {
+    const query: any = {
+        parentId: { $exists: true } // 存在parentId的数据
+    };
+
+    let tagChildList: any = [];
+
+    try {
+
+        tagChildList = await Tag.find({ query })
+
+        SuccessMsg(res, { data: tagChildList});
 
     } catch(e) {
         ErrorMsg(res, {});
@@ -53,9 +105,11 @@ export const tagQueryAll  = async (req: any, res: any) => {
 
 // tag推荐
 export const tagRecommend = async (req: any, res: any) => {
-    const query: any = {};
+    const query: any = {
+        parentId: { $exists: true }
+    };
     const currentPage: string = '1';
-    const pageSize: string = '6';
+    const pageSize: string = '10';
     const querySort: any = { articleCount: -1 };
 
     try {
@@ -97,9 +151,10 @@ export const tagDetail = async (req: any, res: any) => {
 // 新增
 export const tagAdd = async (req: any, res: any) => {
     const { userId } = req.userMsg;
-    const { title } = req.body;
+    const { title, parentId } = req.body;
     const data: any = {
         title,
+        parentId,
         createUserId: userId,
         createTime: Date.now()
     };
