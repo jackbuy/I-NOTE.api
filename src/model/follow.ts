@@ -24,7 +24,7 @@ class FollowModel extends BaseModel {
             populate('followUserId', 'nickname avatar isFollow').
             populate('followTopicId', 'title img isFollow').
             populate('followTagId', 'title isFollow').
-            populate('userId', 'nickname')
+            populate('userId', 'nickname avatar')
     }
 
 }
