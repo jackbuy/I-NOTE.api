@@ -92,7 +92,7 @@ export const zoneUserInfo  = (req: any, res: any) => {
 export const userInfo  = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const query: any = { _id: userId }
-    const select: string = 'username nickname gender brief avatar';
+    const select: string = 'username nickname gender brief avatar theme';
 
     const emitMsg: any = (toUserId: any): void => {
         emit('NEW_MSG', {
