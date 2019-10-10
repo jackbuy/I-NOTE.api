@@ -1,5 +1,8 @@
 import { TopicArticle, Like, Collect } from '../model';
 import Utils from '../utils/utils';
+import {
+    updateTopicArticleCount
+} from './common';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 查询
@@ -31,6 +34,8 @@ export const topicArticleAdd = (req: any, res: any) => {
     }
 
     TopicArticle.save({ data }).then(() => {
+        return updateTopicArticleCount(topicId);
+    }).then(() => {
         SuccessMsg(res, {});
     }).catch(() => {
         ErrorMsg(res, {});
@@ -39,12 +44,14 @@ export const topicArticleAdd = (req: any, res: any) => {
 
 // 删除
 export const topicArticleDelete = (req: any, res: any) => {
-    const { topicArticleId } = req.params;
+    const { topicId, topicArticleId } = req.params;
     const query: any = {
         _id: topicArticleId
     }
 
-    TopicArticle.removeOne({ query }).then((resp) => {
+    TopicArticle.removeOne({ query }).then(() => {
+        return updateTopicArticleCount(topicId);
+    }).then(() => {
         SuccessMsg(res, {});
     }).catch(() => {
         ErrorMsg(res, {});

@@ -9,5 +9,7 @@ export default new Schema({ // 专题
     isFollow: { type: Boolean, default: false }, // 是否已关注
     isTopic: { type: Boolean, default: false }, // 是否已加入专题
     userId: { type: ObjectId, ref: 'User' },
+    followCount: { type: Number, default: 0 }, // 关注数量
+    articleCount: { type: Number, default: 0 }, // 文章数量
     createTime: { type: Date, default: Date.now } // 创建时间
 });

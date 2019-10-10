@@ -1,6 +1,10 @@
 import { Follow } from '../model';
-import { updateFollowCount, updateFansCount } from './common';
 import { messageSave } from './message';
+import {
+    updateFollowCount,
+    updateFansCount,
+    updateTopicFollowCount
+} from './common';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -107,6 +111,8 @@ export const followTopic = (req: any, res: any) => {
         let msg = !resp ? '关注专题成功！' : '取消关注专题成功！';
         p.then(() => {
             return updateFollowCount(userId);
+        }).then(() => {
+            return updateTopicFollowCount(followTopicId);
         }).then(() => {
             return  messageSave({ fromUserId: userId, toUserId: followUserId, topicId: followTopicId, type: 3 });
         }).then(() => {
