@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
 const articleSchema = new Schema({ //文章
-    title: { type: String, unique: true },
+    title: { type: String },
     contentText: { type: String },
     contentHtml: { type: String },
     publish: { type: Boolean, default: false }, // 是否发布

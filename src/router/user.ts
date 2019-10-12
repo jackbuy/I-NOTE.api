@@ -118,7 +118,7 @@ export const userRecommend = (req: any, res: any) => {
     const query: any = {};
     const currentPage: string = '1';
     const pageSize: string = '3';
-    const querySort: any = { articleCount: -1 };
+    const querySort: any = { articleCount: -1, fansCount: -1 };
     const select: string = 'nickname avatar articleCount followCount fansCount';
 
     const userQuery = User.queryListLimit({ query, currentPage, pageSize, select, querySort });
@@ -149,10 +149,16 @@ export const userInfoEdit  = (req: any, res: any) => {
 
 // 用户列表
 export const userQuery = (req: any, res: any) => {
-    const { currentPage, pageSize } = req.body;
-    const query: any = {};
-    const querySort: any = { articleCount: -1 };
-    const select: string = '-__v -password';
+    const { keyword, currentPage, pageSize } = req.body;
+    const query: any = { };
+    if (keyword) {
+        const reg = new RegExp(keyword, 'i') //不区分大小写
+        query.$or = [ //多条件，数组
+            { nickname: { $regex: reg } }
+        ]
+    }
+    const querySort: any = { articleCount: -1, fansCount: -1 };
+    const select: string = '-__v -password -theme -isFollow';
 
     const userQuery = User.queryListLimit({ query, currentPage, pageSize, select, querySort });
 

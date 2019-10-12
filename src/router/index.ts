@@ -30,7 +30,7 @@ app.delete('/message/delete/:messageId', Message.messageDelete);
 
 // Collect
 app.post('/collect/query', Collect.collectQuery);
-app.delete('/collect/delete/:collectId', Collect.collectDelete);
+app.delete('/collect/delete/:collectId/:articleId', Collect.collectDelete);
 
 // Follow
 app.post('/follow/user/query', Follow.followUserQuery);

@@ -91,9 +91,9 @@ export const articleCollect = async (req: any, res: any) => {
         const article: any = await Article.findOne({ query: articleQuery });
 
         if (article) {
-            const { collectCount, userId } = article;
+            const { collectCount } = article;
             const count = !collect ? collectCount + 1 : collectCount - 1;
-            await messageSave({ fromUserId: userId, toUserId: userId._id, collectId: articleId, type: 1 });
+            await messageSave({ fromUserId: userId, toUserId: article.userId._id, collectId: articleId, type: 1 });
             await Article.updateOne({ query: articleQuery, update: { collectCount: count } });
         }
 

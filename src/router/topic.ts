@@ -15,7 +15,11 @@ export const topicQuery  = (req: any, res: any) => {
             { contentText: { $regex: reg } }
         ]
     }
-    const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize });
+    const querySort = {
+        articleCount: -1,
+        followCount: -1
+    };
+    const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize, querySort });
 
     topicQuery.then((resp: any) => {
         SuccessMsg(res, { data: resp });
@@ -67,7 +71,11 @@ export const topicRecommend = (req: any, res: any) => {
     const query: any = {};
     const currentPage: string = '1';
     const pageSize: string = '3';
-    const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize });
+    const querySort = {
+        articleCount: -1,
+        followCount: -1
+    };
+    const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize, querySort });
 
     topicQuery.then((resp) => {
         SuccessMsg(res, { data: resp });
