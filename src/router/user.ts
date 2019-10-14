@@ -3,6 +3,7 @@ import { Captcha, Follow, User } from '../model';
 import { encode } from '../utils/jwt';
 import { emit } from '../socket';
 import Utils from '../utils/utils';
+import To from '../utils/to';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 登录
@@ -148,7 +149,7 @@ export const userInfoEdit  = (req: any, res: any) => {
 }
 
 // 用户列表
-export const userQuery = (req: any, res: any) => {
+export const userQuery = async (req: any, res: any) => {
     const { keyword, currentPage, pageSize } = req.body;
     const query: any = { };
     if (keyword) {
@@ -160,11 +161,11 @@ export const userQuery = (req: any, res: any) => {
     const querySort: any = { articleCount: -1, fansCount: -1 };
     const select: string = '-__v -password -theme -isFollow';
 
-    const userQuery = User.queryListLimit({ query, currentPage, pageSize, select, querySort });
+    try {
+        const result = await User.queryListLimit({ query, currentPage, pageSize, select, querySort });
 
-    userQuery.then((resp: any) => {
-        SuccessMsg(res, { data: resp });
-    }).catch(() => {
+        SuccessMsg(res, { data: result });
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
