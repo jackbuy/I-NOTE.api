@@ -1,7 +1,6 @@
 import { Comment } from '../model';
 import Utils from '../utils/utils';
 import { updateArticleCommentCount } from './common';
-import { promises } from 'fs';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 查询

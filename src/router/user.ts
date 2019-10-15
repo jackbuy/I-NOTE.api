@@ -3,7 +3,6 @@ import { Captcha, Follow, User } from '../model';
 import { encode } from '../utils/jwt';
 import { emit } from '../socket';
 import Utils from '../utils/utils';
-import To from '../utils/to';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 登录

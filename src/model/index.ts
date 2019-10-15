@@ -1,4 +1,5 @@
 import Article from './article';
+import ArticlePublish from './articlePublish';
 import Captcha from './captcha';
 import Collect from './collect';
 import Follow from './follow';
@@ -12,7 +13,7 @@ import User from './user';
 import Comment from './comment';
 
 export {
-    Article, Captcha, Collect, Follow, Like,
+    Article, ArticlePublish,  Captcha, Collect, Follow, Like,
     Message, FileManage, Tag, Topic, User, Comment,
     TopicArticle
 }

@@ -1,4 +1,4 @@
-import { Collect, Article } from '../model';
+import { Collect, ArticlePublish } from '../model';
 import Utils from '../utils/utils';
 import { updateCollectCount } from './common';
 const { SuccessMsg, ErrorMsg } = Utils;
@@ -32,12 +32,12 @@ export const collectDelete = async (req: any, res: any) => {
 
         if (deletedCount === 1) {
 
-            const article: any = await Article.findOne({ query: articleQuery });
+            const article: any = await ArticlePublish.findOne({ query: articleQuery });
 
             if (article) {
                 const { collectCount } = article;
                 const count = collectCount - 1;
-                await Article.updateOne({ query: articleQuery, update: { collectCount: count } });
+                await ArticlePublish.updateOne({ query: articleQuery, update: { collectCount: count } });
             }
 
             await updateCollectCount(userId);

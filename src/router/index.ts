@@ -2,6 +2,7 @@ import express from 'express';
 const app = express();
 
 import * as Article from './article';
+import * as ArticlePublish from './articlePublish';
 import * as User from './user';
 import * as Tag from './tag';
 import * as Collect from './collect';
@@ -42,10 +43,18 @@ app.post('/follow/topic', Follow.followTopic);
 app.post('/follow/tag', Follow.followTag);
 
 // Article
+// 已发布
+app.post('/article/publish/query', ArticlePublish.articlePublishQuery);
+app.post('/article/publish/detail', ArticlePublish.articlePublishDetail);
+app.post('/article/publish', ArticlePublish.articlePublish);
+app.put('/article/publish/update/:articlePublishId', ArticlePublish.articlePublishUpdate);
+app.delete('/article/publish/delete/:articlePublishId/:articleId', ArticlePublish.articlePublishDelete);
+// app.post('/article/like', Article.articleLike);
+// app.post('/article/collect', Article.articleCollect);
+
+// 未发布
 app.post('/article/query', Article.articleQuery);
-app.post('/article/detail', Article.articleDetail);
-app.post('/article/like', Article.articleLike);
-app.post('/article/collect', Article.articleCollect);
+app.get('/article/detail/:articleId', Article.articleDetail);
 app.post('/article/add', Article.articleAdd);
 app.put('/article/edit/:articleId', Article.articleEdit);
 app.delete('/article/delete/:articleId', Article.articleDelete);

@@ -8,6 +8,7 @@ mongoose.connect( DB_URL, {
 })
 
 import article from './article';
+import articlePublish from './articlePublish';
 import tag from './tag';
 import user from './user';
 import like from './like';
@@ -21,6 +22,7 @@ import captcha from './captcha';
 import comment from './comment';
 
 export const Article = mongoose.model('Article', article);
+export const ArticlePublish = mongoose.model('ArticlePublish', articlePublish);
 export const Tag = mongoose.model('Tag', tag);
 export const User = mongoose.model('User', user);
 export const Like = mongoose.model('Like', like);

@@ -1,18 +1,22 @@
-import { Article, Like, Collect, Follow } from '../model';
-import { updateArticleCount, updateCollectCount, updateTagArticleCount } from './common';
-import { messageSave } from './message';
+/**
+ * 未发布文章
+ */
+
+import { Article } from '../model';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
-/**
- * 查询文章(模糊查询)
- */
+// 列表
 export const articleQuery  = (req: any, res: any) => {
-    const { keyword, tagId, publish, userId, currentPage, pageSize, sortType = 'newest' } = req.body;
-    let querySort: any = {};
-    let query: any = { publish };
+    const { keyword, currentPage, pageSize } = req.body;
+    const { userId } = req.userMsg;
+    const querySort: any = {
+        editTime: -1
+    };
+    let query: any = {
+        userId
+    };
 
-    if (userId) query.userId = userId;
     if (keyword) {
         const reg = new RegExp(keyword, 'i') //不区分大小写
         query.$or = [ //多条件，数组
@@ -20,9 +24,6 @@ export const articleQuery  = (req: any, res: any) => {
             { contentText: { $regex: reg } }
         ]
     }
-    if (tagId) query.tagId = tagId;
-    if (sortType == 'newest') querySort = { top: -1, editTime: -1 }
-    if (sortType == 'popular') querySort = { top: -1, viewCount: -1 }
 
     const articleQuery = Article.queryListLimit({ query, currentPage, pageSize, querySort });
 
@@ -34,114 +35,22 @@ export const articleQuery  = (req: any, res: any) => {
 }
 
 // 详情
-export const articleDetail  = (req: any, res: any) => {
-    const { articleId } = req.body;
-    const query: any = { _id: articleId };
-    let userId: string = '';
-    let result: any = {};
-    if (req.userMsg) userId = req.userMsg.userId;
-
-    Article.findOne({ query }).then((resp: any) => {
-        return Article.updateOne({ query, update: { viewCount: resp.viewCount + 1 } })
-    }).then(() => {
-        return Article.queryDetail({ query })
-    }).then((resp: any) => {
-        if (resp) result = resp;
-        return userId ? Follow.findOne({ query: { userId, followUserId: resp.userId._id } }) : Promise.resolve(null);
-    }).then((resp: any) => {
-        if (resp) result.userId.isFollow = true;
-        return userId ? Like.findOne({ query: { createUserId: userId, articleId } }) : Promise.resolve(null);
-    }).then((resp: any) => {
-        if (resp) result.isLike = true;
-        return userId ? Collect.findOne({ query: { createUserId: userId, articleId } }) : Promise.resolve(null);
-    }).then((resp: any) => {
-        if (resp) result.isCollect = true;
-        SuccessMsg(res, { data: result });
-    }).catch(() => {
-        ErrorMsg(res, {});
-    });
-}
-
-// 收藏
-export const articleCollect = async (req: any, res: any) => {
+export const articleDetail = (req: any, res: any) => {
     const { userId } = req.userMsg;
-    const { articleId, articleTitle } = req.body;
-
-    const articleQuery: any = { _id: articleId };
-    const collectQuery = {
-        articleId,
-        createUserId: userId
+    const { articleId } = req.params;
+    const query = {
+        _id: articleId,
+        userId
     };
-    const data: any = {
-        ...collectQuery,
-        articleTitle,
-        createTime: Date.now()
-    };
-
-    try {
-
-        const collect: any = await Collect.findOne({ query: collectQuery });
-
-        if (!collect) {
-            await Collect.save({ data });
+    Article.queryDetail({ query }).then((resp) => {
+        if (!resp) {
+            ErrorMsg(res, { msg: '文章不存在' });
         } else {
-            await Collect.removeOne({ query: collectQuery });
+            SuccessMsg(res, { data: resp });
         }
-
-        const article: any = await Article.findOne({ query: articleQuery });
-
-        if (article) {
-            const { collectCount } = article;
-            const count = !collect ? collectCount + 1 : collectCount - 1;
-            await messageSave({ fromUserId: userId, toUserId: article.userId._id, collectId: articleId, type: 1 });
-            await Article.updateOne({ query: articleQuery, update: { collectCount: count } });
-        }
-
-        await updateCollectCount(userId);
-
-        SuccessMsg(res, {});
-
-    } catch(e) {
-        ErrorMsg(res, {});
-    }
-
-}
-
-// 点赞
-export const articleLike = (req: any, res: any) => {
-    const { userId } = req.userMsg;
-    const { articleId } = req.body;
-
-    const articleQuery: any = { _id: articleId };
-    const likeQquery: any = { 
-        articleId,
-        createUserId: userId
-     };
-    const data: any = {
-        ...likeQquery,
-        createTime: Date.now()
-    };
-    
-    Like.findOne({ query: likeQquery }).then((resp) => {
-        let type: any = resp;
-        let count: number = 0;
-        let p = !type ? Like.save({ data }) : Like.removeOne({ query: likeQquery });
-
-        p.then(() => {
-            return Article.findOne({ query: articleQuery });
-        }).then((resp: any) => {
-            count = !type ? resp.likeCount + 1 : resp.likeCount - 1;
-            return messageSave({ fromUserId: userId, toUserId: resp.userId._id, likeId: articleId, type: 0 });
-        }).then(() => {
-            return Article.updateOne({ query: articleQuery, update: { likeCount: count } }); // 更新文章
-        }).then(() => {
-            SuccessMsg(res, {});
-        }).catch(() => {
-            ErrorMsg(res, {});
-        })
     }).catch(() => {
         ErrorMsg(res, {});
-    });
+    })
 }
 
 // 新增
@@ -152,15 +61,9 @@ export const articleAdd  = (req: any, res: any) => {
         userId,
         createTime: Date.now()
     };
-    let result: any = {};
 
     Article.save({ data }).then((resp: any) => {
-        result = resp;
-        updateArticleCount(userId);
-    }).then(() => {
-        updateTagArticleCount()
-    }).then(() => {
-        SuccessMsg(res, { data: { articleId: result._id } });
+        SuccessMsg(res, { data: { articleId: resp._id } });
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });
     });
@@ -177,11 +80,7 @@ export const articleEdit = (req: any, res: any) => {
     };
     const query: any = { _id: articleId };
 
-    Article.updateOne({ query, update }).then((resp: any) => {
-        updateArticleCount(userId);
-    }).then(() => {
-        updateTagArticleCount()
-    }).then(() => {
+    Article.updateOne({ query, update }).then(() => {
         SuccessMsg(res, {});
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });
@@ -190,18 +89,15 @@ export const articleEdit = (req: any, res: any) => {
 
 // 删除
 export const articleDelete  = (req: any, res: any) => {
-    const { articleId } = req.params;
     const { userId } = req.userMsg;
-    const query = { _id: articleId };
-    let result: any = {};
+    const { articleId } = req.params;
+    const query = {
+        _id: articleId,
+        userId
+    };
 
     Article.removeOne({ query }).then((resp: any) => {
-        result = resp;
-        updateArticleCount(userId);
-    }).then(() => {
-        updateTagArticleCount()
-    }).then(() => {
-        const { deletedCount } = result;
+        const { deletedCount } = resp;
         if (deletedCount === 1) {
             SuccessMsg(res, {});
         } else {

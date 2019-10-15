@@ -1,4 +1,4 @@
-import { TopicArticle, Like, Collect } from '../model';
+import { TopicArticle } from '../model';
 import Utils from '../utils/utils';
 import {
     updateTopicArticleCount

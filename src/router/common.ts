@@ -1,11 +1,11 @@
-import {  Collect, Tag, Topic, Article, Follow, User, Comment, TopicArticle } from '../model';
+import {  Collect, Tag, Topic, ArticlePublish, Follow, User, Comment, TopicArticle } from '../model';
 
 // 更新文章评论数量
 export const updateArticleCommentCount = (articleId: string) => {
     const articleQuery: any = { articleId };
     const query: any = { _id: articleId };
     return Comment.count({ query: articleQuery }).then((resp: any) => {
-        return Article.updateOne({ query, update: { commentCount: resp } })
+        return ArticlePublish.updateOne({ query, update: { commentCount: resp } })
     });
 }
 
@@ -14,14 +14,14 @@ export const updateTagArticleCount = async() => {
     const tagList: any = await Tag.find({});
 
     tagList.map(async (item: any) => {
-        const count = await Article.count({ query: {tagId: item._id, publish: true} });
+        const count = await ArticlePublish.count({ query: {tagId: item._id, publish: true} });
         await Tag.updateOne({ query: { _id: item._id }, update: { articleCount: count } });
     });
 }
 // export const updateTagArticleCount  = (tagId: string) => {
 //     const articleQuery: any = { tagId, publish: true };
 //     const query: any = { _id: tagId };
-//     return Article.count({ query: articleQuery }).then((resp: any) => {
+//     return ArticlePublish.count({ query: articleQuery }).then((resp: any) => {
 //         return Tag.updateOne({ query, update: { articleCount: resp } })
 //     });
 // }
@@ -30,7 +30,7 @@ export const updateTagArticleCount = async() => {
 export const updateArticleCount = (userId: string) => {
     const articleQuery: any = { userId, publish: true };
     const query: any = { _id: userId };
-    return Article.count({ query: articleQuery }).then((resp: any) => {
+    return ArticlePublish.count({ query: articleQuery }).then((resp: any) => {
         return User.updateOne({ query, update: { articleCount: resp } })
     });
 }
