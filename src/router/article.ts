@@ -14,7 +14,8 @@ export const articleQuery  = (req: any, res: any) => {
         editTime: -1
     };
     let query: any = {
-        userId
+        userId,
+        isPublish: false
     };
 
     if (keyword) {

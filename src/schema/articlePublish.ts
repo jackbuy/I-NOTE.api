@@ -5,7 +5,7 @@ const ObjectId = Schema.Types.ObjectId;
 const articleSchema = new Schema({ // 发布的文章
     title: { type: String },
     contentHtml: { type: String },
-    articleId: { type: ObjectId, ref: 'article' }, // 文章Id
+    articleId: { type: ObjectId, ref: 'ArticlePublish' }, // 文章Id
     tagId: { type: ObjectId, ref: 'Tag' },
     userId: { type: ObjectId, ref: 'User' },
     isLike: { type: Boolean, default: false }, // 是否点赞

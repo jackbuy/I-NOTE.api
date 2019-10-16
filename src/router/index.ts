@@ -49,8 +49,8 @@ app.post('/article/publish/detail', ArticlePublish.articlePublishDetail);
 app.post('/article/publish', ArticlePublish.articlePublish);
 app.put('/article/publish/update/:articlePublishId', ArticlePublish.articlePublishUpdate);
 app.delete('/article/publish/delete/:articlePublishId/:articleId', ArticlePublish.articlePublishDelete);
-// app.post('/article/like', Article.articleLike);
-// app.post('/article/collect', Article.articleCollect);
+app.post('/article/publish/like', ArticlePublish.articlePublishLike);
+app.post('/article/publish/collect', ArticlePublish.articlePublishCollect);
 
 // 未发布
 app.post('/article/query', Article.articleQuery);

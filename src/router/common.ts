@@ -14,12 +14,12 @@ export const updateTagArticleCount = async() => {
     const tagList: any = await Tag.find({});
 
     tagList.map(async (item: any) => {
-        const count = await ArticlePublish.count({ query: {tagId: item._id, publish: true} });
+        const count = await ArticlePublish.count({ query: {tagId: item._id} });
         await Tag.updateOne({ query: { _id: item._id }, update: { articleCount: count } });
     });
 }
 // export const updateTagArticleCount  = (tagId: string) => {
-//     const articleQuery: any = { tagId, publish: true };
+//     const articleQuery: any = { tagId };
 //     const query: any = { _id: tagId };
 //     return ArticlePublish.count({ query: articleQuery }).then((resp: any) => {
 //         return Tag.updateOne({ query, update: { articleCount: resp } })
@@ -28,7 +28,7 @@ export const updateTagArticleCount = async() => {
 
 // 更新用户文章数量
 export const updateArticleCount = (userId: string) => {
-    const articleQuery: any = { userId, publish: true };
+    const articleQuery: any = { userId };
     const query: any = { _id: userId };
     return ArticlePublish.count({ query: articleQuery }).then((resp: any) => {
         return User.updateOne({ query, update: { articleCount: resp } })

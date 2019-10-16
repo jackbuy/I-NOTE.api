@@ -12,8 +12,8 @@ export const staticResouces: string = 'resouces';
 export const ignoreJwtApiUrl: string[] = [
     '/user/login',
     '/user/register',
-    '/article/query',
-    '/article/detail',
+    '/article/publish/query',
+    '/article/publish/detail',
     '/tag/query',
     '/tag/recommend',
     '/user/zoneUserInfo',

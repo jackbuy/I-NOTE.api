@@ -6,7 +6,6 @@ import { Article, ArticlePublish, Like, Collect, Follow } from '../model';
 import { updateArticleCount, updateCollectCount, updateTagArticleCount } from './common';
 import { messageSave } from './message';
 import Utils from '../utils/utils';
-import article from '../model/article';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
@@ -25,8 +24,8 @@ export const articlePublishQuery  = (req: any, res: any) => {
     }
 
     if (tagId) query.tagId = tagId;
-    if (sortType == 'newest') querySort = { top: -1, editTime: -1 }
-    if (sortType == 'popular') querySort = { top: -1, viewCount: -1 }
+    if (sortType == 'newest') querySort = { publishTime: -1 }
+    if (sortType == 'popular') querySort = { viewCount: -1 }
 
     const articleQuery = ArticlePublish.queryListLimit({ query, currentPage, pageSize, querySort });
 
@@ -69,7 +68,7 @@ export const articlePublishDetail  = (req: any, res: any) => {
 }
 
 // 收藏
-export const articleCollect = async (req: any, res: any) => {
+export const articlePublishCollect = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId, articleTitle } = req.body;
 
@@ -99,7 +98,9 @@ export const articleCollect = async (req: any, res: any) => {
         if (article) {
             const { collectCount } = article;
             const count = !collect ? collectCount + 1 : collectCount - 1;
-            await messageSave({ fromUserId: userId, toUserId: article.userId._id, collectId: articleId, type: 1 });
+            if (JSON.stringify(userId) !== JSON.stringify(article.userId._id)) {
+                await messageSave({ fromUserId: userId, toUserId: article.userId._id, collectId: articleId, type: 1 });
+            }
             await ArticlePublish.updateOne({ query: articleQuery, update: { collectCount: count } });
         }
 
@@ -114,7 +115,7 @@ export const articleCollect = async (req: any, res: any) => {
 }
 
 // 点赞
-export const articleLike = (req: any, res: any) => {
+export const articlePublishLike = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.body;
 
@@ -137,7 +138,9 @@ export const articleLike = (req: any, res: any) => {
             return ArticlePublish.findOne({ query: articleQuery });
         }).then((resp: any) => {
             count = !type ? resp.likeCount + 1 : resp.likeCount - 1;
-            return messageSave({ fromUserId: userId, toUserId: resp.userId._id, likeId: articleId, type: 0 });
+            if (JSON.stringify(userId) !== JSON.stringify(resp.userId._id)) {
+                return messageSave({ fromUserId: userId, toUserId: resp.userId._id, likeId: articleId, type: 0 });
+            } 
         }).then(() => {
             return ArticlePublish.updateOne({ query: articleQuery, update: { likeCount: count } }); // 更新文章
         }).then(() => {
@@ -158,9 +161,15 @@ export const articlePublish  = (req: any, res: any) => {
         userId,
         publishTime: Date.now()
     };
+    let articlePublishId: any;
 
     ArticlePublish.save({ data }).then((resp: any) => {
-        SuccessMsg(res, { data: { articlePublishId: resp._id } });
+        articlePublishId = resp._id
+        return updateArticleCount(userId);
+    }).then(() => {
+        return updateTagArticleCount()
+    }).then(() => {
+        SuccessMsg(res, { data: { articlePublishId } });
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });
     });
