@@ -65,7 +65,7 @@ app.post('/user/register', User.userRegister);
 app.post('/user/userInfo', User.userInfo);
 app.post('/user/zoneUserInfo', User.zoneUserInfo);
 app.post('/user/userInfoEdit', User.userInfoEdit);
-app.get('/user/recommend', User.userRecommend);
+app.post('/user/publish/query', User.userPublishQuery);
 app.post('/user/query', User.userQuery);
 
 // Topic

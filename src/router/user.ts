@@ -113,23 +113,6 @@ export const userInfo  = (req: any, res: any) => {
     });
 }
 
-// 用户推荐
-export const userRecommend = (req: any, res: any) => {
-    const query: any = {};
-    const currentPage: string = '1';
-    const pageSize: string = '3';
-    const querySort: any = { articleCount: -1, fansCount: -1 };
-    const select: string = 'nickname avatar articleCount followCount fansCount';
-
-    const userQuery = User.queryListLimit({ query, currentPage, pageSize, select, querySort });
-
-    userQuery.then((resp: any) => {
-        SuccessMsg(res, { data: resp });
-    }).catch(() => {
-        ErrorMsg(res, {});
-    });
-}
-
 // 编辑
 export const userInfoEdit  = (req: any, res: any) => {
     const { userId } = req.userMsg;
@@ -145,6 +128,28 @@ export const userInfoEdit  = (req: any, res: any) => {
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });
     });
+}
+
+// 用户公开信息列表
+export const userPublishQuery = async (req: any, res: any) => {
+    const { keyword, currentPage, pageSize } = req.body;
+    const query: any = { };
+    if (keyword) {
+        const reg = new RegExp(keyword, 'i') //不区分大小写
+        query.$or = [ //多条件，数组
+            { nickname: { $regex: reg } }
+        ]
+    }
+    const querySort: any = { articleCount: -1, fansCount: -1 };
+    const select: string = 'nickname avatar articleCount followCount fansCount';
+
+    try {
+        const result = await User.queryListLimit({ query, currentPage, pageSize, select, querySort });
+
+        SuccessMsg(res, { data: result });
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
 }
 
 // 用户列表
