@@ -1,4 +1,4 @@
-import {  Collect, Tag, Topic, ArticlePublish, Follow, User, Comment, TopicArticle } from '../model';
+import {  Collect, Tag, Topic, ArticlePublish, Follow, User, Comment, TopicArticle, Message } from '../model';
 
 // 更新文章评论数量
 export const updateArticleCommentCount = (articleId: string) => {
@@ -87,4 +87,10 @@ export const updateTopicArticleCount = (topicId: string) => {
     return TopicArticle.count({ query: articleQuery }).then((resp: any) => {
         return Topic.updateOne({ query, update: { articleCount: resp } })
     });
+}
+
+// 获取未读消息数量
+export const getNewMessageCount = (toUserId: string) => {
+    const query: any = { toUserId, isRead: false };
+    return Message.count({ query });
 }

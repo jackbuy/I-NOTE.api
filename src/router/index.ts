@@ -25,7 +25,7 @@ app.delete('/tag/delete/:tagId', Tag.TagDelete);
 
 // Message
 app.post('/message/query', Message.messageQuery);
-app.post('/message/query/new/count', Message.newMessage);
+// app.post('/message/query/new/count', Message.newMessage);
 app.put('/message/read/:messageId', Message.messageRead);
 app.delete('/message/delete/:messageId', Message.messageDelete);
 

@@ -210,6 +210,10 @@ export const articlePublishDelete  = (req: any, res: any) => {
         const { deletedCount } = resp;
         if (deletedCount === 1) {
             Article.updateOne({ query: articleQuery, update }).then(() => {
+                return updateArticleCount(userId);
+            }).then(() => {
+                return updateTagArticleCount();
+            }).then(() => {
                 SuccessMsg(res, {});
             });
         } else {

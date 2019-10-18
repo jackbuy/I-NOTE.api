@@ -1,6 +1,7 @@
 import md5 from 'md5';
 import { Captcha, Follow, User } from '../model';
 import { encode } from '../utils/jwt';
+import { getNewMessageCount } from './common';
 import { emit } from '../socket';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
@@ -93,21 +94,22 @@ export const userInfo  = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const query: any = { _id: userId }
     const select: string = 'username nickname gender brief avatar theme';
-
-    const emitMsg: any = (toUserId: any): void => {
-        emit('NEW_MSG', {
-            type: 'newMsg',
-            data: {
-                toUserId
-            }
-        });
-    }
+    let userInfo = {};
 
     const userFind = User.findOne({ query, select });
 
     userFind.then((resp: any) => {
-        emitMsg(userId); // 发送消息
-        SuccessMsg(res, { data: resp });
+        userInfo = resp;
+        return getNewMessageCount(userId);
+    }).then((resp) => {
+        emit('NEW_MSG', {
+            type: 'newMsg',
+            data: {
+                toUserId: userId,
+                msgCount: resp
+            }
+        });
+        SuccessMsg(res, { data: userInfo });
     }).catch(() => {
         ErrorMsg(res, {});
     });
@@ -130,7 +132,7 @@ export const userInfoEdit  = (req: any, res: any) => {
     });
 }
 
-// 用户公开信息列表
+// 公开用户列表
 export const userPublishQuery = async (req: any, res: any) => {
     const { keyword, currentPage, pageSize } = req.body;
     const query: any = { };
