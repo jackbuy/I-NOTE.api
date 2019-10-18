@@ -1,6 +1,6 @@
 import { Message } from '../model';
 import Utils from '../utils/utils';
-import { emit } from '../socket'
+import { emit } from '../socket';
 import { getNewMessageCount } from './common';
 const { SuccessMsg, ErrorMsg } = Utils;
 

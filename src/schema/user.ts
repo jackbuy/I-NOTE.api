@@ -7,7 +7,7 @@ export default new Schema({ //用户
     email: { type: String }, // 用户邮箱
     password: { type: String },
 
-    cate: { type: Number, default: 0 }, // 0：普通会员 1000: 超级管理员
+    level: { type: Number, default: 0 }, // 等级 0：普通会员 1000: 超级管理员
     isFollow: { type: Boolean, default: false }, // 是否已关注
 
     articleCount: { type: Number, default: 0 }, // 文章数量

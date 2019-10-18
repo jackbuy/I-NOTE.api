@@ -8,11 +8,12 @@ const { SuccessMsg, ErrorMsg } = Utils;
 
 // 登录
 export const userLogin  = (req: any, res: any) => {
-    const { email, password } = req.body;
+    const { email, password, type } = req.body;
     const query: any = {
         email,
         password: md5(password)
     }
+    if (type) query.level = 1000;
     const userFind = User.findOne({ query });
 
     userFind.then((resp: any) => {
@@ -75,7 +76,7 @@ export const zoneUserInfo  = (req: any, res: any) => {
 
     const userFind = User.findOne({ query: userQuery, select });
     const followFind = userId ? Follow.findOne({ query: followQuery }) : Promise.resolve(null);
-    
+
     let result: any = {};
 
     userFind.then((resp: any) => {

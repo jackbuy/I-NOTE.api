@@ -65,7 +65,7 @@ export const singleFileUpload = (req: any, res: any) => {
     })
 }
 
-// 删除文件
+// 单文件删除
 export const deleteFile = (req: any, res: any) => {
     const { filename } = req.body;
     delFile(filename).then(() => {

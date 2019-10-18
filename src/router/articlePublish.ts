@@ -5,6 +5,7 @@
 import { Article, ArticlePublish, Like, Collect, Follow } from '../model';
 import { updateArticleCount, updateCollectCount, updateTagArticleCount } from './common';
 import { messageSave } from './message';
+import { emit } from '../socket';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -169,6 +170,9 @@ export const articlePublish  = (req: any, res: any) => {
     }).then(() => {
         return updateTagArticleCount()
     }).then(() => {
+        emit('NEW_POST', {
+            type: 'newPost'
+        });
         SuccessMsg(res, { data: { articlePublishId } });
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });
@@ -187,6 +191,9 @@ export const articlePublishUpdate = (req: any, res: any) => {
     const query: any = { _id: articlePublishId };
 
     ArticlePublish.updateOne({ query, update }).then(() => {
+        emit('NEW_POST', {
+            type: 'newPost'
+        });
         SuccessMsg(res, {});
     }).catch((err: any) => {
         ErrorMsg(res, { msg: err });
@@ -214,6 +221,9 @@ export const articlePublishDelete  = (req: any, res: any) => {
             }).then(() => {
                 return updateTagArticleCount();
             }).then(() => {
+                // emit('NEW_POST', {
+                //     type: 'newPost'
+                // });
                 SuccessMsg(res, {});
             });
         } else {
