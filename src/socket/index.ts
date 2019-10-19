@@ -17,7 +17,7 @@ export default (server: any) => {
 
     // 广播在线用户
     const updateOnline = (sockets = io.sockets) => {
-        sockets.emit('online-user', {
+        sockets.emit('ONLINE_USER', {
             // 连接数
             connect: connectCount,
             // 在线会员
