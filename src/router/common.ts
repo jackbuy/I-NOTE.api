@@ -1,4 +1,4 @@
-import {  Collect, Tag, Topic, ArticlePublish, Follow, User, Comment, TopicArticle, Message } from '../model';
+import { Collect, Tag, Topic, ArticlePublish, Follow, User, Comment, TopicArticle, Message } from '../model';
 
 // 更新文章评论数量
 export const updateArticleCommentCount = (articleId: string) => {
@@ -93,4 +93,19 @@ export const updateTopicArticleCount = (topicId: string) => {
 export const getNewMessageCount = (toUserId: string) => {
     const query: any = { toUserId, isRead: false };
     return Message.count({ query });
+}
+
+// 已发布文章数量
+export const articlePublishCount = () => {
+    return ArticlePublish.count({ query: {} });
+}
+
+// 专题数量
+export const topicCount = () => {
+    return Topic.count({ query: {} });
+}
+
+// 会员数量
+export const userCount = () => {
+    return User.count({ query: {} });
 }

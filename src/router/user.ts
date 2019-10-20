@@ -1,7 +1,12 @@
 import md5 from 'md5';
 import { Captcha, Follow, User } from '../model';
 import { encode } from '../utils/jwt';
-import { getNewMessageCount } from './common';
+import {
+    getNewMessageCount,
+    articlePublishCount,
+    topicCount,
+    userCount
+} from '../router/common';
 import { emit } from '../socket';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
@@ -213,4 +218,21 @@ export const userQuery = async (req: any, res: any) => {
     } catch(e) {
         ErrorMsg(res, {});
     }
+}
+
+// 数量统计
+export const operationsCount = async (req: any, res: any) => {
+    let result: any = {};
+    articlePublishCount().then((resp: any) => {
+        result.articlePublishCount = resp;
+        return topicCount();
+    }).then((resp: any) => {
+        result.topicCount = resp;
+        return userCount();
+    }).then((resp: any) => {
+        result.userCount = resp;
+        SuccessMsg(res, { data: result });
+    }).catch(() => {
+        ErrorMsg(res, {});
+    })
 }

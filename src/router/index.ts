@@ -69,6 +69,8 @@ app.post('/user/userInfoEdit', User.userInfoEdit);
 app.post('/user/publish/query', User.userPublishQuery);
 app.post('/user/query', User.userQuery);
 
+app.post('/operations/count', User.operationsCount);
+
 // Topic
 app.post('/topic/query', Topic.topicQuery);
 app.post('/topic/user/query', Topic.topicUserQuery);
@@ -78,6 +80,7 @@ app.post('/topic/add', Topic.topicAdd);
 app.delete('/topic/delete/:topicId', Topic.topicDelete);
 app.put('/topic/edit/:topicId', Topic.topicEdit);
 app.post('/topic/detail', Topic.topicDetail);
+
 
 // TopicArticle
 app.post('/topic/article/query', TopicArticle.topicArticleQuery);
