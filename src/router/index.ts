@@ -62,6 +62,7 @@ app.delete('/article/delete/:articleId', Article.articleDelete);
 // User
 app.post('/user/login', User.userLogin);
 app.post('/user/register', User.userRegister);
+app.post('/user/forget', User.userForget);
 app.post('/user/userInfo', User.userInfo);
 app.post('/user/zoneUserInfo', User.zoneUserInfo);
 app.post('/user/userInfoEdit', User.userInfoEdit);
@@ -89,7 +90,8 @@ app.post('/single/uploadfile', Upload.upload.any(), Upload.singleFileUpload);
 app.post('/deleteFile', Upload.deleteFile);
 
 // Email
-app.post('/sendEmail', Email.sendEmail);
+app.post('/sendRegisterEmail', Email.sendRegisterEmail);
+app.post('/sendForgetEmail', Email.sendForgetEmail);
 
 // Comment
 app.post('/comment/query', Comment.commentQuery);

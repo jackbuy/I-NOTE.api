@@ -7,7 +7,7 @@ import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 登录
-export const userLogin  = (req: any, res: any) => {
+export const userLogin = (req: any, res: any) => {
     const { email, password, type } = req.body;
     const query: any = {
         email,
@@ -30,14 +30,15 @@ export const userLogin  = (req: any, res: any) => {
 }
 
 // 注册
-export const userRegister  = async (req: any, res: any) => {
+export const userRegister = async (req: any, res: any) => {
     const { nickname, password, email, captcha } = req.body;
     const userQuery: any = {
         email
     };
     const captchaQuery: any = {
         ...userQuery,
-        captcha
+        captcha,
+        type: 0
     };
     const userData: any = {
         nickname,
@@ -67,8 +68,45 @@ export const userRegister  = async (req: any, res: any) => {
 
 }
 
+// 忘记密码
+export const userForget = async (req: any, res: any) => {
+    const { password, email, captcha } = req.body;
+    const userQuery: any = {
+        email
+    };
+    const captchaQuery: any = {
+        email,
+        captcha,
+        type: 1
+    };
+    const update: any = {
+        password: md5(password)
+    };
+
+    try {
+
+        const captcha = await Captcha.findOne({ query: captchaQuery });
+
+        if (captcha) {
+            const user = await User.findOne({ query: userQuery });
+            if (user) {
+                await User.updateOne({ query: userQuery, update });
+                SuccessMsg(res, {});
+            } else {
+                ErrorMsg(res, { msg: '邮箱未注册！' });
+            }
+        } else {
+            ErrorMsg(res, { msg: '无效验证码！' });
+        }
+
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
+
+}
+
 // 空间用户信息
-export const zoneUserInfo  = (req: any, res: any) => {
+export const zoneUserInfo = (req: any, res: any) => {
     const { userId, followUserId } = req.body;
     const userQuery: any = { _id: followUserId }
     const followQuery: any = { userId, type: 0, followUserId }
@@ -91,7 +129,7 @@ export const zoneUserInfo  = (req: any, res: any) => {
 }
 
 // 用户信息
-export const userInfo  = (req: any, res: any) => {
+export const userInfo = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const query: any = { _id: userId }
     const select: string = 'username nickname gender brief avatar theme level';
@@ -117,7 +155,7 @@ export const userInfo  = (req: any, res: any) => {
 }
 
 // 编辑
-export const userInfoEdit  = (req: any, res: any) => {
+export const userInfoEdit = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const query: any = { _id: userId };
     const update: any = {
