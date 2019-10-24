@@ -14,9 +14,10 @@ export const articleQuery  = (req: any, res: any) => {
         editTime: -1
     };
     let query: any = {
-        userId,
-        isPublish: false
+        userId
     };
+
+    let result: any = [];
 
     if (keyword) {
         const reg = new RegExp(keyword, 'i') //不区分大小写
@@ -26,10 +27,13 @@ export const articleQuery  = (req: any, res: any) => {
         ]
     }
 
-    const articleQuery = Article.queryListLimit({ query, currentPage, pageSize, querySort });
+    const articleQuery = Article.queryListLimit({ query, currentPage, pageSize });
 
     articleQuery.then((resp) => {
-        SuccessMsg(res, { data: resp });
+        result = resp;
+        return Article.count({query});
+    }).then((resp: any) => {
+        SuccessMsg(res, { data: result, total: resp });
     }).catch(() => {
         ErrorMsg(res, {});
     });

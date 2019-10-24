@@ -1,6 +1,4 @@
 // mongodb数据库地址
-// export const DB_URL: string = 'mongodb://localhost/inote-dev';
-// export const DB_URL: string = 'mongodb://localhost/inote-test';
 export const DB_URL: string = 'mongodb://localhost/inote-uat';
 
 // jwt的密钥

@@ -21,7 +21,8 @@ class ArticleModel extends BaseModel {
             limit: querylimit,
             sort: querySort
         }
-        return Article.find(query, select, options).
+        // return Article.find(query, select, options).
+        return Article.find(query, select).
             populate('userId', 'username nickname avatar').
             populate({
                 path: 'tagId',

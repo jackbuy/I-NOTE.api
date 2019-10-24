@@ -200,7 +200,7 @@ export const articlePublishUpdate = (req: any, res: any) => {
     });
 }
 
-// 删除发布
+// 删除发布(取消发布)
 export const articlePublishDelete  = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articlePublishId, articleId } = req.params;
