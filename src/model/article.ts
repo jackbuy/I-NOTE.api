@@ -17,12 +17,11 @@ class ArticleModel extends BaseModel {
         const querylimit: number = parseInt(pageSize);
         const select = '-__v -contentHtml';
         const options = {
-            skip: querySkip,
-            limit: querylimit,
+            // skip: querySkip,
+            // limit: querylimit,
             sort: querySort
         }
-        // return Article.find(query, select, options).
-        return Article.find(query, select).
+        return Article.find(query, select, options).
             populate('userId', 'username nickname avatar').
             populate({
                 path: 'tagId',
