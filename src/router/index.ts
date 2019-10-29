@@ -13,6 +13,7 @@ import * as Topic from './topic';
 import * as TopicArticle from './topicArticle';
 import * as Email from './email';
 import * as Comment from './comment';
+import * as FileManage from './fileManage';
 
 // Tag
 app.post('/tag/query', Tag.tagQueryLimit);
@@ -42,8 +43,7 @@ app.post('/follow/user', Follow.followUser);
 app.post('/follow/topic', Follow.followTopic);
 app.post('/follow/tag', Follow.followTag);
 
-// Article
-// 已发布
+// Article - 已发布
 app.post('/article/publish/query', ArticlePublish.articlePublishQuery);
 app.post('/article/publish/detail', ArticlePublish.articlePublishDetail);
 app.post('/article/publish', ArticlePublish.articlePublish);
@@ -52,7 +52,7 @@ app.delete('/article/publish/delete/:articlePublishId/:articleId', ArticlePublis
 app.post('/article/publish/like', ArticlePublish.articlePublishLike);
 app.post('/article/publish/collect', ArticlePublish.articlePublishCollect);
 
-// 未发布
+// Article - 未发布
 app.post('/article/query', Article.articleQuery);
 app.get('/article/detail/:articleId', Article.articleDetail);
 app.post('/article/add', Article.articleAdd);
@@ -81,7 +81,6 @@ app.delete('/topic/delete/:topicId', Topic.topicDelete);
 app.put('/topic/edit/:topicId', Topic.topicEdit);
 app.post('/topic/detail', Topic.topicDetail);
 
-
 // TopicArticle
 app.post('/topic/article/query', TopicArticle.topicArticleQuery);
 app.post('/topic/article/add', TopicArticle.topicArticleAdd);
@@ -101,5 +100,8 @@ app.post('/comment/query', Comment.commentQuery);
 app.post('/comment/save', Comment.commentSave);
 app.post('/comment/delete/:commentId', Comment.commentDelete);
 app.post('/comment/reply', Comment.commentReply);
+
+// photo
+app.post('/photo/query', FileManage.photoQuery);
 
 export default app

@@ -25,7 +25,14 @@ export const userLogin = (req: any, res: any) => {
         if (resp) {
             const { _id, email } = resp;
             const token = encode({ userId: _id, email });
-            SuccessMsg(res, { data: { token: token, userId: _id } });
+            User.updateOne({ 
+                query: { _id },
+                update: { lastSignAt: Date.now() }
+            }).then(() => {
+                SuccessMsg(res, { data: { token: token, userId: _id } });
+            }).catch(() => {
+                ErrorMsg(res, { msg: '登录失败！' });
+            });
         } else {
             ErrorMsg(res, { msg: '邮箱或密码错误！' });
         }

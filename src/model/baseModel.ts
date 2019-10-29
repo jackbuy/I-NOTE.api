@@ -61,6 +61,16 @@ export default class Model {
     }
 
     /**
+     * 移除文档
+     * @param query 查询条件
+     * @return promise
+     */
+    remove({ query }: any): Promise<object> {
+        if (!query) return Promise.reject('query is null');
+        return this.schema.deleteMany(query)
+    }
+
+    /**
      * 计数文档
      * @param query 查询条件
      * @return promise

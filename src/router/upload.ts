@@ -48,15 +48,16 @@ export const multiFileUpload = () => {}
 // 单文件上传
 export const singleFileUpload = (req: any, res: any) => {
     const { files } = req;
-    const { type } = req.body;
+    const { type, articleId } = req.body;
     const { userId } = req.userMsg;
     const { originalname, filename, mimetype, size } = files[0];
     const params = {
-        name: originalname,
-        filename,
+        originalName: originalname,
+        fileName: filename,
         size,
         type,
         mimetype,
+        articleId,
         userId
     }
     if (req.files.length <= 0 || req.files == null) return ErrorMsg(res, {});

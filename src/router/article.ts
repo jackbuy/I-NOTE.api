@@ -4,6 +4,7 @@
 
 import { Article } from '../model';
 import Utils from '../utils/utils';
+import { fileDel } from './fileManage';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
@@ -106,7 +107,11 @@ export const articleDelete  = (req: any, res: any) => {
     Article.removeOne({ query }).then((resp: any) => {
         const { deletedCount } = resp;
         if (deletedCount === 1) {
-            SuccessMsg(res, {});
+            fileDel(articleId).then(() => {
+                SuccessMsg(res, {});
+            }).catch(() => {
+                ErrorMsg(res, { msg: '相关图片删除失败！' });
+            });
         } else {
             ErrorMsg(res, { msg: '文章删除失败！' });
         }
