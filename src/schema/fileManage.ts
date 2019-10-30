@@ -6,9 +6,11 @@ export default new Schema({ // 文件管理
     originalName: { type: String }, // 原始文件名
     fileName: { type: String }, // 文件名
     mimetype: { type: String }, // 文件类型
-    type: { type: Number, default: 0 }, // 0 图片
-    articleId: { type: ObjectId, ref: 'Article' }, // 文章Id
     size: { type: Number, default: 0 }, // 文件大小
     createTime: { type: Date, default: Date.now },
-    userId: { type: ObjectId, ref: 'User' }
+    type: { type: String }, // 0 文章 1专题 2 头像
+    articleId: { type: ObjectId, ref: 'Article' }, // 文章Id
+    topicId: { type: ObjectId, ref: 'Topic' }, // 专题Id
+    userAvatarId: { type: ObjectId, ref: 'User' }, // 用户头像Id
+    userId: { type: ObjectId, ref: 'User' } // 用户Id
 });

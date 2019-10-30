@@ -107,7 +107,7 @@ export const articleDelete  = (req: any, res: any) => {
     Article.removeOne({ query }).then((resp: any) => {
         const { deletedCount } = resp;
         if (deletedCount === 1) {
-            fileDel(articleId).then(() => {
+            fileDel(articleId, '0').then(() => {
                 SuccessMsg(res, {});
             }).catch(() => {
                 ErrorMsg(res, { msg: '相关图片删除失败！' });

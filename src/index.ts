@@ -14,7 +14,7 @@ app.all("*", function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With,token");
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    res.header("Content-Type", "application/json;charset=utf-8");
+    // res.header("Content-Type", "application/json;charset=utf-8"); // 加上后，在加载静态资源图片时会乱码
     if (req.method == 'OPTIONS') {
         res.sendStatus(200);
     } else {
@@ -24,7 +24,8 @@ app.all("*", function(req, res, next) {
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(express.static(staticResouces));
+app.use(express.static(staticResouces)); // 静态资源目录 http://localhost:10000/xxxx.png
+// app.use('/files', express.static(staticResouces)) // 静态资源目录 - 虚拟一个files目录 http://localhost:10000/files/xxxx.png
 
 app.use((req: any, res: any, next) => {
     const token: string = req.body.token || req.query.token || req.headers.token;

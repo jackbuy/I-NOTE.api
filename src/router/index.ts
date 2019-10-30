@@ -86,11 +86,6 @@ app.post('/topic/article/query', TopicArticle.topicArticleQuery);
 app.post('/topic/article/add', TopicArticle.topicArticleAdd);
 app.delete('/topic/:topicId/article/delete/:topicArticleId', TopicArticle.topicArticleDelete);
 
-// upload
-app.post('/uploadfile', Upload.upload.any(), Upload.uploadFile);
-app.post('/single/uploadfile', Upload.upload.any(), Upload.singleFileUpload);
-app.post('/deleteFile', Upload.deleteFile);
-
 // Email
 app.post('/sendRegisterEmail', Email.sendRegisterEmail);
 app.post('/sendForgetEmail', Email.sendForgetEmail);
@@ -101,7 +96,8 @@ app.post('/comment/save', Comment.commentSave);
 app.post('/comment/delete/:commentId', Comment.commentDelete);
 app.post('/comment/reply', Comment.commentReply);
 
-// photo
-app.post('/photo/query', FileManage.photoQuery);
+// fileManage
+app.post('/file/query', FileManage.fileQuery);
+app.post('/file/single/upload', Upload.uploadFile.any(), FileManage.singleFileUpload);
 
 export default app

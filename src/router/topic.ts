@@ -1,6 +1,6 @@
 import { Follow, Topic, TopicArticle } from '../model';
 import { updateTopicCount } from './common';
-import { delFile } from './upload';
+import { fileDel } from './fileManage';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -158,22 +158,18 @@ export const topicDelete  = (req: any, res: any) => {
     const { topicId } = req.params;
     const query = { _id: topicId };
 
-    const topicRemove = Topic.removeOne({ query });
-
     TopicArticle.count({ query: { topicId }}).then((resp: any) => {
         const count: number = resp;
         if (count > 0) return ErrorMsg(res, { msg: '专题已关联文章，不能删除！' });
-        Topic.findOne({ query }).then((resp: any) => {
-            const { img } = resp;
-            delFile(img).then(() => { // 删除封面文件
-                return topicRemove;
-            }).then(() => {
-                return updateTopicCount(userId);
-            }).then(() => {
-                SuccessMsg(res, {});
-            }).catch(() => {
-                ErrorMsg(res, {});
-            });
-        })
+        Topic.removeOne({ query }).then(() => {
+            return updateTopicCount(userId);
+        }).then(() => {
+            return fileDel(topicId, '1');
+        }).then(() => {
+            SuccessMsg(res, {});
+        }).catch(() => {
+            ErrorMsg(res, {});
+        });
+
     });
 }
