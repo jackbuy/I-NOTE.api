@@ -84,7 +84,7 @@ app.post('/topic/detail', Topic.topicDetail);
 // TopicArticle
 app.post('/topic/article/query', TopicArticle.topicArticleQuery);
 app.post('/topic/article/add', TopicArticle.topicArticleAdd);
-app.delete('/topic/:topicId/article/delete/:topicArticleId', TopicArticle.topicArticleDelete);
+app.delete('/topic/:topicId/article/delete/:articleId', TopicArticle.topicArticleDelete);
 
 // Email
 app.post('/sendRegisterEmail', Email.sendRegisterEmail);

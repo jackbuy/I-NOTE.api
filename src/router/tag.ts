@@ -109,7 +109,7 @@ export const tagRecommend = async (req: any, res: any) => {
         parentId: { $exists: true }
     };
     const currentPage: string = '1';
-    const pageSize: string = '10';
+    const pageSize: string = '14';
     const querySort: any = { articleCount: -1 };
 
     try {

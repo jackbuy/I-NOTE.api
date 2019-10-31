@@ -24,11 +24,10 @@ export const topicArticleQuery = (req: any, res: any) => {
 // 新增
 export const topicArticleAdd = (req: any, res: any) => {
     const { userId } = req.userMsg;
-    const { topicId, articleId, articleTitle } = req.body
+    const { topicId, articleId } = req.body
     const data: any = {
         topicId,
         articleId,
-        articleTitle,
         createUserId: userId,
         createTime: Date.now()
     }
@@ -44,12 +43,15 @@ export const topicArticleAdd = (req: any, res: any) => {
 
 // 删除
 export const topicArticleDelete = (req: any, res: any) => {
-    const { topicId, topicArticleId } = req.params;
+    const { userId } = req.userMsg;
+    const { topicId, articleId } = req.params;
     const query: any = {
-        _id: topicArticleId
+        topicId,
+        articleId,
+        createUserId: userId
     }
 
-    TopicArticle.removeOne({ query }).then(() => {
+    TopicArticle.removeOne({ query }).then((resp) => {
         return updateTopicArticleCount(topicId);
     }).then(() => {
         SuccessMsg(res, {});
