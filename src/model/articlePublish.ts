@@ -15,7 +15,7 @@ class ArticlePublishModel extends BaseModel {
     queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
         const querylimit: number = parseInt(pageSize);
-        const select = '-__v -contentHtml';
+        const select = '-__v';
         const options = {
             skip: querySkip,
             limit: querylimit,
