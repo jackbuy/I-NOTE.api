@@ -2,7 +2,7 @@
  * 已发布文章
  */
 
-import { Article, ArticlePublish, Like, Collect, Follow } from '../model';
+import { Article, ArticlePublish, Like, Collect, Follow, TopicArticle } from '../model';
 import { updateArticleCount, updateCollectCount, updateTagArticleCount } from './common';
 import { messageSave } from './message';
 import { emit } from '../socket';
@@ -155,7 +155,7 @@ export const articlePublishLike = (req: any, res: any) => {
 }
 
 // 发布
-export const articlePublish  = (req: any, res: any) => {
+export const articlePublish = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const data: any = {
         ...req.body,
@@ -201,7 +201,7 @@ export const articlePublishUpdate = (req: any, res: any) => {
 }
 
 // 删除发布(取消发布)
-export const articlePublishDelete  = (req: any, res: any) => {
+export const articlePublishDelete = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articlePublishId, articleId } = req.params;
     const query = {
@@ -213,24 +213,30 @@ export const articlePublishDelete  = (req: any, res: any) => {
         isPublish: false
     }
 
-    ArticlePublish.removeOne({ query }).then((resp: any) => {
-        const { deletedCount } = resp;
-        if (deletedCount === 1) {
-            Article.updateOne({ query: articleQuery, update }).then(() => {
-                return updateArticleCount(userId);
-            }).then(() => {
-                return updateTagArticleCount();
-            }).then(() => {
-                // emit('NEW_POST', {
-                //     type: 'newPost'
-                // });
-                SuccessMsg(res, {});
-            });
-        } else {
-            ErrorMsg(res, { msg: '文章删除失败！' });
-        }
-        return 
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: '文章已不存在！' });
-    });
+    try {
+        let isLike = await Like.findOne({
+            query: { articleId: articlePublishId }
+        });
+        if (isLike) return ErrorMsg(res, { msg: '文章已被点赞，不能取消发布！' });
+
+        let isCollect = await Collect.findOne({
+            query: { articleId: articlePublishId }
+        });
+        if (isCollect) return ErrorMsg(res, { msg: '文章已被收藏，不能取消发布！' });
+
+        let isTopicArticle = await TopicArticle.findOne({
+            query: { articleId: articlePublishId }
+        });
+        if (isTopicArticle) return ErrorMsg(res, { msg: '文章已被加入专题，不能取消发布！' });
+
+        await ArticlePublish.removeOne({ query });
+        await Article.updateOne({ query: articleQuery, update });
+        await updateArticleCount(userId);
+        await updateTagArticleCount();
+
+        SuccessMsg(res, {});
+    } catch (err) {
+        ErrorMsg(res, { msg: '文章删除失败！' });
+    }
+
 }
