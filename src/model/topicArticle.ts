@@ -22,7 +22,7 @@ class TopicModel extends BaseModel{
         return TopicArticle.find(query, select, options).
             populate({
                 path: 'articleId',
-                select: '-__v -contentText -contentHtml',
+                select: '-__v -contentText',
                 populate: [
                     { path: 'userId', select: 'username nickname avatar' },
                     // { path: 'tagId', select: 'title' }
