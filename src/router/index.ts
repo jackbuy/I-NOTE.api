@@ -92,6 +92,7 @@ app.post('/sendForgetEmail', Email.sendForgetEmail);
 
 // Comment
 app.post('/comment/query', Comment.commentQuery);
+app.post('/comment/user/query', Comment.commentUserQuery);
 app.post('/comment/save', Comment.commentSave);
 app.post('/comment/delete/:commentId', Comment.commentDelete);
 app.post('/comment/reply', Comment.commentReply);

@@ -14,7 +14,7 @@ mongoose.connection.on('connected', function () {
 
 // 连接异常
 mongoose.connection.on('error',function (err) {
-    console.log('MongoDB连接Error: ' + err);
+    console.log('MongoDB连接失败: ' + err);
 });
 
 // 连接断开

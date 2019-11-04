@@ -20,6 +20,23 @@ export const commentQuery = (req: any, res: any) => {
     })
 }
 
+// 我的评论
+export const commentUserQuery = (req: any, res: any) => {
+    const { userId, currentPage, pageSize, } = req.body;
+    const query: any = {
+        commentUserId: userId,
+        parentId: null
+    }
+    const querySort: any = {
+        _id: 1
+    }
+    Comment.queryUserListLimit({ query, querySort, currentPage, pageSize }).then((resp: any) => {
+        SuccessMsg(res, { data: resp });
+    }).catch(() => {
+        ErrorMsg(res, {});
+    })
+}
+
 // 保存
 export const commentSave = (req: any, res: any) => {
     const { userId } = req.userMsg;

@@ -5,7 +5,6 @@ import { getNewMessageCount } from './common';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 
-
 // 列表
 export const messageQuery = (req: any, res: any) => {
     const { userId } = req.userMsg;

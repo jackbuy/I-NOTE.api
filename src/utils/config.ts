@@ -32,7 +32,8 @@ export const ignoreJwtApiUrl: string[] = [
     '/sendRegisterEmail',
     '/sendForgetEmail',
     '/tag/detail',
-    '/comment/query'
+    '/comment/query',
+    '/comment/user/query'
 ];
 
 export default {
