@@ -5,7 +5,6 @@ const ObjectId = Schema.Types.ObjectId;
 const tagSchema = new Schema({ //tag
     title: { type: String },
     articleCount: { type: Number, default: 0 }, // 文章数量
-    isFollow: { type: Boolean, default: false },
     parentId: { type: ObjectId },
     createUserId: { type: ObjectId, ref: 'User' }, // 创建者
     createTime: { type: Date }, // 创建时间
@@ -14,6 +13,6 @@ const tagSchema = new Schema({ //tag
     children: { type: Array }
 });
 
-tagSchema.index({ title: 1, articleCount: 1, isFollow: 1 }, { unique: true });
+tagSchema.index({ title: 1, articleCount: 1 }, { unique: true });
 
 export default tagSchema;

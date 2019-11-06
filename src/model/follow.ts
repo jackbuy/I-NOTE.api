@@ -21,9 +21,9 @@ class FollowModel extends BaseModel {
             sort: querySort
         }
         return Follow.find(query, select, options).
-            populate('followUserId', 'nickname avatar isFollow').
-            populate('followTopicId', 'title img isFollow').
-            populate('followTagId', 'title isFollow').
+            populate('followUserId', 'nickname avatar').
+            populate('followTopicId', 'title img').
+            populate('followTagId', 'title').
             populate('userId', 'nickname avatar')
     }
 

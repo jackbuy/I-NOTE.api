@@ -42,7 +42,7 @@ export const topicUserQuery  = (req: any, res: any) => {
 }
 
 // 我的专题列表（返回是否已加入专题）
-export const topicUserList  = (req: any, res: any) => {
+export const topicUserList = (req: any, res: any) => {
     const { articleId, currentPage, pageSize } = req.body;
     const { userId } = req.userMsg;
     const query: any = { userId };
@@ -57,7 +57,7 @@ export const topicUserList  = (req: any, res: any) => {
         if (resp) topicIds = resp.map((item: any) => item.topicId );
         topics.map((item: any) => {
             topicIds.map((id) => {
-                if (item._id.equals(id)) item.isTopic = true;
+                item._doc.isTopic = item._id.equals(id) ? true : false;
             });
         });
         SuccessMsg(res, { data: topics });
@@ -100,7 +100,7 @@ export const topicDetail = (req: any, res: any) => {
         if (resp) result = resp;
         return followFind;
     }).then((resp: any) => {
-        if (resp) result.isFollow = true;
+        result._doc.isFollow = resp ? true : false;
         SuccessMsg(res, { data: result });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -131,7 +131,7 @@ export const topicAdd = (req: any, res: any) => {
 }
 
 // 编辑
-export const topicEdit  = (req: any, res: any) => {
+export const topicEdit = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { topicId } = req.params;
     const update: any = {
@@ -142,7 +142,7 @@ export const topicEdit  = (req: any, res: any) => {
     const query: any = { _id: topicId };
 
     const topicUpdate = Topic.updateOne({ query, update });
-    
+
     topicUpdate.then(() => {
         return updateTopicCount(userId);
     }).then(() => {
@@ -153,7 +153,7 @@ export const topicEdit  = (req: any, res: any) => {
 }
 
 // 删除
-export const topicDelete  = (req: any, res: any) => {
+export const topicDelete = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { topicId } = req.params;
     const query = { _id: topicId };

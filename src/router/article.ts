@@ -8,7 +8,7 @@ import { fileDel } from './fileManage';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
-export const articleQuery  = (req: any, res: any) => {
+export const articleQuery = (req: any, res: any) => {
     const { type, keyword, currentPage, pageSize } = req.body;
     const { userId } = req.userMsg;
     const querySort: any = {
@@ -62,7 +62,7 @@ export const articleDetail = (req: any, res: any) => {
 }
 
 // 新增
-export const articleAdd  = (req: any, res: any) => {
+export const articleAdd = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const data: any = {
         ...req.body,
@@ -96,7 +96,7 @@ export const articleEdit = (req: any, res: any) => {
 }
 
 // 删除
-export const articleDelete  = (req: any, res: any) => {
+export const articleDelete = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
     const query = {

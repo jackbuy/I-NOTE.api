@@ -81,7 +81,7 @@ export const followUser = (req: any, res: any) => {
         }).then(() => {
             return updateFansCount(followUserId);
         }).then(() => {
-            return  messageSave({ fromUserId: userId, toUserId: followUserId, userId: followUserId, type: 2 });
+            return messageSave({ fromUserId: userId, toUserId: followUserId, userId: followUserId, type: 2 });
         }).then(() => {
             SuccessMsg(res, { msg });
         }).catch(() => {
@@ -114,7 +114,7 @@ export const followTopic = (req: any, res: any) => {
         }).then(() => {
             return updateTopicFollowCount(followTopicId);
         }).then(() => {
-            return  messageSave({ fromUserId: userId, toUserId: followUserId, topicId: followTopicId, type: 3 });
+            return messageSave({ fromUserId: userId, toUserId: followUserId, topicId: followTopicId, type: 3 });
         }).then(() => {
             SuccessMsg(res, { msg });
         }).catch(() => {

@@ -133,7 +133,7 @@ export const zoneUserInfo = (req: any, res: any) => {
         if (resp) result = resp;
         return followFind;
     }).then((resp: any) => {
-        if (resp) result.isFollow = true;
+        result._doc.isFollow = resp ? true : false;
         SuccessMsg(res, { data: result });
     }).catch(() => {
         ErrorMsg(res, {});
@@ -216,7 +216,7 @@ export const userQuery = async (req: any, res: any) => {
         ]
     }
     const querySort: any = { articleCount: -1, fansCount: -1 };
-    const select: string = '-__v -password -theme -isFollow';
+    const select: string = '-__v -password -theme';
 
     try {
         const result = await User.queryListLimit({ query, currentPage, pageSize, select, querySort });

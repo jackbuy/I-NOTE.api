@@ -53,15 +53,15 @@ export const articlePublishDetail  = (req: any, res: any) => {
         return ArticlePublish.queryDetail({ query })
     }).then((resp: any) => {
         if (resp) result = resp;
-        return userId ? Follow.findOne({ query: { userId, followUserId: resp.userId._id } }) : Promise.resolve(null);
+        if (userId) return Follow.findOne({ query: { userId, followUserId: resp.userId._id } });
     }).then((resp: any) => {
-        if (resp) result.userId.isFollow = true;
-        return userId ? Like.findOne({ query: { createUserId: userId, articleId } }) : Promise.resolve(null);
+        result.userId._doc.isFollow = resp ? true : false;
+        if (userId) return Like.findOne({ query: { createUserId: userId, articleId } });
     }).then((resp: any) => {
-        if (resp) result.isLike = true;
-        return userId ? Collect.findOne({ query: { createUserId: userId, articleId } }) : Promise.resolve(null);
+        result._doc.isLike = resp ? true : false;
+        if (userId) return Collect.findOne({ query: { createUserId: userId, articleId } });
     }).then((resp: any) => {
-        if (resp) result.isCollect = true;
+        result._doc.isCollect = resp ? true : false;
         SuccessMsg(res, { data: result });
     }).catch(() => {
         ErrorMsg(res, {});

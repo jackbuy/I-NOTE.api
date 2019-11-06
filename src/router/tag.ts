@@ -15,7 +15,7 @@ const setArr = ({ arr1, arr2, t, op1, op2 }: setArr) => {
     let _arr: any = [];
     arr1.map((item: any) => {
         arr2.map((item2: any) => {
-            if (item[op1].equals(item2[op2])) item[t] = true;
+            item._doc[t] = item[op1].equals(item2[op2]) ? true : false;
         })
         _arr.push(item);
     })
@@ -138,7 +138,7 @@ export const tagDetail = async (req: any, res: any) => {
 
         if (userId) {
             const follow: any = await Follow.findOne({ query: { userId, followTagId: tagId } })
-            if (follow) result.isFollow = true;
+            result._doc.isFollow = follow ? true : false;
         }
 
         SuccessMsg(res, { data: result });

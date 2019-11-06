@@ -5,6 +5,7 @@ import { decode } from './utils/jwt';
 import { staticResouces, ignoreJwtApiUrl } from './utils/config';
 import router from './router';
 import socket from './socket';
+import { resolve } from 'path';
 
 const app = express();
 

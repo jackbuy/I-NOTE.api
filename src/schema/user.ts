@@ -8,7 +8,6 @@ export default new Schema({ //用户
     password: { type: String },
 
     level: { type: Number, default: 0 }, // 等级 0：普通会员 1000: 超级管理员
-    isFollow: { type: Boolean, default: false }, // 是否已关注
 
     articleCount: { type: Number, default: 0 }, // 文章数量
     topicCount: { type: Number, default: 0 }, // 专题数量
@@ -22,5 +21,5 @@ export default new Schema({ //用户
     avatar: { type: String, default: '' }, // 头像
     gender: { type: Number }, // 性别 0女 1男
     brief: { type: String, default: '' }, // 简介,一句话介绍自己，70个字符限制
-    theme: { type: String, default: 'light' }
+    theme: { type: String, default: 'light' } // 主题
 });
