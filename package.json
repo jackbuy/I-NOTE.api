@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "supervisor -w dist ./dist/index.js",
     "build": "tsc",
-    "tsc-w": "tsc -w"
+    "tsc-w": "tsc -w",
+    "pm2": "pm2 start ./dist/index.js --name I-NOTE.server"
   },
   "author": "",
   "license": "ISC",

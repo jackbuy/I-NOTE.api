@@ -2,6 +2,7 @@ import express from 'express';
 const app = express();
 
 import * as Article from './article';
+import * as ArticleCate from './articleCate';
 import * as ArticlePublish from './articlePublish';
 import * as User from './user';
 import * as Tag from './tag';
@@ -58,6 +59,12 @@ app.get('/article/detail/:articleId', Article.articleDetail);
 app.post('/article/add', Article.articleAdd);
 app.put('/article/edit/:articleId', Article.articleEdit);
 app.delete('/article/delete/:articleId', Article.articleDelete);
+
+// ArticleCate
+app.post('/article/cate/query', ArticleCate.articleCateQuery);
+app.post('/article/cate/add', ArticleCate.articleCateAdd);
+app.put('/article/cate/edit/:articleCateId', ArticleCate.articleCateEdit);
+app.post('/article/cate/delete/:articleCateId', ArticleCate.articleCateDelete);
 
 // User
 app.post('/user/login', User.userLogin);

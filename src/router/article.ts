@@ -9,7 +9,7 @@ const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
 export const articleQuery = (req: any, res: any) => {
-    const { type, keyword, currentPage, pageSize } = req.body;
+    const { articleCateId, type, keyword, currentPage, pageSize } = req.body;
     const { userId } = req.userMsg;
     const querySort: any = {
         editTime: -1
@@ -17,6 +17,13 @@ export const articleQuery = (req: any, res: any) => {
     let query: any = {
         userId
     };
+    if (articleCateId !== 'all') {
+        if (articleCateId !== 'no-cate') {
+            query.articleCateId = articleCateId;
+        } else {
+            query.articleCateId = { $exists: false };
+        }
+    }
     if (type === 'publish') query.isPublish = true;
     if (type === 'draft') query.isPublish = false;
 

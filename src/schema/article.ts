@@ -7,6 +7,7 @@ const articleSchema = new Schema({ //文章
     contentHtml: { type: String },
     isPublish: { type: Boolean, default: false }, // 是否已发布
     articlePublishId: { type: ObjectId, ref: 'article' }, // 发布文章Id
+    articleCateId: { type: ObjectId, ref: 'articleCate' }, // 文章分类Id
     tagId: { type: ObjectId, ref: 'Tag' },
     userId: { type: ObjectId, ref: 'User' },
     createTime: { type: Date, default: Date.now },

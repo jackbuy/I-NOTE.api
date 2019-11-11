@@ -6,6 +6,7 @@ const articleSchema = new Schema({ // 发布的文章
     title: { type: String },
     contentHtml: { type: String },
     articleId: { type: ObjectId, ref: 'ArticlePublish' }, // 文章Id
+    // articleCateId: { type: ObjectId, ref: 'articleCate' }, // 文章分类Id
     tagId: { type: ObjectId, ref: 'Tag' },
     userId: { type: ObjectId, ref: 'User' },
     likeCount: { type: Number, default: 0 }, // 点赞数量

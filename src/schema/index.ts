@@ -23,6 +23,7 @@ mongoose.connection.on('disconnected', function () {
 });
 
 import article from './article';
+import articleCate from './articleCate';
 import articlePublish from './articlePublish';
 import tag from './tag';
 import user from './user';
@@ -37,6 +38,7 @@ import captcha from './captcha';
 import comment from './comment';
 
 export const Article = mongoose.model('Article', article);
+export const ArticleCate = mongoose.model('ArticleCate', articleCate);
 export const ArticlePublish = mongoose.model('ArticlePublish', articlePublish);
 export const Tag = mongoose.model('Tag', tag);
 export const User = mongoose.model('User', user);
