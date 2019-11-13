@@ -2,7 +2,7 @@
  * 文章分类
  */
 
-import { ArticleCate } from '../model';
+import { ArticleCate, Article } from '../model';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -58,6 +58,38 @@ export const articleCateEdit = (req: any, res: any) => {
 }
 
 // 删除
-export const articleCateDelete = (req: any, res: any) => {
+export const articleCateDelete = async (req: any, res: any) => {
     const { userId } = req.userMsg;
+    const { articleCateId } = req.params;
+    const cateQuery = {
+        _id: articleCateId,
+        userId
+    };
+    const articleQuery = {
+        articleCateId,
+        userId
+    };
+
+    try {
+        await ArticleCate.removeOne({ query: cateQuery });
+        let articles: any = await Article.find({ query: articleQuery });
+    
+        if (articles && articles.length > 0) {
+            articles.map(async (item: any) => {
+                const query = {
+                    _id: item._id
+                };
+                // 删除一个字段
+                const update = {
+                    $unset:{'articleCateId':''},
+                    editTime: Date.now()
+                };
+                await Article.updateOne({ query, update });
+            });
+        }
+    
+        SuccessMsg(res, {});
+    } catch (err) {
+        ErrorMsg(res, { msg: err });
+    }
 }

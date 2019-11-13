@@ -64,7 +64,7 @@ app.delete('/article/delete/:articleId', Article.articleDelete);
 app.post('/article/cate/query', ArticleCate.articleCateQuery);
 app.post('/article/cate/add', ArticleCate.articleCateAdd);
 app.put('/article/cate/edit/:articleCateId', ArticleCate.articleCateEdit);
-app.post('/article/cate/delete/:articleCateId', ArticleCate.articleCateDelete);
+app.delete('/article/cate/delete/:articleCateId', ArticleCate.articleCateDelete);
 
 // User
 app.post('/user/login', User.userLogin);

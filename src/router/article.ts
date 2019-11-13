@@ -33,7 +33,7 @@ export const articleQuery = (req: any, res: any) => {
         const reg = new RegExp(keyword, 'i') //不区分大小写
         query.$or = [ //多条件，数组
             { title: { $regex: reg } },
-            { contentText: { $regex: reg } }
+            { contentHtml: { $regex: reg } }
         ]
     }
 
@@ -88,11 +88,23 @@ export const articleAdd = (req: any, res: any) => {
 export const articleEdit = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
-    const update: any = {
-        ...req.body,
-        userId,
-        editTime: Date.now()
-    };
+    const { articleCateId } = req.body;
+    let update: any;
+
+    // 切换分组（未分组）
+    if (articleCateId && articleCateId === 'no-cate') {
+        update = {
+            $unset:{'articleCateId':''},
+            editTime: Date.now()
+        };
+    } else {
+        update = {
+            ...req.body,
+            userId,
+            editTime: Date.now()
+        };
+    }
+
     const query: any = { _id: articleId };
 
     Article.updateOne({ query, update }).then(() => {

@@ -20,7 +20,7 @@ export const articlePublishQuery  = (req: any, res: any) => {
         const reg = new RegExp(keyword, 'i') //不区分大小写
         query.$or = [ //多条件，数组
             { title: { $regex: reg } },
-            { contentText: { $regex: reg } }
+            { contentHtml: { $regex: reg } }
         ]
     }
 
