@@ -15,6 +15,16 @@ import * as TopicArticle from './topicArticle';
 import * as Email from './email';
 import * as Comment from './comment';
 import * as FileManage from './fileManage';
+import * as Letter from './letter';
+import * as LetterUser from './letterUser';
+
+// Letter
+app.post('/letter/query', Letter.LetterQueryLimit);
+app.post('/letter/add', Letter.LetterAdd);
+
+app.post('/letterUser/query', LetterUser.LetterUserQueryLimit);
+app.post('/letterUser/add/:toUserId', LetterUser.LetterUserAdd);
+// app.delete('/tag/delete/:tagId', LetterUser.TagDelete);
 
 // Tag
 app.post('/tag/query', Tag.tagQueryLimit);

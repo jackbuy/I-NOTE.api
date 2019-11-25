@@ -10,7 +10,7 @@ export const topicArticleQuery = (req: any, res: any) => {
     const { topicId, currentPage, pageSize } = req.body;
     const query: any = {
         topicId
-    }
+    };
 
     const topicArticleQuery = TopicArticle.topicArticleQueryLimit({ query, currentPage, pageSize });
 

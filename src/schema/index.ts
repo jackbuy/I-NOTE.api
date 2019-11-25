@@ -36,6 +36,8 @@ import topic from './topic';
 import topicArticle from './topicArticle';
 import captcha from './captcha';
 import comment from './comment';
+import letter from './letter';
+import letterUser from './letterUser';
 
 export const Article = mongoose.model('Article', article);
 export const ArticleCate = mongoose.model('ArticleCate', articleCate);
@@ -51,3 +53,5 @@ export const Topic = mongoose.model('Topic', topic);
 export const TopicArticle = mongoose.model('TopicArticle', topicArticle);
 export const Captcha = mongoose.model('Captcha', captcha);
 export const Comment = mongoose.model('Comment', comment);
+export const Letter = mongoose.model('Letter', letter);
+export const LetterUser = mongoose.model('LetterUser', letterUser);

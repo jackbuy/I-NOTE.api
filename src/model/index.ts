@@ -12,9 +12,11 @@ import Topic from './topic';
 import TopicArticle from './topicArticle';
 import User from './user';
 import Comment from './comment';
+import Letter from './letter';
+import LetterUser from './letterUser';
 
 export {
     Article, ArticleCate, ArticlePublish,  Captcha, Collect, Follow, Like,
     Message, FileManage, Tag, Topic, User, Comment,
-    TopicArticle
+    TopicArticle, Letter, LetterUser
 }

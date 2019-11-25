@@ -1,6 +1,5 @@
 import BaseModel from './baseModel';
 import { Comment } from '../schema';
-import mongoose from 'mongoose';
 
 interface query {
     query: any;
