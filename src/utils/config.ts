@@ -46,11 +46,11 @@ export default {
         apiKey: 'XUfx4WXgipX9Arzj'
     },
     // 上传头像、图片文件到七牛 [必填, 否则将不支持图片上传]
-	qiniuConfig: {
-		accessKey: 'yeHi-3z2QtuHgrY8P2voXRb89xjNWiEryRRqUXCH',
+    qiniuConfig: {
+        accessKey: 'yeHi-3z2QtuHgrY8P2voXRb89xjNWiEryRRqUXCH',
         secretKey: '7HKEhRCnF6fZcp5nSd_a0OByAChNdAqWblKSCNqo',
         bucket: '',
         // 七牛的资源地址
         url: '//img.inote.com'
-	}
+    }
 }

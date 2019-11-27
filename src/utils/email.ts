@@ -1,6 +1,6 @@
 
 import config from './config'
-const SendCloud = require('sendcloud-client');
+import SendCloud from 'sendcloud-client';
 
 let sendCloudConfig = config.sendCloudConfig;
 let client: any

@@ -1,7 +1,7 @@
 
 /**
  * Promise 异常处理
- * @param promise 
+ * @param promise
  */
 export default function to(promise: Promise<object>): any {
 
@@ -14,5 +14,4 @@ export default function to(promise: Promise<object>): any {
   }
 
   return promise.then(data => [null, data]).catch(err => [err]);
-  
 }
