@@ -1,6 +1,5 @@
 import BaseModel from './baseModel';
 import { LetterUser } from '../schema';
-
 interface query {
     query: any;
     currentPage?: string;
@@ -25,6 +24,7 @@ class Model extends BaseModel {
             populate('fromUserId', 'nickname').
             populate('toUserId', 'nickname')
     }
+
 }
 
 export default new Model(LetterUser)

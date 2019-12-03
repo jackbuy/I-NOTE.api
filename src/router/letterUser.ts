@@ -1,4 +1,4 @@
-import { LetterUser } from '../model';
+import { LetterUser, Letter } from '../model';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -17,9 +17,26 @@ export const LetterUserQueryLimit = async (req: any, res: any) => {
         ]
     }
 
-    try {
+    // const queryCount = {
 
+    // }
+
+    try {
+        let result: any = [];
         const userList = await LetterUser.queryListLimit({ query });
+
+        // await userList.map(async (item: any) => {
+        //     const count = await Letter.count({
+        //         query: {
+        //             createTime: {
+        //                 $gte: item.readTime
+        //             }
+        //         }
+        //     });
+        //     item._doc.noReadCount = count;
+
+        //     result.push(item);
+        // });
 
         SuccessMsg(res, { data: userList });
 
