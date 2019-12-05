@@ -8,6 +8,8 @@ import Like from './like';
 import Message from './message';
 import FileManage from './fileManage';
 import Tag from './tag';
+import Ad from './ad';
+import AdCate from './adCate';
 import Topic from './topic';
 import TopicArticle from './topicArticle';
 import User from './user';
@@ -18,5 +20,6 @@ import LetterUser from './letterUser';
 export {
     Article, ArticleCate, ArticlePublish,  Captcha, Collect, Follow, Like,
     Message, FileManage, Tag, Topic, User, Comment,
-    TopicArticle, Letter, LetterUser
+    TopicArticle, Letter, LetterUser,
+    Ad, AdCate
 }

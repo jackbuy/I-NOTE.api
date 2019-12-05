@@ -6,6 +6,8 @@ import * as ArticleCate from './articleCate';
 import * as ArticlePublish from './articlePublish';
 import * as User from './user';
 import * as Tag from './tag';
+import * as Ad from './ad';
+import * as AdCate from './adCate';
 import * as Collect from './collect';
 import * as Message from './message';
 import * as Upload from './upload';
@@ -117,5 +119,15 @@ app.post('/comment/reply', Comment.commentReply);
 // fileManage
 app.post('/file/query', FileManage.fileQuery);
 app.post('/file/single/upload', Upload.uploadFile.any(), FileManage.singleFileUpload);
+
+// ad
+app.post('/ad/cate/query', AdCate.adCateQuery);
+app.post('/ad/cate/add', AdCate.adCateAdd);
+app.post('/ad/cate/edit', AdCate.adCateEdit);
+app.delete('/ad/cate/delete/:cateId', AdCate.adCateDel);
+app.post('/ad/query', Ad.adQuery);
+app.post('/ad/add', Ad.adAdd);
+app.post('/ad/edit', Ad.adEdit);
+app.delete('/ad/delete/:adId', Ad.adDel);
 
 export default app
