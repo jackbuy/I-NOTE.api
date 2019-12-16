@@ -4,16 +4,16 @@ import { updateCollectCount } from './common';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
-export const collectQuery  = (req: any, res: any) => {
+export const collectQuery = async (req: any, res: any) => {
     const { userId, currentPage, pageSize } = req.body;
     const query: any = { createUserId: userId };
-    const collectQuery = Collect.queryListLimit({ query, currentPage, pageSize });
 
-    collectQuery.then((resp) => {
-        SuccessMsg(res, { data: resp });
-    }).catch(() => {
+    try{
+        const result: any = await Collect.queryListLimit({ query, currentPage, pageSize });
+        SuccessMsg(res, { data: result });
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 // 删除
@@ -26,29 +26,16 @@ export const collectDelete = async (req: any, res: any) => {
     const articleQuery: any = { _id: articleId };
 
     try {
-        const result: any = await Collect.removeOne({ query })
-
-        const { deletedCount } = result;
-
-        if (deletedCount === 1) {
-
-            const article: any = await ArticlePublish.findOne({ query: articleQuery });
-
-            if (article) {
-                const { collectCount } = article;
-                const count = collectCount - 1;
-                await ArticlePublish.updateOne({ query: articleQuery, update: { collectCount: count } });
-            }
-
-            await updateCollectCount(userId);
-
-            SuccessMsg(res, {});
-
-        } else {
-            ErrorMsg(res, { msg: '收藏删除失败！' });
+        await Collect.removeOne({ query })
+        const article: any = await ArticlePublish.findOne({ query: articleQuery });
+        if (article) {
+            let { collectCount } = article;
+            collectCount--;
+            await ArticlePublish.updateOne({ query: articleQuery, update: { collectCount } });
         }
+        await updateCollectCount(userId);
+        SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
