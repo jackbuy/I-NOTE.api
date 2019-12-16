@@ -10,13 +10,17 @@ interface query {
 
 class TagModel extends BaseModel{
 
+    constructor(schema: any) {
+        super(schema);
+    }
+
     // 层级列表
     queryList({ query, querySort = { _id: -1} }: query) {
         const select: string = '-__v';
         const options = {
             sort: querySort
         }
-        return Tag.find(query, select, options).
+        return this.schema.find(query, select, options).
             populate('createUserId', 'nickname').
             populate('editUserId', 'nickname')
     }
@@ -31,7 +35,7 @@ class TagModel extends BaseModel{
             limit: querylimit,
             sort: querySort
         }
-        return Tag.find(query, select, options).
+        return this.schema.find(query, select, options).
             populate('createUserId', 'nickname').
             populate('editUserId', 'nickname')
     }

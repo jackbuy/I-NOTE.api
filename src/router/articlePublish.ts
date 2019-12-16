@@ -10,7 +10,7 @@ import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
-export const articlePublishQuery  = (req: any, res: any) => {
+export const articlePublishQuery = (req: any, res: any) => {
     const { keyword, tagId, userId, currentPage, pageSize, sortType = 'newest' } = req.body;
     let querySort: any = {};
     let query: any = {};
@@ -38,7 +38,7 @@ export const articlePublishQuery  = (req: any, res: any) => {
 }
 
 // 详情
-export const articlePublishDetail  = (req: any, res: any) => {
+export const articlePublishDetail = (req: any, res: any) => {
     const { articleId } = req.body;
     const query: any = {
         _id: articleId

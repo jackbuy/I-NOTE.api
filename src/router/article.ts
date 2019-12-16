@@ -8,12 +8,9 @@ import { fileDel } from './fileManage';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
-export const articleQuery = (req: any, res: any) => {
+export const articleQuery = async (req: any, res: any) => {
     const { articleCateId, type, keyword, currentPage, pageSize } = req.body;
     const { userId } = req.userMsg;
-    const querySort: any = {
-        editTime: -1
-    };
     let query: any = {
         userId
     };
@@ -26,9 +23,6 @@ export const articleQuery = (req: any, res: any) => {
     }
     if (type === 'publish') query.isPublish = true;
     if (type === 'draft') query.isPublish = false;
-
-    let result: any = [];
-
     if (keyword) {
         const reg = new RegExp(keyword, 'i') //不区分大小写
         query.$or = [ //多条件，数组
@@ -37,39 +31,38 @@ export const articleQuery = (req: any, res: any) => {
         ]
     }
 
-    const articleQuery = Article.queryListLimit({ query, currentPage, pageSize });
-
-    articleQuery.then((resp) => {
-        result = resp;
-        return Article.count({query});
-    }).then((resp: any) => {
-        SuccessMsg(res, { data: result, total: resp });
-    }).catch(() => {
+    try {
+        const result: any = await Article.queryListLimit({ query, currentPage, pageSize });
+        const total: any = await Article.count({query});
+        SuccessMsg(res, { data: result, total });
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 // 详情
-export const articleDetail = (req: any, res: any) => {
+export const articleDetail = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
     const query = {
         _id: articleId,
         userId
     };
-    Article.queryDetail({ query }).then((resp) => {
-        if (!resp) {
+
+    try{
+        const result: any = await Article.queryDetail({ query });
+        if (!result) {
             ErrorMsg(res, { msg: '文章不存在' });
         } else {
-            SuccessMsg(res, { data: resp });
+            SuccessMsg(res, { data: result });
         }
-    }).catch(() => {
+    } catch(e) {
         ErrorMsg(res, {});
-    })
+    }
 }
 
 // 新增
-export const articleAdd = (req: any, res: any) => {
+export const articleAdd = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const data: any = {
         ...req.body,
@@ -77,15 +70,16 @@ export const articleAdd = (req: any, res: any) => {
         createTime: Date.now()
     };
 
-    Article.save({ data }).then((resp: any) => {
-        SuccessMsg(res, { data: { articleId: resp._id } });
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: err });
-    });
+    try{
+        const result: any = await Article.save({ data });
+        SuccessMsg(res, { data: { articleId: result._id } });
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
 }
 
 // 编辑
-export const articleEdit = (req: any, res: any) => {
+export const articleEdit = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
     const { articleCateId } = req.body;
@@ -107,15 +101,16 @@ export const articleEdit = (req: any, res: any) => {
 
     const query: any = { _id: articleId };
 
-    Article.updateOne({ query, update }).then(() => {
+    try{
+        await Article.updateOne({ query, update });
         SuccessMsg(res, {});
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: err });
-    });
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
 }
 
 // 删除
-export const articleDelete = (req: any, res: any) => {
+export const articleDelete = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
     const query = {
@@ -123,18 +118,11 @@ export const articleDelete = (req: any, res: any) => {
         userId
     };
 
-    Article.removeOne({ query }).then((resp: any) => {
-        const { deletedCount } = resp;
-        if (deletedCount === 1) {
-            fileDel(articleId, '0').then(() => {
-                SuccessMsg(res, {});
-            }).catch(() => {
-                ErrorMsg(res, { msg: '相关图片删除失败！' });
-            });
-        } else {
-            ErrorMsg(res, { msg: '文章删除失败！' });
-        }
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: '文章已不存在！' });
-    });
+    try{
+        await Article.removeOne({ query });
+        await fileDel(articleId, '0'); // 删除文章相关联的图片
+        SuccessMsg(res, {});
+    } catch(e) {
+        ErrorMsg(res, { msg: '文章不存在！' });
+    }
 }

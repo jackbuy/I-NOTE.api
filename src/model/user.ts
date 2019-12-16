@@ -11,6 +11,10 @@ interface query {
 
 class TagModel extends BaseModel{
 
+    constructor(schema: any) {
+        super(schema);
+    }
+
     // 列表
     queryListLimit({ query, currentPage = '1', pageSize = '10', select = '-__v', querySort = { _id: -1} }: query) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
@@ -20,7 +24,7 @@ class TagModel extends BaseModel{
             limit: querylimit,
             sort: querySort
         }
-        return User.find(query, select, options)
+        return this.schema.find(query, select, options)
     }
 
 }

@@ -7,24 +7,23 @@ import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
-export const articleCateQuery = (req: any, res: any) => {
+export const articleCateQuery = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const query = {
         userId
     };
 
-    const articleCateQuery = ArticleCate.find({ query });
-
-    articleCateQuery.then((resp: any) => {
-        SuccessMsg(res, { data: resp });
-    }).catch(() => {
+    try{
+        const result: any = await ArticleCate.find({ query });
+        SuccessMsg(res, { data: result });
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 
 // 新增
-export const articleCateAdd = (req: any, res: any) => {
+export const articleCateAdd = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const data: any = {
         ...req.body,
@@ -32,15 +31,16 @@ export const articleCateAdd = (req: any, res: any) => {
         createTime: Date.now()
     };
 
-    ArticleCate.save({ data }).then((resp: any) => {
-        SuccessMsg(res, { data: { articleCateId: resp._id } });
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: err });
-    });
+    try{
+        const result: any = await ArticleCate.save({ data });
+        SuccessMsg(res, { data: { articleCateId: result._id } });
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
 }
 
 // 编辑
-export const articleCateEdit = (req: any, res: any) => {
+export const articleCateEdit = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleCateId } = req.params;
     const update: any = {
@@ -50,11 +50,12 @@ export const articleCateEdit = (req: any, res: any) => {
     };
     const query: any = { _id: articleCateId };
 
-    ArticleCate.updateOne({ query, update }).then(() => {
+    try{
+        await ArticleCate.updateOne({ query, update });
         SuccessMsg(res, {});
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: err });
-    });
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
 }
 
 // 删除
@@ -73,9 +74,8 @@ export const articleCateDelete = async (req: any, res: any) => {
     try {
         await ArticleCate.removeOne({ query: cateQuery });
         let articles: any = await Article.find({ query: articleQuery });
-    
-        if (articles && articles.length > 0) {
-            articles.map(async (item: any) => {
+        if (articles) {
+            for await (const item of articles) {
                 const query = {
                     _id: item._id
                 };
@@ -85,9 +85,8 @@ export const articleCateDelete = async (req: any, res: any) => {
                     editTime: Date.now()
                 };
                 await Article.updateOne({ query, update });
-            });
+            }
         }
-    
         SuccessMsg(res, {});
     } catch (err) {
         ErrorMsg(res, { msg: err });

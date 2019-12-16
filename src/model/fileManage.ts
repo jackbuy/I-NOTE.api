@@ -10,6 +10,10 @@ interface query {
 
 class CollectModel extends BaseModel {
 
+    constructor(schema: any) {
+        super(schema);
+    }
+
     // 文件列表
     queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
@@ -20,7 +24,7 @@ class CollectModel extends BaseModel {
             limit: querylimit,
             sort: querySort
         }
-        return FileManage.find(query, select, options).
+        return this.schema.find(query, select, options).
             populate('userId', 'nickname avatar').
             populate('articleId', 'title isPublish')
     }

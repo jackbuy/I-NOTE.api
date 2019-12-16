@@ -10,6 +10,10 @@ interface query {
 
 class TopicModel extends BaseModel{
 
+    constructor(schema: any) {
+        super(schema);
+    }
+
     topicArticleQueryLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
         const querylimit: number = parseInt(pageSize);
@@ -19,7 +23,7 @@ class TopicModel extends BaseModel{
             limit: querylimit,
             sort: querySort
         }
-        return TopicArticle.find(query, select, options).
+        return this.schema.find(query, select, options).
             populate({
                 path: 'articleId',
                 select: '-__v -contentText',

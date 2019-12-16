@@ -10,6 +10,10 @@ interface query {
 
 class Model extends BaseModel {
 
+    constructor(schema: any) {
+        super(schema);
+    }
+
     // 列表
     queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
@@ -20,7 +24,7 @@ class Model extends BaseModel {
             limit: querylimit,
             sort: querySort
         }
-        return Comment.find(query, select, options).
+        return this.schema.find(query, select, options).
             populate('commentUserId', 'nickname avatar createTime').
             populate({
                 path: 'reply',
@@ -41,7 +45,7 @@ class Model extends BaseModel {
             limit: querylimit,
             sort: querySort
         }
-        return Comment.find(query, select, options).
+        return this.schema.find(query, select, options).
         populate('articleId', 'title')
     }
 }

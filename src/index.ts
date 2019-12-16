@@ -37,7 +37,7 @@ app.use((req: any, res: any, next) => {
         return next();
     } else {
         if (ignoreJwtApiUrl.includes(req.url)) { // 忽略不使用token的api
-            return next(); 
+            return next();
         } else {
             res.send({
                 code: 401 // token验证失败，请重新登录

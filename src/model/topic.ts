@@ -10,6 +10,10 @@ interface query {
 
 class TopicModel extends BaseModel{
 
+    constructor(schema: any) {
+        super(schema);
+    }
+
     // 列表
     queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
@@ -20,13 +24,13 @@ class TopicModel extends BaseModel{
             limit: querylimit,
             sort: querySort
         }
-        return Topic.find(query, select, options).
+        return this.schema.find(query, select, options).
             populate('userId', 'nickname avatar')
     }
 
     queryTopicDetail({ query }: any) {
         const select: string = '-__v';
-        return Topic.findOne(query, select).
+        return this.schema.findOne(query, select).
             populate('userId', '-password -__v -cate -lastSignAt')
     }
 

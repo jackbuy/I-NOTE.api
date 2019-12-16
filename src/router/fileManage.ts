@@ -4,11 +4,11 @@ import { delFile } from './upload';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
-export const fileQuery  = (req: any, res: any) => {
+export const fileQuery = (req: any, res: any) => {
     const { userId, currentPage, pageSize } = req.body;
     const query: any = { createUserId: userId };
 
-    FileManage.queryListLimit({ query, currentPage, pageSize }).then((resp) => {
+    FileManage.queryListLimit({ query, currentPage, pageSize }).then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});

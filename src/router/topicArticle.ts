@@ -14,7 +14,7 @@ export const topicArticleQuery = (req: any, res: any) => {
 
     const topicArticleQuery = TopicArticle.topicArticleQueryLimit({ query, currentPage, pageSize });
 
-    topicArticleQuery.then((resp) => {
+    topicArticleQuery.then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});

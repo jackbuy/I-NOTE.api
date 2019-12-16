@@ -11,11 +11,8 @@ export const adQuery = async (req: any, res: any) => {
     };
 
     try {
-
         const adList = await Ad.queryListLimit({ query, currentPage, pageSize });
-
         SuccessMsg(res, { data: adList});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
@@ -35,15 +32,11 @@ export const adAdd = async (req: any, res: any) => {
     };
 
     try {
-
         await Ad.save({ data });
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
 
 // 编辑
@@ -63,15 +56,11 @@ export const adEdit = async (req: any, res: any) => {
     };
 
     try {
-
         await Ad.updateOne({ query, update })
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
 
 // 删除
@@ -80,13 +69,9 @@ export const adDel = async (req: any, res: any) => {
     const query: any = { _id: adId };
 
     try {
-
         await Ad.removeOne({ query })
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }

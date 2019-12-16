@@ -18,7 +18,7 @@ import Letter from './letter';
 import LetterUser from './letterUser';
 
 export {
-    Article, ArticleCate, ArticlePublish,  Captcha, Collect, Follow, Like,
+    Article, ArticleCate, ArticlePublish, Captcha, Collect, Follow, Like,
     Message, FileManage, Tag, Topic, User, Comment,
     TopicArticle, Letter, LetterUser,
     Ad, AdCate

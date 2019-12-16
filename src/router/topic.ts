@@ -5,7 +5,7 @@ import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
-export const topicQuery  = (req: any, res: any) => {
+export const topicQuery = (req: any, res: any) => {
     const { keyword, currentPage, pageSize } = req.body;
     const query: any = { };
     if (keyword) {
@@ -29,7 +29,7 @@ export const topicQuery  = (req: any, res: any) => {
 }
 
 // 我的专题
-export const topicUserQuery  = (req: any, res: any) => {
+export const topicUserQuery = (req: any, res: any) => {
     const { userId, currentPage, pageSize } = req.body;
     const query: any = { userId };
     const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize });
@@ -77,7 +77,7 @@ export const topicRecommend = (req: any, res: any) => {
     };
     const topicQuery = Topic.queryListLimit({ query, currentPage, pageSize, querySort });
 
-    topicQuery.then((resp) => {
+    topicQuery.then((resp: any) => {
         SuccessMsg(res, { data: resp });
     }).catch(() => {
         ErrorMsg(res, {});

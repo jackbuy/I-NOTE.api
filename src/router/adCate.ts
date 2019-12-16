@@ -8,11 +8,8 @@ export const adCateQuery = async (req: any, res: any) => {
     const query: any = {};
 
     try {
-
         const adCateList = await AdCate.find({ query });
-
         SuccessMsg(res, { data: adCateList});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
@@ -30,15 +27,11 @@ export const adCateAdd = async (req: any, res: any) => {
     };
 
     try {
-
         await AdCate.save({ data });
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
 
 // 编辑
@@ -56,15 +49,11 @@ export const adCateEdit = async (req: any, res: any) => {
     };
 
     try {
-
         await AdCate.updateOne({ query, update })
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
 
 // 删除
@@ -73,16 +62,9 @@ export const adCateDel = async (req: any, res: any) => {
     const query: any = { _id: cateId };
 
     try {
-
-        // const count: any = await ArticlePublish.count({ query: { tagId } });
-        // if (count > 0) return ErrorMsg(res, { msg: '标签已关联文章，不能删除！' });
-
         await AdCate.removeOne({ query })
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }

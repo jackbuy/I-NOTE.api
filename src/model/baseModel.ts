@@ -81,7 +81,7 @@ export default class Model {
 
     /**
      * 填充
-     * @param param0 
+     * @param param0
      */
     populate ({ collections, options = {} }: any): Promise<object> {
         return this.schema.populate(collections, options);

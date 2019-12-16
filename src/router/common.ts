@@ -1,92 +1,77 @@
 import { Collect, Tag, Topic, ArticlePublish, Follow, User, Comment, TopicArticle, Message } from '../model';
 
 // 更新文章评论数量
-export const updateArticleCommentCount = (articleId: string) => {
+export const updateArticleCommentCount = async (articleId: string) => {
     const articleQuery: any = { articleId };
     const query: any = { _id: articleId };
-    return Comment.count({ query: articleQuery }).then((resp: any) => {
-        return ArticlePublish.updateOne({ query, update: { commentCount: resp } })
-    });
+    const commentCount: any = await Comment.count({ query: articleQuery });
+    return ArticlePublish.updateOne({ query, update: { commentCount } })
 }
 
 // 更新标签文章数量
-export const updateTagArticleCount = async() => {
+export const updateTagArticleCount = async () => {
     const tagList: any = await Tag.find({});
 
-    tagList.map(async (item: any) => {
-        const count = await ArticlePublish.count({ query: {tagId: item._id} });
-        await Tag.updateOne({ query: { _id: item._id }, update: { articleCount: count } });
-    });
+    for await (const item of tagList) {
+        const articleCount: any = await ArticlePublish.count({ query: {tagId: item._id} });
+        await Tag.updateOne({ query: { _id: item._id }, update: { articleCount } });
+    }
 }
-// export const updateTagArticleCount  = (tagId: string) => {
-//     const articleQuery: any = { tagId };
-//     const query: any = { _id: tagId };
-//     return ArticlePublish.count({ query: articleQuery }).then((resp: any) => {
-//         return Tag.updateOne({ query, update: { articleCount: resp } })
-//     });
-// }
 
 // 更新用户文章数量
-export const updateArticleCount = (userId: string) => {
+export const updateArticleCount = async (userId: string) => {
     const articleQuery: any = { userId };
     const query: any = { _id: userId };
-    return ArticlePublish.count({ query: articleQuery }).then((resp: any) => {
-        return User.updateOne({ query, update: { articleCount: resp } })
-    });
+    const articleCount: any = await ArticlePublish.count({ query: articleQuery });
+    return User.updateOne({ query, update: { articleCount } })
 }
 
 // 更新用户专题数量
-export const updateTopicCount = (userId: string) => {
+export const updateTopicCount = async (userId: string) => {
     const articleQuery: any = { userId };
     const query: any = { _id: userId };
-    return Topic.count({ query: articleQuery }).then((resp: any) => {
-        return User.updateOne({ query, update: { topicCount: resp } })
-    });
+    const topicCount: any = await Topic.count({ query: articleQuery });
+    return User.updateOne({ query, update: { topicCount } })
 }
 
 // 更新用户收藏数量
-export const updateCollectCount = (userId: string) => {
+export const updateCollectCount = async (userId: string) => {
     const articleQuery: any = { createUserId: userId };
     const query: any = { _id: userId };
-    return Collect.count({ query: articleQuery }).then((resp: any) => {
-        return User.updateOne({ query, update: { collectCount: resp } })
-    });
+    const collectCount: any = await Collect.count({ query: articleQuery });
+    return User.updateOne({ query, update: { collectCount } })
 }
 
 // 更新用户粉丝数量
-export const updateFansCount = (followUserId: string) => {
+export const updateFansCount = async (followUserId: string) => {
     const articleQuery: any = { followUserId, type: 0 };
     const query: any = { _id: followUserId };
-    return Follow.count({ query: articleQuery }).then((resp: any) => {
-        return User.updateOne({ query, update: { fansCount: resp } })
-    });
+    const fansCount: any = await Follow.count({ query: articleQuery });
+    return User.updateOne({ query, update: { fansCount } })
 }
 
 // 更新用户关注数量
-export const updateFollowCount = (userId: string) => {
+export const updateFollowCount = async (userId: string) => {
     const articleQuery: any = { userId };
     const query: any = { _id: userId };
-    return Follow.count({ query: articleQuery }).then((resp: any) => {
-        return User.updateOne({ query, update: { followCount: resp } })
-    });
+    const followCount: any = await Follow.count({ query: articleQuery });
+    return User.updateOne({ query, update: { followCount } })
 }
 
 // 更新专题关注数量
-export const updateTopicFollowCount = (topicId: string) => {
+export const updateTopicFollowCount = async (topicId: string) => {
     const followQuery: any = { followTopicId: topicId };
     const query: any = { _id: topicId };
-    return Follow.count({ query: followQuery }).then((resp: any) => {
-        return Topic.updateOne({ query, update: { followCount: resp } })
-    });
+    const followCount: any = await Follow.count({ query: followQuery });
+    return Topic.updateOne({ query, update: { followCount } })
 }
 
 // 更新专题文章数量
-export const updateTopicArticleCount = (topicId: string) => {
+export const updateTopicArticleCount = async (topicId: string) => {
     const articleQuery: any = { topicId };
     const query: any = { _id: topicId };
-    return TopicArticle.count({ query: articleQuery }).then((resp: any) => {
-        return Topic.updateOne({ query, update: { articleCount: resp } })
-    });
+    const articleCount: any = await TopicArticle.count({ query: articleQuery });
+    return Topic.updateOne({ query, update: { articleCount } })
 }
 
 // 获取未读消息数量

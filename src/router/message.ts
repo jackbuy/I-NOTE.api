@@ -48,7 +48,7 @@ export const messageSave = (data: any): Promise<object> => {
 }
 
 // 是否有新消息
-// export const newMessage  = (req: any, res: any) => {
+// export const newMessage = (req: any, res: any) => {
 //     const { toUserId } = req.body;
 //     const query: any = { toUserId, isRead: false };
 //     Message.count({ query: query }).then((resp) => {
@@ -59,7 +59,7 @@ export const messageSave = (data: any): Promise<object> => {
 // }
 
 // 标记为已读
-export const messageRead  = (req: any, res: any) => {
+export const messageRead = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { messageId } = req.params;
     const update: any = {
@@ -84,7 +84,7 @@ export const messageRead  = (req: any, res: any) => {
 }
 
 // 删除
-export const messageDelete  = (req: any, res: any) => {
+export const messageDelete = (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { messageId } = req.params;
     const query: any = { _id: messageId };
