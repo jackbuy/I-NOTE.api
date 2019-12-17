@@ -157,7 +157,7 @@ export const userInfoEdit = async (req: any, res: any) => {
     };
 
     try {
-        const result: any = await User.updateOne({ query, update });
+        await User.updateOne({ query, update });
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});

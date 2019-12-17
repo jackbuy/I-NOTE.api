@@ -15,11 +15,7 @@ export const articleQuery = async (req: any, res: any) => {
         userId
     };
     if (articleCateId !== 'all') {
-        if (articleCateId !== 'no-cate') {
-            query.articleCateId = articleCateId;
-        } else {
-            query.articleCateId = { $exists: false };
-        }
+        articleCateId !== 'no-cate' ? query.articleCateId = articleCateId : query.articleCateId = { $exists: false };
     }
     if (type === 'publish') query.isPublish = true;
     if (type === 'draft') query.isPublish = false;
