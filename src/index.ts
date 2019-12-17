@@ -1,10 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-
-import { decode } from './utils/jwt';
-import { staticResouces, ignoreJwtApiUrl, serverPort } from './utils/config';
 import router from './router';
 import socket from './socket';
+import { decode } from './utils/jwt';
+import { staticResouces, ignoreJwtApiUrl, serverPort } from './utils/config';
 
 const app = express();
 

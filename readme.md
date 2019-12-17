@@ -1,8 +1,8 @@
 # I-NOTE.api
 
-#### 系统配置
+#### 配置mongodb数据库
 
-配置文件位置在 `src/utils/config.ts`，在里面可配置mongodb数据库、端口号等配置。
+文件位置在 `src/utils/config.ts`
 
 #### 全局安装 typescript、pm2
 

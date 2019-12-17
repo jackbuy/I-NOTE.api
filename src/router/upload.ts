@@ -2,10 +2,11 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import md5 from 'md5';
+import { staticResouces } from '../utils/config';
 
 const storage = multer.diskStorage({
     destination: (req: any, file: any, cb: any) => { //文件存放目录
-        let dirname = path.join(__dirname, '../../resouces')
+        let dirname = path.join(__dirname, `../../${staticResouces}`)
         fs.exists(dirname, function(exists) {
             if (!exists) fs.mkdirSync(dirname); // 判断是否存在目录，没有则创建
             cb(null, dirname)
@@ -28,7 +29,7 @@ export const uploadFile = multer({
 export const delFile = (filename: any) => {
     return new Promise((resolve, reject) => {
         try {
-            if (filename) fs.unlinkSync('resouces/' + filename);
+            if (filename) fs.unlinkSync(`${staticResouces}/${filename}`);
         } catch(err) {}
         resolve();
     });
