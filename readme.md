@@ -1,5 +1,9 @@
 # I-NOTE.api
 
+#### 系统配置
+
+配置文件位置在 `src/utils/config.ts`，在里面配置mongodb数据库等配置
+
 #### 全局安装 typescript、pm2
 
 > npm install -g typescript pm2
