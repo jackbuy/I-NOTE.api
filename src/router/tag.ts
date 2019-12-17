@@ -26,7 +26,6 @@ const fn = (data: any, pid: any) => {
     let result = [];
     let temp;
     for (var i in data) {
-        // if (data[i]['parentId'] == pid) {
         if (data[i]['parentId'] && data[i]['parentId'].toString() == pid.toString()) {
             result.push(data[i]);
             temp = fn(data, data[i]._id);
@@ -67,18 +66,13 @@ export const tagQueryLimit = async (req: any, res: any) => {
         data: any;
 
     try {
-
         tagList = await Tag.queryList({ query });
-
         if (userId) {
             followList = await Follow.find({ query: FollowQuery });
             result = setArr({ arr1: tagList, arr2: followList, t: 'isFollow', op1: '_id', op2: 'followTagId' });
         }
-
         data = userId ? result : tagList;
-
         SuccessMsg(res, { data: toTreeJson(data)});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
@@ -89,15 +83,11 @@ export const tagChildQuery = async (req: any, res: any) => {
     const query: any = {
         parentId: { $exists: true } // 存在parentId的数据
     };
-
     let tagChildList: any = [];
 
     try {
-
         tagChildList = await Tag.find({ query })
-
         SuccessMsg(res, { data: tagChildList});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
@@ -113,11 +103,8 @@ export const tagRecommend = async (req: any, res: any) => {
     const querySort: any = { articleCount: -1 };
 
     try {
-
         const result = await Tag.queryListLimit({ query, currentPage, pageSize, querySort });
-
         SuccessMsg(res, { data: result });
-
     } catch(e) {
         ErrorMsg(res, {});
     }
@@ -133,16 +120,12 @@ export const tagDetail = async (req: any, res: any) => {
     if (req.userMsg) userId = req.userMsg.userId;
 
     try {
-
         let result: any = await Tag.findOne({ query, select });
-
         if (userId) {
             const follow: any = await Follow.findOne({ query: { userId, followTagId: tagId } })
             result._doc.isFollow = follow ? true : false;
         }
-
         SuccessMsg(res, { data: result });
-
     } catch(e) {
         ErrorMsg(res, {});
     }
@@ -160,15 +143,11 @@ export const tagAdd = async (req: any, res: any) => {
     };
 
     try {
-
         await Tag.save({ data });
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
 
 // 编辑
@@ -190,7 +169,6 @@ export const tagEdit = async (req: any, res: any) => {
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
 
 // 删除
@@ -199,16 +177,11 @@ export const TagDelete = async (req: any, res: any) => {
     const query = { _id: tagId };
 
     try {
-
         const count: any = await ArticlePublish.count({ query: { tagId } });
         if (count > 0) return ErrorMsg(res, { msg: '标签已关联文章，不能删除！' });
-
         await Tag.removeOne({ query })
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }

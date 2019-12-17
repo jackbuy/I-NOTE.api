@@ -21,7 +21,6 @@ export const articleCateQuery = async (req: any, res: any) => {
     }
 }
 
-
 // 新增
 export const articleCateAdd = async (req: any, res: any) => {
     const { userId } = req.userMsg;

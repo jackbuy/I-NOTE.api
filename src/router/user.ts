@@ -12,33 +12,31 @@ import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 登录
-export const userLogin = (req: any, res: any) => {
+export const userLogin = async (req: any, res: any) => {
     const { email, password, type } = req.body;
     const query: any = {
         email,
         password: md5(password)
     }
     if (type) query.level = 1000;
-    const userFind = User.findOne({ query });
 
-    userFind.then((resp: any) => {
-        if (resp) {
-            const { _id, email } = resp;
+    try {
+        const isHas: any = await User.findOne({ query });
+        if (isHas) {
+            const { _id, email } = isHas;
             const token = encode({ userId: _id, email });
-            User.updateOne({ 
+            // 更新登录时间
+            await User.updateOne({
                 query: { _id },
                 update: { lastSignAt: Date.now() }
-            }).then(() => {
-                SuccessMsg(res, { data: { token: token, userId: _id } });
-            }).catch(() => {
-                ErrorMsg(res, { msg: '登录失败！' });
-            });
+            })
+            SuccessMsg(res, { data: { token: token, userId: _id } });
         } else {
             ErrorMsg(res, { msg: '邮箱或密码错误！' });
         }
-    }).catch(() => {
-        ErrorMsg(res, {});
-    });
+    } catch(e) {
+        ErrorMsg(res, { msg: '登录失败！' });
+    }
 }
 
 // 注册
@@ -59,9 +57,7 @@ export const userRegister = async (req: any, res: any) => {
     };
 
     try {
-
         const captcha = await Captcha.findOne({ query: captchaQuery });
-
         if (captcha) {
             const user = await User.findOne({ query: userQuery });
             if (!user) {
@@ -73,11 +69,9 @@ export const userRegister = async (req: any, res: any) => {
         } else {
             ErrorMsg(res, { msg: '无效验证码！' });
         }
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
 
 // 忘记密码
@@ -96,9 +90,7 @@ export const userForget = async (req: any, res: any) => {
     };
 
     try {
-
         const captcha = await Captcha.findOne({ query: captchaQuery });
-
         if (captcha) {
             const user = await User.findOne({ query: userQuery });
             if (user) {
@@ -110,77 +102,66 @@ export const userForget = async (req: any, res: any) => {
         } else {
             ErrorMsg(res, { msg: '无效验证码！' });
         }
-
     } catch(e) {
         ErrorMsg(res, {});
     }
-
 }
 
 // 空间用户信息
-export const zoneUserInfo = (req: any, res: any) => {
+export const zoneUserInfo = async (req: any, res: any) => {
     const { userId, followUserId } = req.body;
     const userQuery: any = { _id: followUserId }
     const followQuery: any = { userId, type: 0, followUserId }
     const select: string = '-password -__v -cate -lastSignAt';
 
-    const userFind = User.findOne({ query: userQuery, select });
-    const followFind = userId ? Follow.findOne({ query: followQuery }) : Promise.resolve(null);
-
-    let result: any = {};
-
-    userFind.then((resp: any) => {
-        if (resp) result = resp;
-        return followFind;
-    }).then((resp: any) => {
-        result._doc.isFollow = resp ? true : false;
+    try {
+        const result: any = await User.findOne({ query: userQuery, select });
+        if (userId) {
+            const isHas: any = await Follow.findOne({ query: followQuery })
+            result._doc.isFollow = isHas ? true : false;
+        }
         SuccessMsg(res, { data: result });
-    }).catch(() => {
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 // 用户信息
-export const userInfo = (req: any, res: any) => {
+export const userInfo = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const query: any = { _id: userId }
     const select: string = 'username nickname gender brief avatar theme level';
-    let userInfo = {};
 
-    const userFind = User.findOne({ query, select });
-
-    userFind.then((resp: any) => {
-        userInfo = resp;
-        return getNewMessageCount(userId);
-    }).then((resp) => {
+    try {
+        const result: any = await User.findOne({ query, select });
+        const count: any = await getNewMessageCount(userId);
         emit('NEW_MSG', {
             type: 'newMsg',
             data: {
                 toUserId: userId,
-                msgCount: resp
+                msgCount: count
             }
         });
-        SuccessMsg(res, { data: userInfo });
-    }).catch(() => {
+        SuccessMsg(res, { data: result });
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 // 编辑
-export const userInfoEdit = (req: any, res: any) => {
+export const userInfoEdit = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const query: any = { _id: userId };
     const update: any = {
         ...req.body
     };
 
-    const userUpdate = User.updateOne({ query, update });
-
-    userUpdate.then(() => {
+    try {
+        const result: any = await User.updateOne({ query, update });
         SuccessMsg(res, {});
-    }).catch((err: any) => {
-        ErrorMsg(res, { msg: err });
-    });
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
 }
 
 // 公开用户列表
@@ -228,16 +209,13 @@ export const userQuery = async (req: any, res: any) => {
 // 数量统计
 export const operationsCount = async (req: any, res: any) => {
     let result: any = {};
-    articlePublishCount().then((resp: any) => {
-        result.articlePublishCount = resp;
-        return topicCount();
-    }).then((resp: any) => {
-        result.topicCount = resp;
-        return userCount();
-    }).then((resp: any) => {
-        result.userCount = resp;
+
+    try {
+        result.articlePublishCount = await articlePublishCount();
+        result.topicCount = await topicCount();
+        result.userCount = await userCount();
         SuccessMsg(res, { data: result });
-    }).catch(() => {
+    } catch(e) {
         ErrorMsg(res, {});
-    })
+    }
 }

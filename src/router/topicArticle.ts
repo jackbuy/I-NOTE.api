@@ -6,23 +6,22 @@ import {
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 查询
-export const topicArticleQuery = (req: any, res: any) => {
+export const topicArticleQuery = async (req: any, res: any) => {
     const { topicId, currentPage, pageSize } = req.body;
     const query: any = {
         topicId
     };
 
-    const topicArticleQuery = TopicArticle.topicArticleQueryLimit({ query, currentPage, pageSize });
-
-    topicArticleQuery.then((resp: any) => {
-        SuccessMsg(res, { data: resp });
-    }).catch(() => {
+    try {
+        const result: any = await TopicArticle.topicArticleQueryLimit({ query, currentPage, pageSize });
+        SuccessMsg(res, { data: result });
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 // 新增
-export const topicArticleAdd = (req: any, res: any) => {
+export const topicArticleAdd = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { topicId, articleId } = req.body
     const data: any = {
@@ -32,17 +31,17 @@ export const topicArticleAdd = (req: any, res: any) => {
         createTime: Date.now()
     }
 
-    TopicArticle.save({ data }).then(() => {
-        return updateTopicArticleCount(topicId);
-    }).then(() => {
+    try {
+        await TopicArticle.save({ data });
+        await updateTopicArticleCount(topicId);
         SuccessMsg(res, {});
-    }).catch(() => {
+    } catch(e) {
         ErrorMsg(res, {});
-    })
+    }
 }
 
 // 删除
-export const topicArticleDelete = (req: any, res: any) => {
+export const topicArticleDelete = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { topicId, articleId } = req.params;
     const query: any = {
@@ -51,11 +50,11 @@ export const topicArticleDelete = (req: any, res: any) => {
         createUserId: userId
     }
 
-    TopicArticle.removeOne({ query }).then((resp) => {
-        return updateTopicArticleCount(topicId);
-    }).then(() => {
+    try {
+        await TopicArticle.removeOne({ query });
+        await updateTopicArticleCount(topicId);
         SuccessMsg(res, {});
-    }).catch(() => {
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }

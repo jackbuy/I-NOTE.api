@@ -46,14 +46,18 @@ export const LetterUserAdd = async (req: any, res: any) => {
     const { toUserId } = req.params;
     const query: any = {
         $or: [
-            { $and: [
-                { fromUserId: userId },
-                { toUserId: toUserId }
-            ] },
-            { $and: [
-                { fromUserId: toUserId },
-                { toUserId: userId }
-            ] }
+            {
+                $and: [
+                    { fromUserId: userId },
+                    { toUserId: toUserId }
+                ]
+            },
+            {
+                $and: [
+                    { fromUserId: toUserId },
+                    { toUserId: userId }
+                ]
+            }
         ]
     }
     const data = {

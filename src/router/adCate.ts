@@ -2,7 +2,6 @@ import { AdCate } from '../model';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
-
 // 分类列表- 分页查询
 export const adCateQuery = async (req: any, res: any) => {
     const query: any = {};
