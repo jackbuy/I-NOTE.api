@@ -11,8 +11,8 @@ export const adQuery = async (req: any, res: any) => {
     };
 
     try {
-        const adList = await Ad.queryListLimit({ query, currentPage, pageSize });
-        SuccessMsg(res, { data: adList});
+        const result: any = await Ad.queryListLimit({ query, currentPage, pageSize });
+        SuccessMsg(res, { data: result});
     } catch(e) {
         ErrorMsg(res, {});
     }

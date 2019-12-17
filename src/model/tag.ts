@@ -1,11 +1,16 @@
 import BaseModel from './baseModel';
 import { Tag } from '../schema';
 
-interface query {
-    query: any;
+interface cateList {
+    query: object;
+    querySort?: object;
+}
+
+interface list {
+    query: object;
     currentPage?: string;
     pageSize?: string;
-    querySort?: any;
+    querySort?: object;
 }
 
 class TagModel extends BaseModel{
@@ -15,7 +20,7 @@ class TagModel extends BaseModel{
     }
 
     // 层级列表
-    queryList({ query, querySort = { _id: -1} }: query) {
+    queryList({ query, querySort = { _id: -1} }: cateList) {
         const select: string = '-__v';
         const options = {
             sort: querySort
@@ -26,7 +31,7 @@ class TagModel extends BaseModel{
     }
 
     // 子级列表
-    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: list) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
         const querylimit: number = parseInt(pageSize);
         const select: string = '-__v';

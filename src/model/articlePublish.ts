@@ -2,11 +2,15 @@
 import BaseModel from './baseModel';
 import { ArticlePublish } from '../schema';
 
-interface query {
-    query: any;
+interface list {
+    query: object;
     currentPage: string;
     pageSize: string;
-    querySort?: any;
+    querySort?: object;
+}
+
+interface detail {
+    query: object
 }
 
 class ArticlePublishModel extends BaseModel {
@@ -16,7 +20,7 @@ class ArticlePublishModel extends BaseModel {
     }
 
     // 列表
-    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1 } }: list) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
         const querylimit: number = parseInt(pageSize);
         const select = '-__v';
@@ -37,7 +41,7 @@ class ArticlePublishModel extends BaseModel {
     }
 
     // 详情
-    queryDetail({ query }: any) {
+    queryDetail({ query }: detail) {
         const select = '-__v';
         return this.schema.findOne(query, select).
             populate('userId', '-password -__v -cate -createTime -editTime').

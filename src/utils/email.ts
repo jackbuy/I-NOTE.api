@@ -37,7 +37,6 @@ export const send = (param: Param): Promise<any> => {
             html: param.html || param.text
         });
 
-        console.log(res);
         if (res.message == 'success') {
             resolve();
         } else {
@@ -46,31 +45,3 @@ export const send = (param: Param): Promise<any> => {
 
     })
 }
-
-/*
-var nodemailer = require("nodemailer");
-var config = require('../../configs/settings');
-
-// create reusable transport method (opens pool of SMTP connections)
-var smtpTransport = nodemailer.createTransport("SMTP", {
-  host: config.mail_opts.host,
-  secureConnection: true, // 使用 SSL
-  use_authentication: true,  //使用qq等邮箱需要配置
-  port: config.mail_opts.port, // SMTP 端口
-  auth: {
-    user: config.mail_opts.auth.user,
-    pass: config.mail_opts.auth.pass
-  }
-});
-
-// 发送邮件
-exports.send = function(options, callback){
-  smtpTransport.sendMail({
-    from: config.name+" <"+config.mail_opts.auth.user+">",
-    to: options.to,
-    subject: options.subject,
-    text: options.text,
-    html: options.html // html body
-  }, callback);
-};
-*/

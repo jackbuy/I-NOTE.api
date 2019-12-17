@@ -2,11 +2,11 @@
 import BaseModel from './baseModel';
 import { Article } from '../schema';
 
-interface query {
-    query: any;
-    currentPage: string;
-    pageSize: string;
-    querySort?: any;
+interface list {
+    query: object;
+    currentPage?: string;
+    pageSize?: string;
+    querySort?: object;
 }
 
 class ArticleModel extends BaseModel {
@@ -16,7 +16,7 @@ class ArticleModel extends BaseModel {
     }
 
     // 列表
-    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: list) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
         const querylimit: number = parseInt(pageSize);
         const select = 'title isPublish articlePublishId';

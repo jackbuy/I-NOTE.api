@@ -7,8 +7,8 @@ export const adCateQuery = async (req: any, res: any) => {
     const query: any = {};
 
     try {
-        const adCateList = await AdCate.find({ query });
-        SuccessMsg(res, { data: adCateList});
+        const result: any = await AdCate.find({ query });
+        SuccessMsg(res, { data: result});
     } catch(e) {
         ErrorMsg(res, {});
     }

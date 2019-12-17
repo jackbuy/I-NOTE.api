@@ -9,7 +9,7 @@ const { SuccessMsg, ErrorMsg } = Utils;
 // 列表
 export const articleCateQuery = async (req: any, res: any) => {
     const { userId } = req.userMsg;
-    const query = {
+    const query: any = {
         userId
     };
 
@@ -61,11 +61,11 @@ export const articleCateEdit = async (req: any, res: any) => {
 export const articleCateDelete = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleCateId } = req.params;
-    const cateQuery = {
+    const cateQuery: any = {
         _id: articleCateId,
         userId
     };
-    const articleQuery = {
+    const articleQuery: any = {
         articleCateId,
         userId
     };

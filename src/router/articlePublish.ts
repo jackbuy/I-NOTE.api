@@ -202,25 +202,25 @@ export const articlePublishUpdate = async (req: any, res: any) => {
 export const articlePublishDelete = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articlePublishId, articleId } = req.params;
-    const query = {
+    const query: object = {
         _id: articlePublishId,
         userId
     };
-    const articleQuery = { _id: articleId}
-    const update = {
+    const articleQuery: object = { _id: articleId}
+    const update: object = {
         isPublish: false
     }
 
     try {
-        let isLike = await Like.findOne({
+        let isLike: object = await Like.findOne({
             query: { articleId: articlePublishId }
         });
         if (isLike) return ErrorMsg(res, { msg: '文章已被点赞，不能取消发布！' });
-        let isCollect = await Collect.findOne({
+        let isCollect: object = await Collect.findOne({
             query: { articleId: articlePublishId }
         });
         if (isCollect) return ErrorMsg(res, { msg: '文章已被收藏，不能取消发布！' });
-        let isTopicArticle = await TopicArticle.findOne({
+        let isTopicArticle: object = await TopicArticle.findOne({
             query: { articleId: articlePublishId }
         });
         if (isTopicArticle) return ErrorMsg(res, { msg: '文章已被加入专题，不能取消发布！' });

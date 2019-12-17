@@ -1,11 +1,11 @@
 import BaseModel from './baseModel';
 import { Ad } from '../schema';
 
-interface query {
-    query: any;
+interface list {
+    query: object;
     currentPage?: string;
     pageSize?: string;
-    querySort?: any;
+    querySort?: object;
 }
 
 class AdModel extends BaseModel{
@@ -15,7 +15,7 @@ class AdModel extends BaseModel{
     }
 
     // 列表
-    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: query) {
+    queryListLimit({ query, currentPage = '1', pageSize = '10', querySort = { _id: -1} }: list) {
         const querySkip: number = (parseInt(currentPage)-1) * parseInt(pageSize);
         const querylimit: number = parseInt(pageSize);
         const select = '-__v';

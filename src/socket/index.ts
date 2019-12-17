@@ -38,7 +38,7 @@ export default (server: any) => {
         const { token } = socket.handshake.query;
 
         let userId = '';
-        
+
         if (token) {
             // 解码JWT获取用户的id
             let res = JWT.decode(token);
@@ -98,5 +98,5 @@ export default (server: any) => {
 export const emit = (target: string, params: object): void => {
     if (io) {
         io.sockets.emit(target, params)
-    } 
+    }
 }

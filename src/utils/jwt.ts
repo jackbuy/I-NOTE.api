@@ -17,7 +17,7 @@ export const encode = function(data: any): string {
 
 /**
  * 解码
- * @param token  JWT
+ * @param token JWT
  */
 export const decode = function(token: string): any {
     try {

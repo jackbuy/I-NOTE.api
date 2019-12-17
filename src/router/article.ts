@@ -11,9 +11,7 @@ const { SuccessMsg, ErrorMsg } = Utils;
 export const articleQuery = async (req: any, res: any) => {
     const { articleCateId, type, keyword, currentPage, pageSize } = req.body;
     const { userId } = req.userMsg;
-    let query: any = {
-        userId
-    };
+    let query: any = { userId };
     if (articleCateId !== 'all') {
         articleCateId !== 'no-cate' ? query.articleCateId = articleCateId : query.articleCateId = { $exists: false };
     }
@@ -40,7 +38,7 @@ export const articleQuery = async (req: any, res: any) => {
 export const articleDetail = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
-    const query = {
+    const query: any = {
         _id: articleId,
         userId
     };
@@ -79,6 +77,7 @@ export const articleEdit = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
     const { articleCateId } = req.body;
+    const query: any = { _id: articleId };
     let update: any;
 
     // 切换分组（未分组）
@@ -95,8 +94,6 @@ export const articleEdit = async (req: any, res: any) => {
         };
     }
 
-    const query: any = { _id: articleId };
-
     try{
         await Article.updateOne({ query, update });
         SuccessMsg(res, {});
@@ -109,7 +106,7 @@ export const articleEdit = async (req: any, res: any) => {
 export const articleDelete = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { articleId } = req.params;
-    const query = {
+    const query: any = {
         _id: articleId,
         userId
     };
