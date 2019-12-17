@@ -1,21 +1,20 @@
-## I-NOTE.api
+# I-NOTE.api
 
-全局安装 typescript
+#### 全局安装 typescript、pm2
 
-> npm install -g typescript
+> npm install -g typescript pm2
 
-#### 运行项目
+#### 本地运行项目
 
+> npm run build
 > npm run dev
 
 #### 开发项目
 
-第一步：
 > npm run tsc-w
-
-第二步：
 > npm run dev
 
-###### 构建项目
+#### 线上运行项目
 
-> npm run build 
+> npm run build
+> npm run pm2
