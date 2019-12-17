@@ -13,11 +13,8 @@ export const LetterQueryLimit = async (req: any, res: any) => {
     }
 
     try {
-
         const userList = await Letter.queryListLimit({ query });
-
         SuccessMsg(res, { data: userList });
-
     } catch(e) {
         ErrorMsg(res, {});
     }
@@ -36,11 +33,8 @@ export const LetterAdd = async (req: any, res: any) => {
     };
 
     try {
-
         await Letter.save({ data });
-
         const users: any = await LetterUser.findOne({ query: { _id: letterUserId } });
-
         if (users) {
             const { toUserId } = users;
             emit('NEW_LETTER', {
@@ -50,9 +44,7 @@ export const LetterAdd = async (req: any, res: any) => {
                 }
             });
         }
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }

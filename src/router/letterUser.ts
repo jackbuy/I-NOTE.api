@@ -5,7 +5,6 @@ const { SuccessMsg, ErrorMsg } = Utils;
 // 私信联系人列表- 分页查询
 export const LetterUserQueryLimit = async (req: any, res: any) => {
     const { userId } = req.userMsg;
-
     const query = {
         $or: [
             { $and: [
@@ -16,11 +15,8 @@ export const LetterUserQueryLimit = async (req: any, res: any) => {
             ] }
         ]
     }
-
     // const queryCount = {
-
     // }
-
     try {
         let result: any = [];
         const userList = await LetterUser.queryListLimit({ query });
@@ -39,7 +35,6 @@ export const LetterUserQueryLimit = async (req: any, res: any) => {
         // });
 
         SuccessMsg(res, { data: userList });
-
     } catch(e) {
         ErrorMsg(res, {});
     }
@@ -49,7 +44,6 @@ export const LetterUserQueryLimit = async (req: any, res: any) => {
 export const LetterUserAdd = async (req: any, res: any) => {
     const { userId } = req.userMsg;
     const { toUserId } = req.params;
-
     const query: any = {
         $or: [
             { $and: [
@@ -62,7 +56,6 @@ export const LetterUserAdd = async (req: any, res: any) => {
             ] }
         ]
     }
-
     const data = {
         fromUserId: userId,
         toUserId,
@@ -70,18 +63,13 @@ export const LetterUserAdd = async (req: any, res: any) => {
     }
 
     try {
-
         // 检查是否存在
         const isHas = await LetterUser.findOne({ query });
-
         let addUser = {};
-
         if (!isHas) {
             addUser = await LetterUser.save({ data });
         }
-
         SuccessMsg(res, { data: isHas ? isHas : addUser });
-
     } catch(e) {
         ErrorMsg(res, {});
     }

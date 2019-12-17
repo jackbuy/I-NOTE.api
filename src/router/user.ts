@@ -198,7 +198,6 @@ export const userPublishQuery = async (req: any, res: any) => {
 
     try {
         const result = await User.queryListLimit({ query, currentPage, pageSize, select, querySort });
-
         SuccessMsg(res, { data: result });
     } catch(e) {
         ErrorMsg(res, {});
@@ -220,7 +219,6 @@ export const userQuery = async (req: any, res: any) => {
 
     try {
         const result = await User.queryListLimit({ query, currentPage, pageSize, select, querySort });
-
         SuccessMsg(res, { data: result });
     } catch(e) {
         ErrorMsg(res, {});

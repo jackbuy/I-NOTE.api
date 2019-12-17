@@ -4,15 +4,16 @@ import { delFile } from './upload';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 列表
-export const fileQuery = (req: any, res: any) => {
+export const fileQuery = async (req: any, res: any) => {
     const { userId, currentPage, pageSize } = req.body;
     const query: any = { createUserId: userId };
 
-    FileManage.queryListLimit({ query, currentPage, pageSize }).then((resp: any) => {
-        SuccessMsg(res, { data: resp });
-    }).catch(() => {
+    try{
+        const result: any = await FileManage.queryListLimit({ query, currentPage, pageSize })
+        SuccessMsg(res, { data: result });
+    } catch(e) {
         ErrorMsg(res, {});
-    });
+    }
 }
 
 // 单文件上传并保持到数据库
@@ -43,10 +44,8 @@ export const singleFileUpload = async (req: any, res: any) => {
         // 删除旧数据
         await fileDel(userId, '2');
     }
-
     // 存入数据库
     await FileManage.save({ data });
-
     SuccessMsg(res, { data: filename });
 }
 
@@ -64,10 +63,8 @@ export const fileDel = (targetId: string, type: string) => {
         if (type === '2') query = { userAvatarId: targetId };
 
         try{
-
             let files: any = await FileManage.find({ query });
-
-            files.map(async (item: any) => {
+            for await (let item of files) {
                 const { _id, fileName } = item;
                 await FileManage.removeOne({
                     query: {
@@ -75,14 +72,10 @@ export const fileDel = (targetId: string, type: string) => {
                     }
                 });
                 await delFile(fileName);
-            });
-
+            }
             resolve();
-
         } catch(err) {
-
             reject();
-
         }
     });
 }

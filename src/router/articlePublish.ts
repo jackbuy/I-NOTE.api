@@ -23,8 +23,8 @@ export const articlePublishQuery = async (req: any, res: any) => {
         ]
     }
     if (tagId) query.tagId = tagId;
-    if (sortType == 'newest') querySort = { publishTime: -1 }
-    if (sortType == 'popular') querySort = { viewCount: -1 }
+    if (sortType == 'newest') querySort = { publishTime: -1 };
+    if (sortType == 'popular') querySort = { viewCount: -1 };
 
     try{
         const result: any = await ArticlePublish.queryListLimit({ query, currentPage, pageSize, querySort });
@@ -138,11 +138,11 @@ export const articlePublishLike = async (req: any, res: any) => {
             let { likeCount } = article;
             !isLike ? likeCount++ : likeCount--;
             if (JSON.stringify(userId) !== JSON.stringify(article.userId._id)) {
-                return messageSave({
+                await messageSave({
                     fromUserId: userId,
                     toUserId: article.userId._id,
                     likeId: articleId,
-                    type: 0 
+                    type: 0
                 });
             }
             await ArticlePublish.updateOne({ query: articleQuery, update: { likeCount } }); // 更新文章

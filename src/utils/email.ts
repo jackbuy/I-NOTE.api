@@ -37,6 +37,7 @@ export const send = (param: Param): Promise<any> => {
             html: param.html || param.text
         });
 
+        console.log(res);
         if (res.message == 'success') {
             resolve();
         } else {

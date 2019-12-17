@@ -185,11 +185,8 @@ export const tagEdit = async (req: any, res: any) => {
     };
 
     try {
-
         await Tag.updateOne({ query, update })
-
         SuccessMsg(res, {});
-
     } catch(e) {
         ErrorMsg(res, {});
     }

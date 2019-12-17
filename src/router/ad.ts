@@ -56,7 +56,7 @@ export const adEdit = async (req: any, res: any) => {
     };
 
     try {
-        await Ad.updateOne({ query, update })
+        await Ad.updateOne({ query, update });
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});
@@ -69,7 +69,7 @@ export const adDel = async (req: any, res: any) => {
     const query: any = { _id: adId };
 
     try {
-        await Ad.removeOne({ query })
+        await Ad.removeOne({ query });
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});

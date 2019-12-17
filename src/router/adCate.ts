@@ -49,7 +49,7 @@ export const adCateEdit = async (req: any, res: any) => {
     };
 
     try {
-        await AdCate.updateOne({ query, update })
+        await AdCate.updateOne({ query, update });
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});
@@ -62,7 +62,7 @@ export const adCateDel = async (req: any, res: any) => {
     const query: any = { _id: cateId };
 
     try {
-        await AdCate.removeOne({ query })
+        await AdCate.removeOne({ query });
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});
