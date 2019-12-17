@@ -4,8 +4,11 @@ export const DB_URL: string = 'mongodb://localhost/inote-uat';
 // jwt的密钥
 export const secretkey: string = 'secretkey_inote';
 
-// 静态资源文件夹
+// 静态资源文件夹（自动创建,用于存放上传的图片）
 export const staticResouces: string = 'resouces';
+
+// 服务启动端口号，默认10000
+export const serverPort: number = 10000;
 
 // 忽略jwt检查的api
 export const ignoreJwtApiUrl: string[] = [

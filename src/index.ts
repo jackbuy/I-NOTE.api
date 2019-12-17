@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 import { decode } from './utils/jwt';
-import { staticResouces, ignoreJwtApiUrl } from './utils/config';
+import { staticResouces, ignoreJwtApiUrl, serverPort } from './utils/config';
 import router from './router';
 import socket from './socket';
 
@@ -49,6 +49,6 @@ app.use((req: any, res: any, next) => {
 
 app.use(router);
 
-const server = app.listen(10000, () => console.log('服务已启动，端口10000'))
+const server = app.listen(serverPort, () => console.log(`服务已启动，端口${serverPort}`))
 
 socket(server);
