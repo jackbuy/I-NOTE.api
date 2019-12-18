@@ -51,16 +51,17 @@ export const articlePublishDetail = async (req: any, res: any) => {
         viewCount++;
         await ArticlePublish.updateOne({ query, update: { viewCount } });
         detail._doc.viewCount = viewCount;
-        // 是否关注
-        const isFollow: any = await Follow.findOne({ query: { userId, followUserId: detail.userId._id } });
-        detail.userId._doc.isFollow = isFollow ? true : false;
-        // 是否点赞
-        const isLike: any = await Like.findOne({ query: { createUserId: userId, articleId } });
-        detail._doc.isLike = isLike ? true : false;
-        // 是否收藏
-        const isCollect: any = await Collect.findOne({ query: { createUserId: userId, articleId } });
-        detail._doc.isCollect = isCollect ? true : false;
-
+        if (userId) {
+            // 是否关注
+            const isFollow: any = await Follow.findOne({ query: { userId, followUserId: detail.userId._id } });
+            detail.userId._doc.isFollow = isFollow ? true : false;
+            // 是否点赞
+            const isLike: any = await Like.findOne({ query: { createUserId: userId, articleId } });
+            detail._doc.isLike = isLike ? true : false;
+            // 是否收藏
+            const isCollect: any = await Collect.findOne({ query: { createUserId: userId, articleId } });
+            detail._doc.isCollect = isCollect ? true : false;
+        }
         SuccessMsg(res, { data: detail });
     } catch(e){
         ErrorMsg(res, {});

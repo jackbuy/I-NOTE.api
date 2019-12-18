@@ -134,14 +134,16 @@ export const userInfo = async (req: any, res: any) => {
 
     try {
         const result: any = await User.findOne({ query, select });
-        const count: any = await getNewMessageCount(userId);
-        emit('NEW_MSG', {
-            type: 'newMsg',
-            data: {
-                toUserId: userId,
-                msgCount: count
-            }
-        });
+        if (result) {
+            const count: any = await getNewMessageCount(userId);
+            emit('NEW_MSG', {
+                type: 'newMsg',
+                data: {
+                    toUserId: userId,
+                    msgCount: count
+                }
+            });
+        }
         SuccessMsg(res, { data: result });
     } catch(e) {
         ErrorMsg(res, {});

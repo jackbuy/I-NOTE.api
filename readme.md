@@ -8,6 +8,10 @@
 
 > npm install -g typescript pm2
 
+#### 安装依赖
+
+> npm insatll
+
 #### 本地运行项目
 
 > npm run build

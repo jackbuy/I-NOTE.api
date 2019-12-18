@@ -50,11 +50,9 @@ export const topicUserList = async (req: any, res: any) => {
     try {
         let topics: any = await Topic.queryListLimit({ query, currentPage, pageSize });
         let topicArticles: any = await TopicArticle.find({ query: { createUserId: userId, articleId } });
-        let topicIds: any = topicArticles.map((item: any) => item.topicId );
+        let topicIds: any = topicArticles.map((item: any) => JSON.stringify(item.topicId));
         topics.map((item: any) => {
-            topicIds.map((id: any) => {
-                item._doc.isTopic = item._id.equals(id) ? true : false;
-            });
+            item._doc.isTopic = topicIds.includes(JSON.stringify(item._id)) ? true : false;
         });
         SuccessMsg(res, { data: topics });
     } catch(e) {
