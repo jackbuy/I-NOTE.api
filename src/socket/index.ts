@@ -1,6 +1,5 @@
 import socketIO from 'socket.io';
 import * as JWT from '../utils/jwt';
-// import { unreadMessageCount } from '../router/common';
 
 // 总连接数
 let connectCount = 0,
@@ -72,17 +71,6 @@ export default (server: any) => {
             onlineVisitor.push(address);
         }
         connectCount += 1;
-
-        // 未读消息-数量推送
-        // socket.on('UNREAD_MESSAGE_COUNT', async (toUserId: string) => {
-        //     if (!toUserId) return;
-        //     let count = await unreadMessageCount(toUserId);
-        //     onlineUser.map((item: any) => {
-        //         if (item.userId === toUserId) {
-        //             io.sockets.connected[item.socketId].emit('UNREAD_MESSAGE_COUNT', count);
-        //         }
-        //     });
-        // });
 
         // 监听断开事件
         socket.on('disconnect', function(res: any){

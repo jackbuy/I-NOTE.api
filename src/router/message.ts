@@ -58,18 +58,6 @@ export const messageSave = ({ fromUserId, toUserId, targetId, type }: message) =
     });
 }
 
-// 获取未读消息数量
-// export const messageUnreadCount = async (req: any, res: any) => {
-//     const { toUserId } = req.body;
-//     const query: any = { toUserId, isRead: false };
-//     try {
-//         let count = await Message.count({ query });
-//         SuccessMsg(res, { data: count });
-//     } catch {
-//         ErrorMsg(res, {});
-//     }
-// }
-
 // 标记为已读
 export const messageRead = async (req: any, res: any) => {
     const { userId } = req.userMsg;
