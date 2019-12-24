@@ -83,7 +83,7 @@ export const followUser = async (req: any, res: any) => {
         !isHas ? await Follow.save({ data }) : await Follow.removeOne({ query });
         await updateFollowCount(userId);
         await updateFansCount(followUserId);
-        await messageSave({ fromUserId: userId, toUserId: followUserId, userId: followUserId, type: 2 });
+        await messageSave({ fromUserId: userId, toUserId: followUserId, targetId: followUserId, type: 2 });
         SuccessMsg(res, { data: msg });
     } catch(e) {
         ErrorMsg(res, {});
@@ -110,7 +110,7 @@ export const followTopic = async (req: any, res: any) => {
         !isHas ? await Follow.save({ data }) : await Follow.removeOne({ query });
         await updateFollowCount(userId);
         await updateTopicFollowCount(followTopicId);
-        await messageSave({ fromUserId: userId, toUserId: followUserId, topicId: followTopicId, type: 3 });
+        await messageSave({ fromUserId: userId, toUserId: followUserId, targetId: followTopicId, type: 3 });
         SuccessMsg(res, { data: msg });
     } catch(e) {
         ErrorMsg(res, {});

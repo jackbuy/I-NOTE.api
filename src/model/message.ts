@@ -30,7 +30,9 @@ class MessageModel extends BaseModel{
             populate('userId', 'nickname').
             populate('topicId', 'title').
             populate('likeId', 'title').
-            populate('collectId', 'title')
+            populate('collectId', 'title').
+            populate('commentId', 'title').
+            populate('replyId', 'title')
     }
 
 }

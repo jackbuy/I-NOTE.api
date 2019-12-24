@@ -68,6 +68,41 @@ export const articlePublishDetail = async (req: any, res: any) => {
     }
 }
 
+// 点赞
+export const articlePublishLike = async (req: any, res: any) => {
+    const { userId } = req.userMsg;
+    const { articleId } = req.body;
+
+    const articleQuery: any = { _id: articleId };
+    const likeQquery: any = { 
+        articleId,
+        createUserId: userId
+     };
+    const data: any = {
+        ...likeQquery,
+        createTime: Date.now()
+    };
+
+    try{
+        const isLike: any = await Like.findOne({ query: likeQquery });
+        if (!isLike) {
+            await Like.save({ data });
+        } else {
+            await Like.removeOne({ query: likeQquery });
+        }
+        const article: any = await ArticlePublish.findOne({ query: articleQuery });
+        if (article) {
+            let { likeCount } = article;
+            !isLike ? likeCount++ : likeCount--;
+            await messageSave({ fromUserId: userId, toUserId: article.userId._id, targetId: articleId, type: 0 });
+            await ArticlePublish.updateOne({ query: articleQuery, update: { likeCount } }); // 更新文章
+        }
+        SuccessMsg(res, {});
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
+}
+
 // 收藏
 export const articlePublishCollect = async (req: any, res: any) => {
     const { userId } = req.userMsg;
@@ -95,59 +130,10 @@ export const articlePublishCollect = async (req: any, res: any) => {
         if (article) {
             let { collectCount } = article;
             !collect ? collectCount++ : collectCount--;
-            if (JSON.stringify(userId) !== JSON.stringify(article.userId._id)) {
-                await messageSave({
-                    fromUserId: userId,
-                    toUserId: article.userId._id,
-                    collectId: articleId,
-                    type: 1
-                });
-            }
-            await ArticlePublish.updateOne({ query: articleQuery, update: { collectCount } });
+            await messageSave({ fromUserId: userId, toUserId: article.userId._id, targetId: articleId, type: 1 });
+            await ArticlePublish.updateOne({ query: articleQuery, update: { collectCount } }); // 更新文章
         }
         await updateCollectCount(userId);
-        SuccessMsg(res, {});
-    } catch(e) {
-        ErrorMsg(res, {});
-    }
-}
-
-// 点赞
-export const articlePublishLike = async (req: any, res: any) => {
-    const { userId } = req.userMsg;
-    const { articleId } = req.body;
-
-    const articleQuery: any = { _id: articleId };
-    const likeQquery: any = { 
-        articleId,
-        createUserId: userId
-     };
-    const data: any = {
-        ...likeQquery,
-        createTime: Date.now()
-    };
-
-    try{
-        const isLike: any = await Like.findOne({ query: likeQquery });
-        if (!isLike) {
-            await Like.save({ data });
-        } else {
-            await Like.removeOne({ query: likeQquery });
-        }
-        const article: any = await ArticlePublish.findOne({ query: articleQuery });
-        if (article) {
-            let { likeCount } = article;
-            !isLike ? likeCount++ : likeCount--;
-            if (JSON.stringify(userId) !== JSON.stringify(article.userId._id)) {
-                await messageSave({
-                    fromUserId: userId,
-                    toUserId: article.userId._id,
-                    likeId: articleId,
-                    type: 0
-                });
-            }
-            await ArticlePublish.updateOne({ query: articleQuery, update: { likeCount } }); // 更新文章
-        }
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});
@@ -168,9 +154,7 @@ export const articlePublish = async (req: any, res: any) => {
         const articlePublishId: any = detail._id
         await updateArticleCount(userId);
         await updateTagArticleCount();
-        emit('NEW_POST', {
-            type: 'newPost'
-        });
+        emit('NEW_POST', { type: 'newPost' }); // 新动态
         SuccessMsg(res, { data: { articlePublishId } });
     } catch(e) {
         ErrorMsg(res, {});
@@ -190,9 +174,7 @@ export const articlePublishUpdate = async (req: any, res: any) => {
 
     try{
         await ArticlePublish.updateOne({ query, update });
-        emit('NEW_POST', {
-            type: 'newPost'
-        });
+        emit('NEW_POST', { type: 'newPost' }); // 新动态
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});

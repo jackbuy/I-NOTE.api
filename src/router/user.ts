@@ -1,13 +1,8 @@
 import md5 from 'md5';
 import { Captcha, Follow, User } from '../model';
 import { encode } from '../utils/jwt';
-import {
-    getNewMessageCount,
-    articlePublishCount,
-    topicCount,
-    userCount
-} from '../router/common';
-import { emit } from '../socket';
+import { articlePublishCount, topicCount, userCount, unreadMessageCount } from '../router/common';
+import { emit, emitConnected } from '../socket';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -135,14 +130,8 @@ export const userInfo = async (req: any, res: any) => {
     try {
         const result: any = await User.findOne({ query, select });
         if (result) {
-            const count: any = await getNewMessageCount(userId);
-            emit('NEW_MSG', {
-                type: 'newMsg',
-                data: {
-                    toUserId: userId,
-                    msgCount: count
-                }
-            });
+            const count = await unreadMessageCount(userId);
+            emitConnected('UNREAD_MESSAGE_COUNT', userId, { count });
         }
         SuccessMsg(res, { data: result });
     } catch(e) {

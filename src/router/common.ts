@@ -74,12 +74,6 @@ export const updateTopicArticleCount = async (topicId: string) => {
     return Topic.updateOne({ query, update: { articleCount } })
 }
 
-// 获取未读消息数量
-export const getNewMessageCount = (toUserId: string) => {
-    const query: any = { toUserId, isRead: false };
-    return Message.count({ query });
-}
-
 // 已发布文章数量
 export const articlePublishCount = () => {
     return ArticlePublish.count({ query: {} });
@@ -93,4 +87,10 @@ export const topicCount = () => {
 // 会员数量
 export const userCount = () => {
     return User.count({ query: {} });
+}
+
+// 未读消息数量
+export const unreadMessageCount = (toUserId: string) => {
+    const query: any = { toUserId, isRead: false };
+    return Message.count({ query });
 }

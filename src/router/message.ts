@@ -1,7 +1,7 @@
 import { Message } from '../model';
 import Utils from '../utils/utils';
-import { emit } from '../socket';
-import { getNewMessageCount } from './common';
+import { emitConnected } from '../socket';
+import { unreadMessageCount } from './common';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 
@@ -21,22 +21,35 @@ export const messageQuery = async (req: any, res: any) => {
     }
 }
 
+interface message{
+    fromUserId: string;
+    toUserId: string;
+    targetId: string;
+    type: number;
+}
+
 // 保存消息
-export const messageSave = (data: any): Promise<object> => {
+export const messageSave = ({ fromUserId, toUserId, targetId, type }: message) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { toUserId } = data;
+            const data: any = {
+                fromUserId,
+                toUserId,
+                type
+            }
+            if (type === 0) data.likeId = targetId;
+            if (type === 1) data.collectId = targetId;
+            if (type === 2) data.userId = targetId;
+            if (type === 3) data.topicId = targetId;
+            if (type === 4) data.commentId = targetId;
+            if (type === 5) data.replyId = targetId;
+            // 过滤自己给自己发消息
+            if (JSON.stringify(fromUserId) === JSON.stringify(toUserId)) return resolve();
             const result: any = await Message.findOne({ query: data });
             if (!result) {
                 await Message.save({ data });
-                const count: any = await getNewMessageCount(toUserId);
-                emit('NEW_MSG', {
-                    type: 'newMsg',
-                    data: {
-                        toUserId,
-                        msgCount: count
-                    }
-                });
+                const count: any = await unreadMessageCount(toUserId);
+                emitConnected('UNREAD_MESSAGE_COUNT', toUserId, { count })
             }
             resolve();
         } catch(e) {
@@ -44,6 +57,18 @@ export const messageSave = (data: any): Promise<object> => {
         }
     });
 }
+
+// 获取未读消息数量
+// export const messageUnreadCount = async (req: any, res: any) => {
+//     const { toUserId } = req.body;
+//     const query: any = { toUserId, isRead: false };
+//     try {
+//         let count = await Message.count({ query });
+//         SuccessMsg(res, { data: count });
+//     } catch {
+//         ErrorMsg(res, {});
+//     }
+// }
 
 // 标记为已读
 export const messageRead = async (req: any, res: any) => {
@@ -56,14 +81,8 @@ export const messageRead = async (req: any, res: any) => {
 
     try {
         await Message.updateOne({ query, update });
-        const count: any = await getNewMessageCount(userId);
-        emit('NEW_MSG', {
-            type: 'newMsg',
-            data: {
-                toUserId: userId,
-                msgCount: count
-            }
-        });
+        const count: any = await unreadMessageCount(userId);
+        emitConnected('UNREAD_MESSAGE_COUNT', userId, { count })
         SuccessMsg(res, {});
     } catch {
         ErrorMsg(res, {});
@@ -78,14 +97,8 @@ export const messageDelete = async (req: any, res: any) => {
 
     try {
         await Message.removeOne({ query });
-        const count: any = await getNewMessageCount(userId);
-        emit('NEW_MSG', {
-            type: 'newMsg',
-            data: {
-                toUserId: userId,
-                msgCount: count
-            }
-        });
+        const count: any = await unreadMessageCount(userId);
+        emitConnected('UNREAD_MESSAGE_COUNT', userId, { count })
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});

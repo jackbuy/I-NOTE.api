@@ -1,6 +1,7 @@
 import { Comment } from '../model';
 import Utils from '../utils/utils';
 import { updateArticleCommentCount } from './common';
+import { messageSave } from './message';
 const { SuccessMsg, ErrorMsg } = Utils;
 
 // 查询
@@ -44,6 +45,7 @@ export const commentUserQuery = async (req: any, res: any) => {
 // 保存
 export const commentSave = async (req: any, res: any) => {
     const { userId } = req.userMsg;
+    const { articleId, authorId } = req.body;
     const data: any = {
         ...req.body,
         commentUserId: userId,
@@ -53,6 +55,7 @@ export const commentSave = async (req: any, res: any) => {
     try {
         await Comment.save({ data });
         await updateArticleCommentCount(req.body.articleId);
+        await messageSave({ fromUserId: userId, toUserId: authorId, targetId: articleId, type: 4 });
         SuccessMsg(res, {});
     } catch(e) {
         ErrorMsg(res, {});
@@ -62,6 +65,7 @@ export const commentSave = async (req: any, res: any) => {
 // 回复
 export const commentReply = async (req: any, res: any) => {
     const { userId } = req.userMsg;
+    const { articleId, replyUserId } = req.body;
     const data: any = {
         ...req.body,
         commentUserId: userId,
@@ -74,8 +78,8 @@ export const commentReply = async (req: any, res: any) => {
         const query: any = { _id: req.body.parentId };
         const update: any = { $push: { reply: result._id }};
         await Comment.updateOne({ query, update });
-
         await updateArticleCommentCount(req.body.articleId);
+        await messageSave({ fromUserId: userId, toUserId: replyUserId, targetId: articleId, type: 5 });
 
         SuccessMsg(res, {});
     } catch(e) {
