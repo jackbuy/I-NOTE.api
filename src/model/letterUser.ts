@@ -26,8 +26,8 @@ class Model extends BaseModel {
         }
         return this.schema.find(query, select, options).
             populate('letterId', 'content createTime').
-            populate('fromUserId', 'nickname').
-            populate('toUserId', 'nickname')
+            populate('fromUserId', 'nickname avatar').
+            populate('toUserId', 'nickname avatar')
     }
 
 }

@@ -67,7 +67,7 @@ export const LetterUserAdd = async (req: any, res: any) => {
     }
 
     try {
-        // 检查是否存在
+        // 检查私信列表是否已存在
         const isHas = await LetterUser.findOne({ query });
         let addUser = {};
         if (!isHas) {
