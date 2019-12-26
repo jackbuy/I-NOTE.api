@@ -1,8 +1,8 @@
 import md5 from 'md5';
 import { Captcha, Follow, User } from '../model';
 import { encode } from '../utils/jwt';
-import { articlePublishCount, topicCount, userCount, unreadMessageCount } from '../router/common';
-import { emit, emitConnected } from '../socket';
+import { articlePublishCount, topicCount, userCount, unreadMessageCount, unreadLetterCount } from '../router/common';
+import { emitConnected } from '../socket';
 import Utils from '../utils/utils';
 const { SuccessMsg, ErrorMsg } = Utils;
 
@@ -130,8 +130,10 @@ export const userInfo = async (req: any, res: any) => {
     try {
         const result: any = await User.findOne({ query, select });
         if (result) {
-            const count = await unreadMessageCount(userId);
-            emitConnected('UNREAD_MESSAGE_COUNT', userId, { count });
+            const messageCount = await unreadMessageCount(userId);
+            emitConnected('UNREAD_MESSAGE_COUNT', userId, { count: messageCount });
+            const letterCount = await unreadLetterCount(userId);
+            emitConnected('UNREAD_LETTER_COUNT', userId, { count: letterCount });
         }
         SuccessMsg(res, { data: result });
     } catch(e) {

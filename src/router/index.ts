@@ -26,6 +26,7 @@ app.post('/letter/add', Letter.LetterAdd);
 
 app.post('/letterUser/query', LetterUser.LetterUserQueryLimit);
 app.post('/letterUser/add/:toUserId', LetterUser.LetterUserAdd);
+app.post('/letterUser/clear/count', LetterUser.clearLetterUserCount);
 // app.delete('/tag/delete/:tagId', LetterUser.TagDelete);
 
 // Tag

@@ -1,4 +1,8 @@
-import { Collect, Tag, Topic, ArticlePublish, Follow, User, Comment, TopicArticle, Message } from '../model';
+import {
+    Collect, Tag, Topic, ArticlePublish,
+    Follow, User, Comment, TopicArticle,
+    Message, LetterUser
+} from '../model';
 
 // 更新文章评论数量
 export const updateArticleCommentCount = async (articleId: string) => {
@@ -93,4 +97,33 @@ export const userCount = () => {
 export const unreadMessageCount = (toUserId: string) => {
     const query: any = { toUserId, isRead: false };
     return Message.count({ query });
+}
+// 未读消息数量
+export const unreadLetterCount = (toUserId: string) => {
+    return new Promise(async (resolve, reject) => {
+        const query: any = {
+            $or: [
+                {
+                    $and: [
+                        { toUserId: toUserId }
+                    ]
+                },
+                {
+                    $and: [
+                        { fromUserId: toUserId }
+                    ]
+                }
+            ]
+        };
+        let letterUser: any = await LetterUser.find({ query });
+        let count: number = 0;
+        letterUser.map((item: any) => {
+            if (JSON.stringify(item.fromUserId) === JSON.stringify(toUserId)) {
+                count = count + item.fromUserUnreadCount;
+            } else {
+                count = count + item.toUserUnreadCount;
+            }
+        });
+        resolve(count);
+    });
 }
