@@ -8,7 +8,7 @@ interface list {
     querySort?: object;
 }
 
-class TopicModel extends BaseModel{
+class TopicArticleModel extends BaseModel{
 
     constructor(schema: any) {
         super(schema);
@@ -42,4 +42,4 @@ class TopicModel extends BaseModel{
     }
 }
 
-export default new TopicModel(TopicArticle)
+export default new TopicArticleModel(TopicArticle)

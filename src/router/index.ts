@@ -19,6 +19,7 @@ import * as Comment from './comment';
 import * as FileManage from './fileManage';
 import * as Letter from './letter';
 import * as LetterUser from './letterUser';
+import * as System from './system';
 
 // Letter
 app.post('/letter/query', Letter.LetterQueryLimit);
@@ -130,5 +131,11 @@ app.post('/ad/query', Ad.adQuery);
 app.post('/ad/add', Ad.adAdd);
 app.post('/ad/edit', Ad.adEdit);
 app.delete('/ad/delete/:adId', Ad.adDel);
+
+// system
+app.get('/system/detail', System.systemDetail);
+
+app.post('/system/add', System.systemAdd);
+app.post('/system/edit', System.systemEdit);
 
 export default app

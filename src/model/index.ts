@@ -16,10 +16,11 @@ import User from './user';
 import Comment from './comment';
 import Letter from './letter';
 import LetterUser from './letterUser';
+import System from './system';
 
 export {
     Article, ArticleCate, ArticlePublish, Captcha, Collect, Follow, Like,
     Message, FileManage, Tag, Topic, User, Comment,
     TopicArticle, Letter, LetterUser,
-    Ad, AdCate
+    Ad, AdCate, System
 }

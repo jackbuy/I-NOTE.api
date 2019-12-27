@@ -1,7 +1,7 @@
 import BaseModel from './baseModel';
 import { Captcha } from '../schema';
 
-class Model extends BaseModel {
+class CaptchaModel extends BaseModel {
 
     constructor(schema: any) {
         super(schema);
@@ -15,4 +15,4 @@ class Model extends BaseModel {
 
 }
 
-export default new Model(Captcha)
+export default new CaptchaModel(Captcha)

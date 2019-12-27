@@ -9,7 +9,7 @@ interface list {
     querySort?: object;
 }
 
-class TagModel extends BaseModel{
+class UserModel extends BaseModel{
 
     constructor(schema: any) {
         super(schema);
@@ -29,4 +29,4 @@ class TagModel extends BaseModel{
 
 }
 
-export default new TagModel(User)
+export default new UserModel(User)

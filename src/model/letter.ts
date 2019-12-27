@@ -8,7 +8,7 @@ interface list {
     querySort?: object;
 }
 
-class Model extends BaseModel {
+class LetterModel extends BaseModel {
 
     constructor(schema: any) {
         super(schema);
@@ -28,4 +28,4 @@ class Model extends BaseModel {
     }
 }
 
-export default new Model(Letter)
+export default new LetterModel(Letter)

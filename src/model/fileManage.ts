@@ -8,7 +8,7 @@ interface list {
     querySort?: object;
 }
 
-class CollectModel extends BaseModel {
+class FileModel extends BaseModel {
 
     constructor(schema: any) {
         super(schema);
@@ -31,4 +31,4 @@ class CollectModel extends BaseModel {
 
 }
 
-export default new CollectModel(FileManage);
+export default new FileModel(FileManage);
