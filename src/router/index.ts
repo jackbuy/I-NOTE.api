@@ -1,5 +1,5 @@
 import express from 'express';
-const app = express();
+const router = express.Router();
 
 import * as Article from './article';
 import * as ArticleCate from './articleCate';
@@ -22,120 +22,120 @@ import * as LetterUser from './letterUser';
 import * as System from './system';
 
 // Letter
-app.post('/letter/query', Letter.LetterQueryLimit);
-app.post('/letter/add', Letter.LetterAdd);
+router.post('/letter/query', Letter.LetterQueryLimit);
+router.post('/letter/add', Letter.LetterAdd);
 
-app.post('/letterUser/query', LetterUser.LetterUserQueryLimit);
-app.post('/letterUser/add/:toUserId', LetterUser.LetterUserAdd);
-app.post('/letterUser/clear/count', LetterUser.clearLetterUserCount);
-// app.delete('/tag/delete/:tagId', LetterUser.TagDelete);
+router.post('/letterUser/query', LetterUser.LetterUserQueryLimit);
+router.post('/letterUser/add/:toUserId', LetterUser.LetterUserAdd);
+router.post('/letterUser/clear/count', LetterUser.clearLetterUserCount);
+// router.delete('/tag/delete/:tagId', LetterUser.TagDelete);
 
 // Tag
-app.post('/tag/query', Tag.tagQueryLimit);
-app.post('/tag/child/query', Tag.tagChildQuery);
-app.get('/tag/recommend', Tag.tagRecommend);
-app.post('/tag/detail', Tag.tagDetail);
-app.post('/tag/add', Tag.tagAdd);
-app.post('/tag/edit', Tag.tagEdit);
-app.delete('/tag/delete/:tagId', Tag.TagDelete);
+router.post('/tag/query', Tag.tagQueryLimit);
+router.post('/tag/child/query', Tag.tagChildQuery);
+router.get('/tag/recommend', Tag.tagRecommend);
+router.post('/tag/detail', Tag.tagDetail);
+router.post('/tag/add', Tag.tagAdd);
+router.post('/tag/edit', Tag.tagEdit);
+router.delete('/tag/delete/:tagId', Tag.TagDelete);
 
 // Message
-app.post('/message/query', Message.messageQuery);
-app.put('/message/read/:messageId', Message.messageRead);
-app.delete('/message/delete/:messageId', Message.messageDelete);
+router.post('/message/query', Message.messageQuery);
+router.put('/message/read/:messageId', Message.messageRead);
+router.delete('/message/delete/:messageId', Message.messageDelete);
 
 // Collect
-app.post('/collect/query', Collect.collectQuery);
-app.delete('/collect/delete/:collectId/:articleId', Collect.collectDelete);
+router.post('/collect/query', Collect.collectQuery);
+router.delete('/collect/delete/:collectId/:articleId', Collect.collectDelete);
 
 // Follow
-app.post('/follow/user/query', Follow.followUserQuery);
-app.post('/follow/topic/query', Follow.followTopicQuery);
-app.post('/follow/tag/query', Follow.followTagQuery);
-app.post('/fans/query', Follow.fansQuery);
-app.post('/follow/user', Follow.followUser);
-app.post('/follow/topic', Follow.followTopic);
-app.post('/follow/tag', Follow.followTag);
+router.post('/follow/user/query', Follow.followUserQuery);
+router.post('/follow/topic/query', Follow.followTopicQuery);
+router.post('/follow/tag/query', Follow.followTagQuery);
+router.post('/fans/query', Follow.fansQuery);
+router.post('/follow/user', Follow.followUser);
+router.post('/follow/topic', Follow.followTopic);
+router.post('/follow/tag', Follow.followTag);
 
 // Article - 已发布
-app.post('/article/publish/query', ArticlePublish.articlePublishQuery);
-app.post('/article/publish/detail', ArticlePublish.articlePublishDetail);
-app.post('/article/publish', ArticlePublish.articlePublish);
-app.put('/article/publish/update/:articlePublishId', ArticlePublish.articlePublishUpdate);
-app.delete('/article/publish/delete/:articlePublishId/:articleId', ArticlePublish.articlePublishDelete);
-app.post('/article/publish/like', ArticlePublish.articlePublishLike);
-app.post('/article/publish/collect', ArticlePublish.articlePublishCollect);
+router.post('/article/publish/query', ArticlePublish.articlePublishQuery);
+router.post('/article/publish/detail', ArticlePublish.articlePublishDetail);
+router.post('/article/publish', ArticlePublish.articlePublish);
+router.put('/article/publish/update/:articlePublishId', ArticlePublish.articlePublishUpdate);
+router.delete('/article/publish/delete/:articlePublishId/:articleId', ArticlePublish.articlePublishDelete);
+router.post('/article/publish/like', ArticlePublish.articlePublishLike);
+router.post('/article/publish/collect', ArticlePublish.articlePublishCollect);
 
 // Article - 未发布
-app.post('/article/query', Article.articleQuery);
-app.get('/article/detail/:articleId', Article.articleDetail);
-app.post('/article/add', Article.articleAdd);
-app.put('/article/edit/:articleId', Article.articleEdit);
-app.delete('/article/delete/:articleId', Article.articleDelete);
+router.post('/article/query', Article.articleQuery);
+router.get('/article/detail/:articleId', Article.articleDetail);
+router.post('/article/add', Article.articleAdd);
+router.put('/article/edit/:articleId', Article.articleEdit);
+router.delete('/article/delete/:articleId', Article.articleDelete);
 
 // ArticleCate
-app.post('/article/cate/query', ArticleCate.articleCateQuery);
-app.post('/article/cate/add', ArticleCate.articleCateAdd);
-app.put('/article/cate/edit/:articleCateId', ArticleCate.articleCateEdit);
-app.delete('/article/cate/delete/:articleCateId', ArticleCate.articleCateDelete);
+router.post('/article/cate/query', ArticleCate.articleCateQuery);
+router.post('/article/cate/add', ArticleCate.articleCateAdd);
+router.put('/article/cate/edit/:articleCateId', ArticleCate.articleCateEdit);
+router.delete('/article/cate/delete/:articleCateId', ArticleCate.articleCateDelete);
 
 // User
-app.post('/user/login', User.userLogin);
-app.post('/user/register', User.userRegister);
-app.post('/user/forget', User.userForget);
-app.post('/user/userInfo', User.userInfo);
-app.post('/user/zoneUserInfo', User.zoneUserInfo);
-app.post('/user/userInfoEdit', User.userInfoEdit);
-app.post('/user/publish/query', User.userPublishQuery);
-app.post('/user/query', User.userQuery);
+router.post('/user/login', User.userLogin);
+router.post('/user/register', User.userRegister);
+router.post('/user/forget', User.userForget);
+router.post('/user/userInfo', User.userInfo);
+router.post('/user/zoneUserInfo', User.zoneUserInfo);
+router.post('/user/userInfoEdit', User.userInfoEdit);
+router.post('/user/publish/query', User.userPublishQuery);
+router.post('/user/query', User.userQuery);
 
 // operations
-app.post('/operations/count', User.operationsCount);
+router.post('/operations/count', User.operationsCount);
 
 // Topic
-app.post('/topic/query', Topic.topicQuery);
-app.post('/topic/user/query', Topic.topicUserQuery);
-app.post('/topic/user/list', Topic.topicUserList);
-app.get('/topic/recommend', Topic.topicRecommend);
-app.post('/topic/add', Topic.topicAdd);
-app.delete('/topic/delete/:topicId', Topic.topicDelete);
-app.put('/topic/edit/:topicId', Topic.topicEdit);
-app.post('/topic/detail', Topic.topicDetail);
+router.post('/topic/query', Topic.topicQuery);
+router.post('/topic/user/query', Topic.topicUserQuery);
+router.post('/topic/user/list', Topic.topicUserList);
+router.get('/topic/recommend', Topic.topicRecommend);
+router.post('/topic/add', Topic.topicAdd);
+router.delete('/topic/delete/:topicId', Topic.topicDelete);
+router.put('/topic/edit/:topicId', Topic.topicEdit);
+router.post('/topic/detail', Topic.topicDetail);
 
 // TopicArticle
-app.post('/topic/article/query', TopicArticle.topicArticleQuery);
-app.post('/topic/article/add', TopicArticle.topicArticleAdd);
-app.delete('/topic/:topicId/article/delete/:articleId', TopicArticle.topicArticleDelete);
+router.post('/topic/article/query', TopicArticle.topicArticleQuery);
+router.post('/topic/article/add', TopicArticle.topicArticleAdd);
+router.delete('/topic/:topicId/article/delete/:articleId', TopicArticle.topicArticleDelete);
 
 // Email
-app.post('/sendRegisterEmail', Email.sendRegisterEmail);
-app.post('/sendForgetEmail', Email.sendForgetEmail);
+router.post('/sendRegisterEmail', Email.sendRegisterEmail);
+router.post('/sendForgetEmail', Email.sendForgetEmail);
 
 // Comment
-app.post('/comment/query', Comment.commentQuery);
-app.post('/comment/user/query', Comment.commentUserQuery);
-app.post('/comment/save', Comment.commentSave);
-app.post('/comment/delete/:commentId', Comment.commentDelete);
-app.post('/comment/reply', Comment.commentReply);
+router.post('/comment/query', Comment.commentQuery);
+router.post('/comment/user/query', Comment.commentUserQuery);
+router.post('/comment/save', Comment.commentSave);
+router.post('/comment/delete/:commentId', Comment.commentDelete);
+router.post('/comment/reply', Comment.commentReply);
 
 // fileManage
-app.post('/file/query', FileManage.fileQuery);
-app.post('/file/single/upload', Upload.uploadFile.any(), FileManage.singleFileUpload);
+router.post('/file/query', FileManage.fileQuery);
+router.post('/file/single/upload', Upload.uploadFile.any(), FileManage.singleFileUpload);
 
 // ad
-app.post('/ad/cate/query', AdCate.adCateQuery);
-app.post('/ad/cate/add', AdCate.adCateAdd);
-app.post('/ad/cate/edit', AdCate.adCateEdit);
-app.delete('/ad/cate/delete/:cateId', AdCate.adCateDel);
-app.post('/ad/query', Ad.adQuery);
-app.post('/ad/add', Ad.adAdd);
-app.post('/ad/edit', Ad.adEdit);
-app.delete('/ad/delete/:adId', Ad.adDel);
+router.post('/ad/cate/query', AdCate.adCateQuery);
+router.post('/ad/cate/add', AdCate.adCateAdd);
+router.post('/ad/cate/edit', AdCate.adCateEdit);
+router.delete('/ad/cate/delete/:cateId', AdCate.adCateDel);
+router.post('/ad/query', Ad.adQuery);
+router.post('/ad/add', Ad.adAdd);
+router.post('/ad/edit', Ad.adEdit);
+router.delete('/ad/delete/:adId', Ad.adDel);
 
 // system
-app.get('/system/detail', System.systemDetail);
+router.get('/system/detail', System.systemDetail);
 
-app.post('/system/add', System.systemAdd);
-app.post('/system/edit', System.systemEdit);
+router.post('/system/add', System.systemAdd);
+router.post('/system/edit', System.systemEdit);
 
-export default app
+export default router

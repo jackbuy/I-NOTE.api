@@ -9,12 +9,12 @@ class Utils {
         };
         if (data) result.data = data;
         if (total >= 0) result.total = total;
-        return res.send(result)
+        return res.json(result)
     }
 
     // 异常响应
     ErrorMsg = (res: any, { code = 500, msg = '' }: any) => {
-        return res.send({
+        return res.json({
             code,
             msg
         })
