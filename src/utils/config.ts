@@ -37,7 +37,8 @@ export const ignoreJwtApiUrl: string[] = [
     '/sendForgetEmail',
     '/tag/detail',
     '/comment/query',
-    '/comment/user/query'
+    '/comment/user/query',
+    '/system/detail'
 ];
 
 export default {
