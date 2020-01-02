@@ -21,8 +21,8 @@ class ArticleModel extends BaseModel {
         const querylimit: number = parseInt(pageSize);
         const select = 'title isPublish articlePublishId';
         const options = {
-            // skip: querySkip,
-            // limit: querylimit,
+            skip: querySkip,
+            limit: querylimit,
             sort: querySort
         }
         return this.schema.find(query, select, options)
