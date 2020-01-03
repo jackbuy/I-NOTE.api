@@ -26,14 +26,6 @@ class ArticleModel extends BaseModel {
             sort: querySort
         }
         return this.schema.find(query, select, options)
-            // populate('userId', 'username nickname avatar').
-            // populate({
-            //     path: 'tagId',
-            //     select: 'title parentId',
-            //     populate: [
-            //         { path: 'parentId', select: 'title' }
-            //     ]
-            // });
     }
 
     // 详情
