@@ -20,6 +20,7 @@ import * as FileManage from './fileManage';
 import * as Letter from './letter';
 import * as LetterUser from './letterUser';
 import * as System from './system';
+import * as Link from './link';
 
 // Letter
 router.post('/letter/query', Letter.LetterQueryLimit);
@@ -137,5 +138,11 @@ router.get('/system/detail', System.systemDetail);
 
 router.post('/system/add', System.systemAdd);
 router.post('/system/edit', System.systemEdit);
+
+// link
+router.post('/link/query', Link.linkQueryLimit);
+router.post('/link/add', Link.linkAdd);
+router.post('/link/edit', Link.linkEdit);
+router.delete('/link/delete/:linkId', Link.linkDelete);
 
 export default router

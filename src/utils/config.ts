@@ -38,7 +38,8 @@ export const ignoreJwtApiUrl: string[] = [
     '/tag/detail',
     '/comment/query',
     '/comment/user/query',
-    '/system/detail'
+    '/system/detail',
+    '/link/query'
 ];
 
 export default {

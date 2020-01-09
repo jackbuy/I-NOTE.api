@@ -128,17 +128,14 @@ export const userInfo = async (req: any, res: any) => {
     const select: string = 'username nickname gender brief avatar theme level';
 
     try {
-        const result: any = await User.findOne({ query, select });
-        if (result) {
-            const messageCount = await unreadMessageCount(userId);
-            const letterCount = await unreadLetterCount(userId);
-            emitConnected('UNREAD_MESSAGE_COUNT', userId, { count: messageCount });
-            emitConnected('UNREAD_LETTER_COUNT', userId, { count: letterCount });
-        }
-        SuccessMsg(res, { data: result });
-    } catch(e) {
-        ErrorMsg(res, {});
-    }
+        const messageCount = await unreadMessageCount(userId);
+        const letterCount = await unreadLetterCount(userId);
+        emitConnected('UNREAD_MESSAGE_COUNT', userId, { count: messageCount });
+        emitConnected('UNREAD_LETTER_COUNT', userId, { count: letterCount });
+    } catch(e) {}
+
+    const result: any = await User.findOne({ query, select });
+    SuccessMsg(res, { data: result });
 }
 
 // 编辑

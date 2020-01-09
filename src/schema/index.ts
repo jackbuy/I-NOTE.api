@@ -41,6 +41,7 @@ import comment from './comment';
 import letter from './letter';
 import letterUser from './letterUser';
 import system from './system';
+import link from './link';
 
 export const Article = mongoose.model('Article', article);
 export const ArticleCate = mongoose.model('ArticleCate', articleCate);
@@ -61,3 +62,4 @@ export const Comment = mongoose.model('Comment', comment);
 export const Letter = mongoose.model('Letter', letter);
 export const LetterUser = mongoose.model('LetterUser', letterUser);
 export const System = mongoose.model('System', system);
+export const Link = mongoose.model('Link', link);
