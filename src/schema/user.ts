@@ -20,6 +20,7 @@ export default new Schema({ //用户
 
     avatar: { type: String, default: '' }, // 头像
     gender: { type: Number }, // 性别 0女 1男
+    freeze: { type: Number, default: 0 }, // 是否冻结 0正常 1冻结
     brief: { type: String, default: '' }, // 简介,一句话介绍自己，70个字符限制
     theme: { type: String, default: 'light' } // 主题
 });

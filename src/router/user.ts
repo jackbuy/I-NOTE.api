@@ -154,6 +154,22 @@ export const userInfoEdit = async (req: any, res: any) => {
     }
 }
 
+// 冻结用户
+export const useIsFreeze = async (req: any, res: any) => {
+    const { userId } = req.body;
+    const query: any = { _id: userId };
+    const update: any = {
+        ...req.body
+    };
+
+    try {
+        await User.updateOne({ query, update });
+        SuccessMsg(res, {});
+    } catch(e) {
+        ErrorMsg(res, {});
+    }
+}
+
 // 公开用户列表
 export const userPublishQuery = async (req: any, res: any) => {
     const { keyword, currentPage, pageSize } = req.body;

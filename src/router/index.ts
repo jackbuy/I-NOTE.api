@@ -87,6 +87,7 @@ router.post('/user/forget', User.userForget);
 router.post('/user/userInfo', User.userInfo);
 router.post('/user/zoneUserInfo', User.zoneUserInfo);
 router.post('/user/userInfoEdit', User.userInfoEdit);
+router.post('/user/useIsFreeze', User.useIsFreeze);
 router.post('/user/publish/query', User.userPublishQuery);
 router.post('/user/query', User.userQuery);
 
